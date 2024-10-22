@@ -7,9 +7,30 @@ import { ChangeEvent, FormEvent, useState } from "react";
 export default function LoginForm() {
   const [formData, setFormData] = useState({ email: "", password: "" });
 
-  function handleSubmitLogin(event: FormEvent) {
+  async function handleSubmitLogin(event: FormEvent) {
     event.preventDefault();
-    console.log(">>>", formData);
+
+    const payload = {
+      email: formData.email,
+      password: formData.password,
+    };
+
+    try {
+      const res = await fetch("http://localhost:8000/api/token/", {
+        mode: "no-cors",
+        method: "POST",
+        body: JSON.stringify(payload),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const responseData = await res.json();
+
+      console.log("response", res.status, responseData);
+    } catch (error) {
+      console.log("error", error);
+    }
   }
 
   function handleLoginFormChange(event: ChangeEvent<HTMLInputElement>) {
