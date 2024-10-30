@@ -17,7 +17,6 @@ export default function LoginForm() {
 
     try {
       const res = await fetch("http://localhost:8000/api/token/", {
-        // mode: "no-cors",
         method: "POST",
         body: JSON.stringify(payload),
         headers: {
