@@ -1,15 +1,19 @@
 "use client";
 
-import { storeAuthTokens } from "@/http-client";
+import { getAccessToken, storeAuthTokens } from "@/http-client";
 import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 
 export default function LoginForm() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    getAccessToken();
+  }, []);
 
   async function handleSubmitLogin(event: FormEvent) {
     event.preventDefault();
