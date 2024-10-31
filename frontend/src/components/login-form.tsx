@@ -1,11 +1,15 @@
 "use client";
 
+import { storeAuthTokens } from "@/http-client";
 import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/react";
+import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useState } from "react";
 
 export default function LoginForm() {
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   async function handleSubmitLogin(event: FormEvent) {
     event.preventDefault();
@@ -16,6 +20,8 @@ export default function LoginForm() {
     };
 
     try {
+      setIsLoading(true);
+
       const res = await fetch("http://localhost:8000/api/token/", {
         method: "POST",
         body: JSON.stringify(payload),
@@ -24,11 +30,24 @@ export default function LoginForm() {
         },
       });
 
-      const responseData = await res.json();
+      if (res.ok) {
+        const responseData = await res.json();
 
-      console.log("response", res.status, responseData);
+        const { refresh, access } = responseData;
+
+        console.log(refresh, access);
+
+        storeAuthTokens(refresh, access);
+
+        router.push("/dashboard/");
+        return;
+      }
+
+      console.log("error", res);
     } catch (error) {
       console.log("error", error);
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -60,7 +79,7 @@ export default function LoginForm() {
         onChange={handleLoginFormChange}
         isRequired
       />
-      <Button type="submit" color="primary">
+      <Button type="submit" color="primary" isLoading={isLoading}>
         Entrar
       </Button>
     </form>
