@@ -43,7 +43,7 @@ export default function LoginForm() {
 
         storeAuthTokens(refresh, access);
 
-        router.push("/dashboard/");
+        router.push("/");
         return;
       }
 
@@ -62,7 +62,7 @@ export default function LoginForm() {
   return (
     <form
       onSubmit={handleSubmitLogin}
-      className="flex flex-col border-2 rounded-2xl p-5 max-sm:w-[90%]"
+      className="flex flex-col border-2 rounded-2xl p-5 w-72 max-sm:w-[80%]"
     >
       <h1 className="text-3xl text-center mb-3">Login</h1>
       <Input
