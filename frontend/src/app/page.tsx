@@ -2,6 +2,7 @@
 import VehicleEntryTile from "@/components/vehicle-entry";
 import HttpClient, { urls } from "@/http-client";
 import { VehicleEntry, VehicleEntryDTO } from "@/types/api";
+import { formatVehicleEntry } from "@/utils/vehicle-entries";
 import { Spinner } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -14,18 +15,8 @@ export default function Home() {
     async function doTheJob() {
       const res = await HttpClient.get(urls.vehicleEntries);
       if (res.ok) {
-        const vehicleEntries = await res.json();
-        console.log(">>>", vehicleEntries);
-        setVehicles(
-          vehicleEntries.map((v: VehicleEntryDTO) => ({
-            state: v.state,
-            licencePlate: v.licence_plate,
-            model: v.model,
-            description: v.description,
-            author: v.author,
-            date: v.date,
-          }))
-        );
+        const vehicleEntries: VehicleEntryDTO[] = await res.json();
+        setVehicles(vehicleEntries.map(formatVehicleEntry));
       } else if (res.status == 401) {
         router.push("login/");
       } else {
@@ -34,7 +25,7 @@ export default function Home() {
     }
 
     doTheJob();
-  }, []);
+  }, [router]);
 
   return (
     <main className="container mx-auto h-screen">
