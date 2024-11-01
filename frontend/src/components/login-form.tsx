@@ -11,10 +11,6 @@ export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    getAccessToken();
-  }, []);
-
   async function handleSubmitLogin(event: FormEvent) {
     event.preventDefault();
 

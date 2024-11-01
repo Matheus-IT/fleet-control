@@ -1,51 +1,92 @@
 "use client";
+
 import VehicleEntryTile from "@/components/vehicle-entry";
-import HttpClient, { urls } from "@/http-client";
-import { VehicleEntry, VehicleEntryDTO } from "@/types/api";
+import { getAccessToken, getRefreshToken, setAccessToken } from "@/http-client";
+import { VehicleEntryDTO } from "@/types/api";
 import { formatVehicleEntry } from "@/utils/vehicle-entries";
 import { Spinner } from "@nextui-org/react";
+import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 
 export default function Home() {
-  const [vehicles, setVehicles] = useState<VehicleEntry[] | null>(null);
   const router = useRouter();
 
-  useEffect(() => {
-    async function doTheJob() {
-      const res = await HttpClient.get(urls.vehicleEntries);
+  const { isPending, error, data } = useQuery({
+    queryKey: ["fetchVehicleEntries"],
+    retry: false,
+    queryFn: async () => {
+      const res = await fetch("http://localhost:8000/api/vehicle-entries/", {
+        headers: {
+          Authorization: "Bearer " + getAccessToken(),
+        },
+      });
+
       if (res.ok) {
         const vehicleEntries: VehicleEntryDTO[] = await res.json();
-        setVehicles(vehicleEntries.map(formatVehicleEntry));
-      } else if (res.status == 401) {
-        router.push("login/");
-      } else {
-        console.log("Error when getting vehicles:", res);
+        return vehicleEntries.map(formatVehicleEntry);
       }
-    }
 
-    doTheJob();
-  }, [router]);
+      if (res.status == 401) {
+        console.log("Not allowed");
+        const response = await fetch(
+          "http://localhost:8000/api/token/refresh/",
+          {
+            method: "POST",
+            body: JSON.stringify({ refresh: getRefreshToken() }),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        console.log("retrying...");
+
+        if (response.ok) {
+          const { access } = await response.json();
+          setAccessToken(access);
+
+          console.log("fetching vehicles with new token");
+
+          const res = await fetch(
+            "http://localhost:8000/api/vehicle-entries/",
+            {
+              headers: {
+                Authorization: "Bearer " + getAccessToken(),
+              },
+            }
+          );
+
+          if (res.ok) {
+            const vehicleEntries: VehicleEntryDTO[] = await res.json();
+            return vehicleEntries.map(formatVehicleEntry);
+          }
+        } else {
+          router.push("/login/");
+        }
+      }
+      return [];
+    },
+  });
 
   return (
     <main className="container mx-auto h-screen">
       <div className="flex flex-col gap-4 max-sm:p-4">
-        {vehicles != null && vehicles.length > 0 && (
+        {data && data.length > 0 && (
           <>
             <h1 className="text-2xl text-center mt-6">Registros de veículos</h1>
-            {vehicles.map((v) => (
+            {data.map((v) => (
               <VehicleEntryTile key={v.licencePlate} vehicleEntry={v} />
             ))}
           </>
         )}
-        {vehicles != null && vehicles.length == 0 && (
-          <h1 className="text-center">Nenhum registro de veículo.</h1>
+        {data && data.length == 0 && (
+          <h1 className="text-center text-lg">Nenhum registro de veículo.</h1>
         )}
-        {vehicles == null && (
+        {isPending && (
           <div className="h-screen flex items-center justify-center">
             <Spinner size="lg" />
           </div>
         )}
+        {error && <h1 className="text-center text-lg">Aconteceu um erro!</h1>}
       </div>
     </main>
   );
