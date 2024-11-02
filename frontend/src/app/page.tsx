@@ -63,7 +63,7 @@ export default function Home() {
           router.push("/login/");
         }
       }
-      return [];
+      return null;
     },
   });
 
