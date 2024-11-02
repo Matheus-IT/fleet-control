@@ -1,5 +1,5 @@
-import { VehicleEntryDTO } from "./types/api";
-import { formatVehicleEntry } from "./utils/vehicle-entries";
+import { VehicleEntryDTO } from "../types/api";
+import { formatVehicleEntry } from "../utils/vehicle-entries";
 
 export default class HttpClient {
   static #host = "http://localhost:8000/";

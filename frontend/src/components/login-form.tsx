@@ -1,10 +1,10 @@
 "use client";
 
-import { getAccessToken, storeAuthTokens } from "@/http-client";
+import { storeAuthTokens } from "@/api/auth-tokens";
 import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 
 export default function LoginForm() {
   const [formData, setFormData] = useState({ email: "", password: "" });
