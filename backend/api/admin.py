@@ -3,7 +3,15 @@ from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib import admin
-from api.models import User, Supervisor, Driver
+from api.models import (
+    User,
+    Supervisor,
+    Driver,
+    Vehicle,
+    Workshop,
+    Team,
+    VehicleRegistry,
+)
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.core.exceptions import ValidationError
 
@@ -107,6 +115,50 @@ class DriverAdmin(admin.ModelAdmin):
     search_fields = ("name", "organization", "user")
 
 
+class VehicleAdmin(admin.ModelAdmin):
+    list_display = ("id", "model", "licence_plate", "is_at_workshop")
+    search_fields = ("model", "licence_plate", "is_at_workshop")
+
+
+class WorkshopAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "name",
+    )
+    search_fields = ("name",)
+
+
+class TeamAdmin(admin.ModelAdmin):
+    list_display = ("id", "name", "type")
+    search_fields = ("name", "type")
+
+
+class VehicleRegistryAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "vehicle",
+        "vehicle_km",
+        "entry",
+        "workshop",
+        "problem_reported",
+        "responsable_team",
+        "created_at",
+    )
+    search_fields = (
+        "vehicle",
+        "vehicle_km",
+        "entry",
+        "workshop",
+        "problem_reported",
+        "responsable_team",
+        "created_at",
+    )
+
+
 admin.site.register(User, UserAdmin)
 admin.site.register(Supervisor, SupervisorAdmin)
 admin.site.register(Driver, DriverAdmin)
+admin.site.register(Vehicle, VehicleAdmin)
+admin.site.register(Workshop, WorkshopAdmin)
+admin.site.register(Team, TeamAdmin)
+admin.site.register(VehicleRegistry, VehicleRegistryAdmin)

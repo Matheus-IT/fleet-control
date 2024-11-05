@@ -62,3 +62,28 @@ class Driver(models.Model):
     name = models.CharField(max_length=50)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
+class Vehicle(models.Model):
+    model = models.CharField(max_length=50)
+    licence_plate = models.CharField(max_length=10, unique=True)
+    is_at_workshop = models.BooleanField(default=False)
+
+
+class Workshop(models.Model):
+    name = models.CharField(max_length=50)
+
+
+class Team(models.Model):
+    name = models.CharField(max_length=50)
+    type = models.CharField(max_length=10, unique=True)
+
+
+class VehicleRegistry(models.Model):
+    vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
+    vehicle_km = models.IntegerField()
+    entry = models.BooleanField(default=False)  # foi entrada ou saída
+    workshop = models.ForeignKey(Workshop, on_delete=models.CASCADE)
+    problem_reported = models.CharField(max_length=256)
+    responsable_team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
