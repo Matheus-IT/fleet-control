@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib import admin
-from api.models import User
+from api.models import User, Supervisor, Driver
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.core.exceptions import ValidationError
 
@@ -92,4 +92,21 @@ class UserAdmin(BaseUserAdmin):
     ordering = ("email",)
 
 
+class OrganizationAdmin(admin.ModelAdmin):
+    list_display = ("id", "name")
+    search_fields = ("name",)
+
+
+class SupervisorAdmin(admin.ModelAdmin):
+    list_display = ("id", "name", "organization", "user")
+    search_fields = ("name", "organization", "user")
+
+
+class DriverAdmin(admin.ModelAdmin):
+    list_display = ("id", "name", "organization", "user")
+    search_fields = ("name", "organization", "user")
+
+
 admin.site.register(User, UserAdmin)
+admin.site.register(Supervisor, SupervisorAdmin)
+admin.site.register(Driver, DriverAdmin)
