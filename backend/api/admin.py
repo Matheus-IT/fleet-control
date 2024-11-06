@@ -5,6 +5,7 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib import admin
 from api.models import (
     User,
+    Organization,
     Supervisor,
     Driver,
     Vehicle,
@@ -156,6 +157,7 @@ class VehicleRegistryAdmin(admin.ModelAdmin):
 
 
 admin.site.register(User, UserAdmin)
+admin.site.register(Organization, OrganizationAdmin)
 admin.site.register(Supervisor, SupervisorAdmin)
 admin.site.register(Driver, DriverAdmin)
 admin.site.register(Vehicle, VehicleAdmin)
