@@ -81,8 +81,8 @@ class UserChangeForm(forms.ModelForm):
 class UserAdmin(BaseUserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
-    list_display = ["email", "is_staff"]
-    list_filter = ["email", "is_staff", "is_active"]
+    list_display = ["email", "name", "is_staff"]
+    list_filter = ["email", "name", "is_staff", "is_active"]
     fieldsets = (
         (None, {"fields": ("email", "password", "new_password1", "new_password2")}),
         ("Permissions", {"fields": ("is_staff", "is_active")}),
@@ -106,13 +106,13 @@ class OrganizationAdmin(admin.ModelAdmin):
 
 
 class SupervisorAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "organization", "user")
-    search_fields = ("name", "organization", "user")
+    list_display = ("id", "organization", "user")
+    search_fields = ("organization", "user")
 
 
 class DriverAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "organization", "user")
-    search_fields = ("name", "organization", "user")
+    list_display = ("id", "organization", "user")
+    search_fields = ("organization", "user")
 
 
 class VehicleAdmin(admin.ModelAdmin):
