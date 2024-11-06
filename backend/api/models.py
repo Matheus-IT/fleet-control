@@ -41,9 +41,33 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
+    DRIVER_PROFILE = "driver"
+    SUPERVISOR_PROFILE = "supervisor"
+    PROFILES = {
+        DRIVER_PROFILE: "Motorista",
+        SUPERVISOR_PROFILE: "Supervisor",
+    }
 
     def __str__(self):
         return self.email
+
+    @property
+    def profiles(self):
+        profiles = []
+        if hasattr(self, "supervisor"):
+            profiles.append(self.SUPERVISOR_PROFILE)
+        if hasattr(self, "driver"):
+            profiles.append(self.DRIVER_PROFILE)
+        return profiles or None
+
+    @property
+    def profiles_display(self):
+        profiles = []
+        if hasattr(self, "supervisor"):
+            profiles.append(self.PROFILES[self.SUPERVISOR_PROFILE])
+        if hasattr(self, "driver"):
+            profiles.append(self.PROFILES[self.DRIVER_PROFILE])
+        return profiles or None
 
 
 class Organization(models.Model):
@@ -55,12 +79,18 @@ class Organization(models.Model):
 
 class Supervisor(models.Model):
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user.name
 
 
 class Driver(models.Model):
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user.name
 
 
 class Vehicle(models.Model):
