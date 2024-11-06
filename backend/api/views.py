@@ -32,3 +32,10 @@ def vehicle_entries_view(request: Request):
         },
     ]
     return Response(vehicles)
+
+
+@api_view(http_method_names=["get"])
+@permission_classes([IsAuthenticated])
+@authentication_classes([JWTAuthentication])
+def profile_info_view(request: Request):
+    return Response({"user_profiles": request.user.profiles})
