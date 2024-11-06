@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { getVehicleEntries } from "@/api/vehicles";
+import { getVehicleEntries } from "@/api/request-queries";
 import { VehicleEntry } from "@/types/api";
 
 export function useVehicleEntries() {
