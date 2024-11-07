@@ -1,9 +1,8 @@
 import axios from "axios";
-import { API_BASE_URL } from "./http-client";
 import { getAccessToken, getRefreshToken, setAccessToken } from "./auth-tokens";
 import { RefreshTokenExpiredError } from "@/types/errors";
 
-const base = process.env.NEXT_PUBLIC_API_BASE_URL || API_BASE_URL;
+const base = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 // Create axios instance with default config
 export const axiosInstance = axios.create({

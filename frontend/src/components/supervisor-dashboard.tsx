@@ -1,9 +1,14 @@
+import { getVehicleEntries } from "@/api/request-queries";
 import VehicleEntryTile from "@/components/vehicle-entry";
-import { useVehicleEntries } from "@/hooks/useVehicleEntries";
+import { useAuthenticatedQuery } from "@/hooks/react-query";
 import { Spinner } from "@nextui-org/react";
 
 export default function SupervisorDashboard() {
-  const { data, isPending } = useVehicleEntries();
+  const { data, isPending } = useAuthenticatedQuery(
+    ["vehicleEntries"],
+    getVehicleEntries
+  );
+
   return (
     <main className="container mx-auto h-screen">
       <div className="flex flex-col gap-4 max-sm:p-4">
