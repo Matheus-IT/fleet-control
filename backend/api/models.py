@@ -110,7 +110,7 @@ class Vehicle(models.Model):
         return f"{self.model} - {self.licence_plate}"
 
     @property
-    def is_at_workshop():
+    def is_at_workshop(self):
         return False  # TODO: implement logic for this property
 
 
