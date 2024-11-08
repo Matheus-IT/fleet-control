@@ -117,8 +117,8 @@ class DriverAdmin(admin.ModelAdmin):
 
 
 class VehicleAdmin(admin.ModelAdmin):
-    list_display = ("id", "model", "licence_plate", "is_at_workshop")
-    search_fields = ("model", "licence_plate", "is_at_workshop")
+    list_display = ("id", "model", "organization", "licence_plate", "is_at_workshop")
+    search_fields = ("model", "organization", "licence_plate", "is_at_workshop")
 
 
 class WorkshopAdmin(admin.ModelAdmin):

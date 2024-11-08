@@ -95,6 +95,7 @@ class Driver(models.Model):
 
 class Vehicle(models.Model):
     model = models.CharField(max_length=50)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     licence_plate = models.CharField(max_length=10, unique=True)
     is_at_workshop = models.BooleanField(default=False)
 
