@@ -8,7 +8,7 @@ from django.contrib.auth.models import (
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from django.db import models
-from django.utils.text import slugify
+from uuid import uuid4
 
 
 class UserManager(BaseUserManager):
@@ -99,11 +99,11 @@ class Vehicle(models.Model):
     model = models.CharField(max_length=50)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     licence_plate = models.CharField(max_length=10, unique=True)
-    slug = models.SlugField(unique=True, null=True, blank=True)  # Slug field
+    slug = models.SlugField(unique=True, null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if not self.slug:  # Ensure the slug is created if not provided
-            self.slug = slugify(self.model + self.licence_plate)
+            self.slug = uuid4()
         super().save(*args, **kwargs)
 
     def __str__(self):
