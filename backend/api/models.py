@@ -109,7 +109,7 @@ class Workshop(models.Model):
 
 class Team(models.Model):
     name = models.CharField(max_length=50)
-    type = models.CharField(max_length=10, unique=True)
+    type = models.CharField(max_length=50, unique=True)
 
 
 class VehicleRegistry(models.Model):
