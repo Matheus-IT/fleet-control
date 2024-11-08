@@ -11,7 +11,8 @@ from api.models import (
     Vehicle,
     Workshop,
     Team,
-    VehicleRegistry,
+    VehicleEntryRegistry,
+    VehicleExitRegistry,
 )
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.core.exceptions import ValidationError
@@ -134,12 +135,11 @@ class TeamAdmin(admin.ModelAdmin):
     search_fields = ("name", "type")
 
 
-class VehicleRegistryAdmin(admin.ModelAdmin):
+class VehicleEntryRegistryAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "vehicle",
         "vehicle_km",
-        "entry",
         "workshop",
         "problem_reported",
         "responsable_team",
@@ -148,10 +148,21 @@ class VehicleRegistryAdmin(admin.ModelAdmin):
     search_fields = (
         "vehicle",
         "vehicle_km",
-        "entry",
         "workshop",
         "problem_reported",
         "responsable_team",
+        "created_at",
+    )
+
+
+class VehicleExitRegistryAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "entry_record",
+        "created_at",
+    )
+    search_fields = (
+        "entry_record",
         "created_at",
     )
 
@@ -163,4 +174,5 @@ admin.site.register(Driver, DriverAdmin)
 admin.site.register(Vehicle, VehicleAdmin)
 admin.site.register(Workshop, WorkshopAdmin)
 admin.site.register(Team, TeamAdmin)
-admin.site.register(VehicleRegistry, VehicleRegistryAdmin)
+admin.site.register(VehicleEntryRegistry, VehicleEntryRegistryAdmin)
+admin.site.register(VehicleExitRegistry, VehicleExitRegistryAdmin)

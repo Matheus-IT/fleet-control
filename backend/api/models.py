@@ -97,10 +97,13 @@ class Vehicle(models.Model):
     model = models.CharField(max_length=50)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     licence_plate = models.CharField(max_length=10, unique=True)
-    is_at_workshop = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.model} - {self.licence_plate}"
+
+    @property
+    def is_at_workshop():
+        return False  # TODO: implement logic for this property
 
 
 class Workshop(models.Model):
@@ -118,10 +121,9 @@ class Team(models.Model):
         return f"{self.name} - {self.type}"
 
 
-class VehicleRegistry(models.Model):
+class VehicleEntryRegistry(models.Model):
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
     vehicle_km = models.IntegerField()
-    entry = models.BooleanField(default=False)  # foi entrada ou saída
     workshop = models.ForeignKey(Workshop, on_delete=models.CASCADE)
     problem_reported = models.CharField(max_length=256)
     responsable_team = models.ForeignKey(Team, on_delete=models.CASCADE)
@@ -129,3 +131,11 @@ class VehicleRegistry(models.Model):
 
     def __str__(self):
         return f"{self.problem_reported} - {self.vehicle.model}"
+
+
+class VehicleExitRegistry(models.Model):
+    entry_record = models.OneToOneField(VehicleEntryRegistry, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Exit of {self.entry_record}"
