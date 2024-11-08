@@ -6,7 +6,6 @@ from django.contrib.auth.models import (
     User,
 )
 from django.utils.translation import gettext_lazy as _
-from django.utils import timezone
 from django.db import models
 from uuid import uuid4
 
@@ -111,7 +110,13 @@ class Vehicle(models.Model):
 
     @property
     def is_at_workshop(self):
-        return False  # TODO: implement logic for this property
+        latest_entry = VehicleEntryRegistry.objects.filter(vehicle=self).last()
+        if not latest_entry:
+            return False
+        try:
+            return not latest_entry.exit_record
+        except VehicleEntryRegistry.exit_record.RelatedObjectDoesNotExist:
+            return True
 
 
 class Workshop(models.Model):
@@ -142,7 +147,9 @@ class VehicleEntryRegistry(models.Model):
 
 
 class VehicleExitRegistry(models.Model):
-    entry_record = models.OneToOneField(VehicleEntryRegistry, on_delete=models.CASCADE)
+    entry_record = models.OneToOneField(
+        VehicleEntryRegistry, related_name="exit_record", on_delete=models.CASCADE
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
