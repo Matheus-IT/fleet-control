@@ -99,6 +99,9 @@ class Vehicle(models.Model):
     licence_plate = models.CharField(max_length=10, unique=True)
     is_at_workshop = models.BooleanField(default=False)
 
+    def __str__(self):
+        return f"{self.model} - {self.licence_plate}"
+
 
 class Workshop(models.Model):
     name = models.CharField(max_length=50, unique=True)
@@ -111,6 +114,9 @@ class Team(models.Model):
     name = models.CharField(max_length=50)
     type = models.CharField(max_length=50, unique=True)
 
+    def __str__(self):
+        return f"{self.name} - {self.type}"
+
 
 class VehicleRegistry(models.Model):
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
@@ -120,3 +126,6 @@ class VehicleRegistry(models.Model):
     problem_reported = models.CharField(max_length=256)
     responsable_team = models.ForeignKey(Team, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.problem_reported} - {self.vehicle.model}"
