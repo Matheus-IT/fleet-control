@@ -140,6 +140,7 @@ class VehicleEntryRegistry(models.Model):
     workshop = models.ForeignKey(Workshop, on_delete=models.CASCADE)
     problem_reported = models.CharField(max_length=256)
     responsable_team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -150,6 +151,7 @@ class VehicleExitRegistry(models.Model):
     entry_record = models.OneToOneField(
         VehicleEntryRegistry, related_name="exit_record", on_delete=models.CASCADE
     )
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
