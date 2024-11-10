@@ -1,11 +1,19 @@
-import { VehicleEntry, VehicleEntryDTO } from "@/types/api";
-import { formatVehicleEntry } from "@/utils/vehicle-entries";
+import { VehicleEntryRegistry } from "@/types/api";
 import { axiosInstance } from "./axios-instance";
+import { VehicleEntryRegistrySchema } from "./zod-schemas";
 
-export async function getVehicleEntries(): Promise<VehicleEntry[]> {
-  const response = await axiosInstance.get("/api/vehicle-entries/");
-  const vehicleEntries: VehicleEntryDTO[] = response.data;
-  return vehicleEntries.map(formatVehicleEntry);
+export async function getVehicleEntries(): Promise<VehicleEntryRegistry[]> {
+  const response = await axiosInstance.get("/api/vehicle-overview/");
+
+  const parsedData = VehicleEntryRegistrySchema.array().safeParse(
+    response.data
+  );
+  if (parsedData.success) {
+    const vehicleEntries: VehicleEntryRegistry[] = parsedData.data;
+    return vehicleEntries;
+  }
+
+  throw new Error(`Invalid data format from API: ${parsedData.error}`);
 }
 
 export const getProfileInfo = async () => {

@@ -1,17 +1,30 @@
-export interface VehicleEntry {
-  state: string;
-  licencePlate: string;
+export interface Vehicle {
   model: string;
-  description: string;
-  author: string;
-  date: string;
+  organization: number;
+  licence_plate: string;
+  slug: string;
+  is_at_workshop: boolean;
 }
 
-export interface VehicleEntryDTO {
-  state: string;
-  licence_plate: string;
-  model: string;
-  description: string;
-  author: string;
-  date: string;
+export interface Workshop {
+  name: string;
+}
+
+export interface ResponsableTeam {
+  name: string;
+  type: string;
+}
+
+export interface User {
+  name: string;
+}
+
+export interface VehicleEntryRegistry {
+  vehicle: Vehicle;
+  vehicle_km: number;
+  workshop: Workshop;
+  problem_reported: string;
+  responsable_team: ResponsableTeam;
+  author: User;
+  created_at: Date;
 }

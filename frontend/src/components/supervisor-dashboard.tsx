@@ -4,7 +4,7 @@ import { useAuthenticatedQuery } from "@/hooks/react-query";
 import { Spinner } from "@nextui-org/react";
 
 export default function SupervisorDashboard() {
-  const { data, isPending } = useAuthenticatedQuery(
+  const { data, isPending, error } = useAuthenticatedQuery(
     ["vehicleEntries"],
     getVehicleEntries
   );
@@ -16,7 +16,10 @@ export default function SupervisorDashboard() {
           <>
             <h1 className="text-2xl text-center mt-6">Registros de veículos</h1>
             {data.map((v) => (
-              <VehicleEntryTile key={v.licencePlate} vehicleEntry={v} />
+              <VehicleEntryTile
+                key={v.vehicle.licence_plate}
+                vehicleEntry={v}
+              />
             ))}
           </>
         )}
@@ -28,6 +31,7 @@ export default function SupervisorDashboard() {
             <Spinner size="lg" />
           </div>
         )}
+        {error && <h1>Ocorreu um erro: {error.message}</h1>}
       </div>
     </main>
   );
