@@ -17,10 +17,10 @@ export default function VehicleEntryTile({
   return (
     <div className="w-full shadow-md rounded-lg p-4 border-l-5 border-l-green-700">
       <p className="text-lg">{vehicleEntry.vehicle.model}</p>
-      <p>
+      <div>
         Placa:{" "}
         <Chip className="mr-2">{vehicleEntry.vehicle.licence_plate}</Chip>
-      </p>
+      </div>
       <p className="text-base">
         Na oficina:{" "}
         <strong
