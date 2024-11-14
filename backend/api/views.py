@@ -21,12 +21,25 @@ def vehicles_overview_view(request: Request):
             status=400,
         )
 
+    search_query = request.query_params.get("search_query", "")
+    # case insensitive
+    search_query = search_query.strip().lower()
+
     vehicles = Vehicle.objects.filter(organization=request.user.supervisor.organization)
     vehicle_registries = []
     for v in vehicles:
         latest_entry = VehicleEntryRegistry.objects.filter(vehicle=v).last()
         if not latest_entry:
             continue
+
+        # Skip if no matching search terms
+        if search_query and not (
+            search_query in v.licence_plate.lower()
+            or search_query in v.model.lower()
+            or search_query in latest_entry.workshop.name.lower()
+        ):
+            continue
+
         vehicle_registries.append(latest_entry)
 
     serializer = VehicleEntryRegistrySerializer(vehicle_registries, many=True)

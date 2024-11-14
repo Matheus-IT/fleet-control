@@ -34,6 +34,7 @@ export default function VehicleEntryTile({
         </strong>
       </p>
       <p className="text-base">Problema: {vehicleEntry.problem_reported}</p>
+      <p className="text-base">Oficina: {vehicleEntry.workshop.name}</p>
       <p className="text-sm">
         Criado por <strong>{vehicleEntry.author.name}</strong> em{" "}
         {formatDate(vehicleEntry.created_at)}
