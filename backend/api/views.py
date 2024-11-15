@@ -48,7 +48,6 @@ def vehicles_overview_view(request: Request):
             continue
 
         vehicle_registries.append(latest_entry)
-    print("4")
 
     serializer = VehicleEntryRegistrySerializer(vehicle_registries, many=True)
 
