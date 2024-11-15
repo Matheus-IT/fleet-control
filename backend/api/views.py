@@ -15,9 +15,11 @@ from api.serializers import VehicleEntryRegistrySerializer
 @permission_classes([IsAuthenticated])
 @authentication_classes([JWTAuthentication])
 def vehicles_overview_view(request: Request):
-    if not hasattr(request.user, "supervisor"):
+    if not hasattr(request.user, "supervisor") and not hasattr(request.user, "driver"):
         return Response(
-            {"error": "Usuário precisa ser um supervisor para acessar essa página"},
+            {
+                "error": "Usuário precisa ser um supervisor ou motorista para acessar essa página"
+            },
             status=400,
         )
 
@@ -25,7 +27,12 @@ def vehicles_overview_view(request: Request):
     # case insensitive
     search_query = search_query.strip().lower()
 
-    vehicles = Vehicle.objects.filter(organization=request.user.supervisor.organization)
+    organization = (
+        request.user.supervisor.organization
+        if hasattr(request.user, "supervisor")
+        else request.user.driver.organization
+    )
+    vehicles = Vehicle.objects.filter(organization=organization)
     vehicle_registries = []
     for v in vehicles:
         latest_entry = VehicleEntryRegistry.objects.filter(vehicle=v).last()
@@ -41,6 +48,7 @@ def vehicles_overview_view(request: Request):
             continue
 
         vehicle_registries.append(latest_entry)
+    print("4")
 
     serializer = VehicleEntryRegistrySerializer(vehicle_registries, many=True)
 
