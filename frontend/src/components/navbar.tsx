@@ -6,6 +6,7 @@ import {
   NavbarItem,
 } from "@nextui-org/react";
 import Logo from "./logo";
+import LogoutButton from "./logout-button";
 
 export default function MyNavbar() {
   return (
@@ -38,6 +39,8 @@ export default function MyNavbar() {
           size="sm"
           src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
         />
+
+        <LogoutButton />
       </NavbarContent>
     </Navbar>
   );

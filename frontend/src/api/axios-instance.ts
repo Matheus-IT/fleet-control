@@ -79,6 +79,6 @@ axiosInstanceAuth.interceptors.response.use(
   }
 );
 
-function redirectToLogin() {
+export function redirectToLogin() {
   window.location.href = "/login";
 }
