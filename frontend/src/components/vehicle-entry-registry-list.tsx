@@ -1,6 +1,5 @@
-import { getVehicleEntries } from "@/api/request-queries";
 import VehicleEntryTile from "@/components/vehicle-entry";
-import { useAuthenticatedQuery } from "@/hooks/react-query";
+import { useGetVehicleEntries } from "@/hooks/react-query";
 import { Spinner } from "@nextui-org/react";
 import { useMemo, useState } from "react";
 
@@ -11,10 +10,7 @@ export default function VehicleEntryRegistryList({
 }) {
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { data, isPending, error } = useAuthenticatedQuery(
-    ["vehicleEntries"],
-    () => getVehicleEntries(searchQuery)
-  );
+  const { data, isPending, error } = useGetVehicleEntries(searchQuery);
 
   const filteredData = useMemo(() => {
     if (!data) return [];
