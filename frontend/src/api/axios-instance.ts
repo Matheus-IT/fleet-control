@@ -1,19 +1,26 @@
-import axios from "axios";
-import { getAccessToken, getRefreshToken, setAccessToken } from "./auth-tokens";
-import { RefreshTokenExpiredError } from "@/types/errors";
+import axios, { AxiosError } from "axios";
+import {
+  getAccessToken,
+  getRefreshToken,
+  setAccessToken,
+  setAuthCredentials,
+} from "./auth-tokens";
 
 const base = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
-// Create axios instance with default config
-export const axiosInstance = axios.create({
+const config = {
   baseURL: base,
   headers: {
     "Content-Type": "application/json",
   },
-});
+};
+
+export const axiosClient = axios.create(config);
+
+export const axiosInstanceAuth = axios.create(config);
 
 // Request interceptor to add auth token
-axiosInstance.interceptors.request.use(
+axiosInstanceAuth.interceptors.request.use(
   (config) => {
     const token = getAccessToken();
     if (token) {
@@ -27,7 +34,7 @@ axiosInstance.interceptors.request.use(
 );
 
 // Response interceptor to handle token refresh
-axiosInstance.interceptors.response.use(
+axiosInstanceAuth.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
@@ -39,7 +46,8 @@ axiosInstance.interceptors.response.use(
       try {
         const refreshToken = getRefreshToken();
         if (!refreshToken) {
-          throw new Error("No refresh token available");
+          redirectToLogin();
+          return Promise.reject(error);
         }
 
         // Try to refresh the token
@@ -52,14 +60,25 @@ axiosInstance.interceptors.response.use(
 
         // Retry the original request with new token
         originalRequest.headers.Authorization = `Bearer ${access}`;
-        return axiosInstance(originalRequest);
+
+        return axiosInstanceAuth(originalRequest);
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (refreshError) {
-        throw new RefreshTokenExpiredError();
+        // refresh token expirou
+        if (error instanceof AxiosError && error.response?.status === 401) {
+          setAuthCredentials(null, null);
+          await new Promise((resolve) => setTimeout(resolve, 5000));
+          redirectToLogin();
+          return;
+        }
       }
     }
 
     return Promise.reject(error);
   }
 );
+
+function redirectToLogin() {
+  window.location.href = "/login";
+}
