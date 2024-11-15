@@ -1,7 +1,8 @@
 "use client";
 
 import { getProfileInfo } from "@/api/request-queries";
-import { SUPERVISOR_PROFILE } from "@/api/user";
+import { DRIVER_PROFILE, SUPERVISOR_PROFILE } from "@/api/user";
+import DriverDashboard from "@/components/driver-dashboard";
 import SupervisorDashboard from "@/components/supervisor-dashboard";
 import { useAuthenticatedQuery } from "@/hooks/react-query";
 import { Spinner } from "@nextui-org/react";
@@ -16,6 +17,9 @@ export default function Home() {
     <>
       {data && data.user_profiles.includes(SUPERVISOR_PROFILE) && (
         <SupervisorDashboard />
+      )}
+      {data && data.user_profiles.includes(DRIVER_PROFILE) && (
+        <DriverDashboard />
       )}
       {isPending && (
         <div className="h-screen flex items-center justify-center">

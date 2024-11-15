@@ -3,8 +3,10 @@ import { Chip } from "@nextui-org/react";
 
 export default function VehicleEntryTile({
   vehicleEntry,
+  onClick,
 }: {
   vehicleEntry: VehicleEntryRegistry;
+  onClick: () => void;
 }) {
   function formatDate(date: Date): string {
     const day = String(date.getDate()).padStart(2, "0");
@@ -23,7 +25,10 @@ export default function VehicleEntryTile({
   }
 
   return (
-    <div className="w-full shadow-md rounded-lg p-4 border-l-5 border-l-green-700">
+    <div
+      onClick={onClick}
+      className="w-full shadow-md rounded-lg p-4 border-l-5 border-l-green-700 cursor-pointer hover:border-l-green-800 hover:shadow-lg"
+    >
       <p className="text-lg">{vehicleEntry.vehicle.model}</p>
       <div>
         Placa:{" "}
