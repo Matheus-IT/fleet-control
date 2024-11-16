@@ -49,15 +49,27 @@ export default function VehicleEntryTile({
       {vehicleEntry.vehicle.is_at_workshop && (
         <>
           <p className="text-base">Problema: {vehicleEntry.problem_reported}</p>
-          <p className="text-base">Oficina: {vehicleEntry.workshop.name}</p>
+          {vehicleEntry.workshop && (
+            <p className="text-base">Oficina: {vehicleEntry.workshop.name}</p>
+          )}
         </>
       )}
 
       <p className="text-sm">
-        Ultima atualização em{" "}
-        <strong>{formatDate(vehicleEntry.created_at)}</strong> as{" "}
-        {formatTime(vehicleEntry.created_at)} por{" "}
-        <strong>{vehicleEntry.author.name}</strong>
+        {vehicleEntry.author ? (
+          <>
+            Ultima atualização em{" "}
+            <strong>{formatDate(vehicleEntry.created_at)}</strong> as{" "}
+            {formatTime(vehicleEntry.created_at)} por{" "}
+            <strong>{vehicleEntry.author.name}</strong>
+          </>
+        ) : (
+          <>
+            Registro do veículo criado em{" "}
+            <strong>{formatDate(vehicleEntry.created_at)}</strong> as{" "}
+            {formatTime(vehicleEntry.created_at)}
+          </>
+        )}
       </p>
     </div>
   );

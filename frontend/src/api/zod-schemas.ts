@@ -23,11 +23,11 @@ export const UserSchema = z.object({
 
 export const VehicleEntryRegistrySchema = z.object({
   vehicle: VehicleSchema,
-  vehicle_km: z.number(),
-  workshop: WorkshopSchema,
+  vehicle_km: z.nullable(z.number()),
+  workshop: z.nullable(WorkshopSchema),
   problem_reported: z.string(),
-  responsable_team: ResponsableTeamSchema,
-  author: UserSchema,
+  responsable_team: z.nullable(ResponsableTeamSchema),
+  author: z.nullable(UserSchema),
   created_at: z
     .union([z.string(), z.date()]) // Allow both string and Date formats
     .transform((value) =>

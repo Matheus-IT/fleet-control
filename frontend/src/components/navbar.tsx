@@ -37,7 +37,7 @@ export default function MyNavbar() {
           isBordered
           className="transition-transform ml-auto"
           size="sm"
-          src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
+          src="https://i.pravatar.cc/140"
         />
 
         <LogoutButton />

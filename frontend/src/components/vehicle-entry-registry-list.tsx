@@ -22,7 +22,7 @@ export default function VehicleEntryRegistryList({
       return (
         vehicle.licence_plate.toLowerCase().includes(query) ||
         vehicle.model.toLowerCase().includes(query) ||
-        entry.workshop.name.toLowerCase().includes(query)
+        entry?.workshop?.name.toLowerCase().includes(query)
       );
     });
   }, [data, searchQuery]);

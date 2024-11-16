@@ -8,7 +8,7 @@ import { useGetProfileInfo } from "@/hooks/react-query";
 import { Spinner } from "@nextui-org/react";
 
 export default function Home() {
-  const { data, isPending } = useGetProfileInfo();
+  const { data, isPending, error } = useGetProfileInfo();
 
   return (
     <>
@@ -25,6 +25,7 @@ export default function Home() {
           <Spinner size="lg" />
         </div>
       )}
+      {error && <h1>Ocorreu um erro: {error.message}</h1>}
     </>
   );
 }

@@ -114,7 +114,8 @@ class Vehicle(models.Model):
         if not latest_entry:
             return False
         try:
-            return not latest_entry.exit_record
+            # if the record doesn't have author, it is the creation of the vehicle
+            return latest_entry.author != None and latest_entry.exit_record != None
         except VehicleEntryRegistry.exit_record.RelatedObjectDoesNotExist:
             return True
 

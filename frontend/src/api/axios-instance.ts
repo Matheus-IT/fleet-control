@@ -47,7 +47,7 @@ axiosInstanceAuth.interceptors.response.use(
         const refreshToken = getRefreshToken();
         if (!refreshToken) {
           redirectToLogin();
-          return Promise.reject(error);
+          return;
         }
 
         // Try to refresh the token
@@ -68,7 +68,6 @@ axiosInstanceAuth.interceptors.response.use(
         // refresh token expirou
         if (error instanceof AxiosError && error.response?.status === 401) {
           setAuthCredentials(null, null);
-          await new Promise((resolve) => setTimeout(resolve, 5000));
           redirectToLogin();
           return;
         }
