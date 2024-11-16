@@ -5,10 +5,11 @@ from rest_framework.decorators import (
 )
 from rest_framework.response import Response
 from rest_framework.request import Request
+from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from api.models import Vehicle, VehicleEntryRegistry
-from api.serializers import VehicleEntryRegistrySerializer
+from api.serializers import VehicleEntryRegistrySerializer, VehicleSerializer
 
 
 @api_view(http_method_names=["get"])
@@ -65,3 +66,10 @@ def profile_info_view(request: Request):
     return Response(
         {"user_name": request.user.name, "user_profiles": request.user.profiles}
     )
+
+
+class VehicleViewset(ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    queryset = Vehicle.objects.all()
+    serializer_class = VehicleSerializer
+    lookup_field = "slug"
