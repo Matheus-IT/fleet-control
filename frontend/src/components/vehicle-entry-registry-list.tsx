@@ -1,12 +1,13 @@
 import VehicleEntryTile from "@/components/vehicle-entry";
 import { useGetVehicleEntries } from "@/hooks/react-query";
+import { Vehicle } from "@/types/api";
 import { Spinner } from "@nextui-org/react";
 import { useMemo, useState } from "react";
 
 export default function VehicleEntryRegistryList({
   onEntryClick,
 }: {
-  onEntryClick: () => void;
+  onEntryClick: (vehicle: Vehicle) => void;
 }) {
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -46,7 +47,7 @@ export default function VehicleEntryRegistryList({
                 {filteredData.map((v) => (
                   <VehicleEntryTile
                     key={v.vehicle.licence_plate}
-                    onClick={onEntryClick}
+                    onClick={() => onEntryClick(v.vehicle)}
                     vehicleEntry={v}
                   />
                 ))}

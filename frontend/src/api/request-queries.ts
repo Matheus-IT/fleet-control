@@ -1,6 +1,7 @@
 import { VehicleEntryRegistry } from "@/types/api";
 import { axiosInstanceAuth } from "./axios-instance";
 import { VehicleEntryRegistrySchema } from "./zod-schemas";
+import { UserInfo } from "@/types/user";
 
 export async function getVehicleEntries(
   searchQuery: string
@@ -22,10 +23,10 @@ export async function getVehicleEntries(
   throw new Error(`Invalid data format from API: ${parsedData.error}`);
 }
 
-export const getProfileInfo = async (): Promise<{
-  user_name: string;
-  user_profiles: string[];
-}> => {
+export const getProfileInfo = async (): Promise<UserInfo> => {
   const response = await axiosInstanceAuth.get("/api/profile-info/");
-  return response.data;
+  return {
+    userProfiles: response.data.user_profiles,
+    nameOfUser: response.data.user_name,
+  };
 };

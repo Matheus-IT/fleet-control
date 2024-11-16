@@ -1,20 +1,21 @@
 "use client";
 
 import { DRIVER_PROFILE, SUPERVISOR_PROFILE } from "@/api/user";
-import MyNavbar from "@/components/navbar";
 import VehicleEntryRegistryList from "@/components/vehicle-entry-registry-list";
-import { useGetProfileInfo } from "@/hooks/react-query";
-import { Spinner } from "@nextui-org/react";
+import { useUserInfoStore } from "@/stores/user-info";
+import { Vehicle } from "@/types/api";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
-  const { data, isPending, error } = useGetProfileInfo();
+  const { userInfo } = useUserInfoStore((state) => state);
+  const router = useRouter();
 
   function handleSupervisorClickVehicleEntry() {
     console.log("Salut!");
   }
 
-  function handleDriverClickVehicleEntry() {
-    console.log("Hallo!");
+  function handleDriverClickVehicleEntry(vehicle: Vehicle) {
+    router.push(`create-record/${vehicle.slug}`);
   }
 
   function handleSupervisorDriverClickVehicleEntry() {
@@ -35,20 +36,11 @@ export default function Home() {
 
   return (
     <>
-      <MyNavbar nameOfUser={data?.user_name} />
-
-      {data?.user_profiles && (
+      {userInfo?.userProfiles && (
         <VehicleEntryRegistryList
-          onEntryClick={getClickHandler(data.user_profiles)}
+          onEntryClick={getClickHandler(userInfo.userProfiles)}
         />
       )}
-
-      {isPending && (
-        <div className="h-screen flex items-center justify-center">
-          <Spinner size="lg" />
-        </div>
-      )}
-      {error && <h1>Ocorreu um erro: {error.message}</h1>}
     </>
   );
 }
