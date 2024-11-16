@@ -136,11 +136,11 @@ class Team(models.Model):
 
 class VehicleEntryRegistry(models.Model):
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
-    vehicle_km = models.IntegerField()
-    workshop = models.ForeignKey(Workshop, on_delete=models.CASCADE)
+    vehicle_km = models.IntegerField(null=True)
+    workshop = models.ForeignKey(Workshop, on_delete=models.CASCADE, null=True)
     problem_reported = models.CharField(max_length=256)
-    responsable_team = models.ForeignKey(Team, on_delete=models.CASCADE)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    responsable_team = models.ForeignKey(Team, on_delete=models.CASCADE, null=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

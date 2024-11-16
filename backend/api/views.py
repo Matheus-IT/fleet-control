@@ -37,7 +37,11 @@ def vehicles_overview_view(request: Request):
     for v in vehicles:
         latest_entry = VehicleEntryRegistry.objects.filter(vehicle=v).last()
         if not latest_entry:
-            continue
+            # Create entry to be able to show up in the list
+            latest_entry = VehicleEntryRegistry.objects.create(
+                vehicle=v,
+                problem_reported="",
+            )
 
         # Skip if no matching search terms
         if search_query and not (
