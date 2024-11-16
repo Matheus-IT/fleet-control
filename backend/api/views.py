@@ -62,4 +62,6 @@ def vehicles_overview_view(request: Request):
 @permission_classes([IsAuthenticated])
 @authentication_classes([JWTAuthentication])
 def profile_info_view(request: Request):
-    return Response({"user_profiles": request.user.profiles})
+    return Response(
+        {"user_name": request.user.name, "user_profiles": request.user.profiles}
+    )

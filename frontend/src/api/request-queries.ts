@@ -23,6 +23,7 @@ export async function getVehicleEntries(
 }
 
 export const getProfileInfo = async (): Promise<{
+  user_name: string;
   user_profiles: string[];
 }> => {
   const response = await axiosInstanceAuth.get("/api/profile-info/");

@@ -8,7 +8,11 @@ import {
 import Logo from "./logo";
 import LogoutButton from "./logout-button";
 
-export default function MyNavbar() {
+export default function MyNavbar({
+  nameOfUser,
+}: {
+  nameOfUser: string | undefined;
+}) {
   return (
     <Navbar isBordered>
       <span className="inline-flex items-center w-fit">
@@ -33,12 +37,15 @@ export default function MyNavbar() {
           </Link>
         </NavbarItem>
 
-        <Avatar
-          isBordered
-          className="transition-transform ml-auto"
-          size="sm"
-          src="https://i.pravatar.cc/140"
-        />
+        <div className="flex gap-2 items-center ml-auto">
+          <span>{nameOfUser}</span>
+          <Avatar
+            isBordered
+            className="transition-transform"
+            size="sm"
+            src="https://i.pravatar.cc/140"
+          />
+        </div>
 
         <LogoutButton />
       </NavbarContent>
