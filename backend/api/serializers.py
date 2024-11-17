@@ -22,7 +22,8 @@ class WorkshopSerializer(serializers.ModelSerializer):
 class TeamSerializer(serializers.ModelSerializer):
     class Meta:
         model = Team
-        fields = ["name", "type"]
+        fields = ["id", "name", "type"]
+        read_only_fields = ["id"]
 
 
 class UserSerializer(serializers.ModelSerializer):

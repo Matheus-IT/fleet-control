@@ -13,6 +13,7 @@ export const WorkshopSchema = z.object({
 });
 
 export const ResponsableTeamSchema = z.object({
+  id: z.number(),
   name: z.string(),
   type: z.string(),
 });

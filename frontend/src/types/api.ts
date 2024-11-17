@@ -14,6 +14,7 @@ export interface Workshop {
 }
 
 export interface ResponsableTeam {
+  id: number;
   name: string;
   type: string;
 }

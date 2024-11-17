@@ -29,7 +29,7 @@ export default function VehicleEntryRegistryList({
   }, [data, searchQuery]);
 
   return (
-    <main className="container mx-auto h-screen">
+    <main className="container mx-auto">
       <div className="flex flex-col gap-4 max-sm:p-4">
         {data && data.length > 0 && (
           <>

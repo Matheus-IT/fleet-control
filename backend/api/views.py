@@ -8,8 +8,12 @@ from rest_framework.request import Request
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from api.models import Vehicle, VehicleEntryRegistry
-from api.serializers import VehicleEntryRegistrySerializer, VehicleSerializer
+from api.models import Vehicle, VehicleEntryRegistry, Team
+from api.serializers import (
+    VehicleEntryRegistrySerializer,
+    VehicleSerializer,
+    TeamSerializer,
+)
 
 
 @api_view(http_method_names=["get"])
@@ -73,3 +77,9 @@ class VehicleViewset(ModelViewSet):
     queryset = Vehicle.objects.all()
     serializer_class = VehicleSerializer
     lookup_field = "slug"
+
+
+class TeamViewset(ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    queryset = Team.objects.all()
+    serializer_class = TeamSerializer
