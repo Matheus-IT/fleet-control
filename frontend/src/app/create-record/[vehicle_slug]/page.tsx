@@ -2,7 +2,7 @@
 
 import { useGetTeams, useGetVehicle } from "@/hooks/react-query";
 import { PageProps } from "../../../../.next/types/app/page";
-import { Autocomplete, AutocompleteItem } from "@nextui-org/react";
+import SearchableSelect from "@/components/searchable-select";
 
 export default function CreateRecordPage({ params }: PageProps) {
   const { data: vehicle } = useGetVehicle(params.vehicle_slug);
@@ -24,17 +24,7 @@ export default function CreateRecordPage({ params }: PageProps) {
       </h1>
 
       {teams && (
-        <Autocomplete
-          label="Selecione um time"
-          className="max-w-xs"
-          defaultItems={teams}
-        >
-          {(t) => (
-            <AutocompleteItem key={t.id} value={t.id}>
-              {t.name}
-            </AutocompleteItem>
-          )}
-        </Autocomplete>
+        <SearchableSelect options={teams} placeholder="Select a team" />
       )}
     </main>
   );
