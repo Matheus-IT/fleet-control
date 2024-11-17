@@ -1,13 +1,29 @@
 import Select from "react-select";
 
-const SearchableSelect = ({ options, placeholder }) => {
+const SearchableSelect = ({
+  options,
+  placeholder,
+  getOptionLabel,
+  getOptionValue,
+  onChange,
+}: {
+  options: unknown[];
+  placeholder: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  getOptionLabel: (o: any) => string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  getOptionValue: (o: any) => string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onChange: (o: any) => void;
+}) => {
   return (
     <div>
       <Select
         options={options}
         placeholder={placeholder}
-        getOptionLabel={(option) => `${option.name} - ${option.type}`}
-        getOptionValue={(option) => option.id}
+        getOptionLabel={getOptionLabel}
+        getOptionValue={getOptionValue}
+        onChange={onChange}
       />
     </div>
   );
