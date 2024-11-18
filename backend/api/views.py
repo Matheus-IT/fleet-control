@@ -8,11 +8,12 @@ from rest_framework.request import Request
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from api.models import Vehicle, VehicleEntryRegistry, Team
+from api.models import Vehicle, VehicleEntryRegistry, Team, Workshop
 from api.serializers import (
     VehicleEntryRegistrySerializer,
     VehicleSerializer,
     TeamSerializer,
+    WorkshopSerializer,
 )
 
 
@@ -83,3 +84,9 @@ class TeamViewset(ModelViewSet):
     permission_classes = [IsAuthenticated]
     queryset = Team.objects.all()
     serializer_class = TeamSerializer
+
+
+class WorkshopViewset(ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    queryset = Workshop.objects.all()
+    serializer_class = WorkshopSerializer

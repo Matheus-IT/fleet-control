@@ -8,6 +8,7 @@ from api.views import (
     profile_info_view,
     TeamViewset,
     VehicleViewset,
+    WorkshopViewset,
 )
 
 from rest_framework.routers import DefaultRouter
@@ -16,6 +17,7 @@ router = DefaultRouter()
 
 router.register("vehicles", VehicleViewset, basename="vehicle")
 router.register("teams", TeamViewset, basename="team")
+router.register("workshops", WorkshopViewset, basename="workshop")
 
 
 urlpatterns = [

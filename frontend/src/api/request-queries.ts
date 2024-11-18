@@ -1,9 +1,10 @@
-import { ResponsableTeam, VehicleEntryRegistry } from "@/types/api";
+import { ResponsableTeam, VehicleEntryRegistry, Workshop } from "@/types/api";
 import { axiosInstanceAuth } from "./axios-instance";
 import {
   ResponsableTeamSchema,
   VehicleEntryRegistrySchema,
   VehicleSchema,
+  WorkshopSchema,
 } from "./zod-schemas";
 import { UserInfo } from "@/types/user";
 
@@ -48,5 +49,13 @@ export async function getTeams() {
   const parsedData = ResponsableTeamSchema.array().safeParse(res.data);
   if (parsedData.success) {
     return parsedData.data as ResponsableTeam[];
+  }
+}
+
+export async function getWorkshops() {
+  const res = await axiosInstanceAuth.get("/api/workshops/");
+  const parsedData = WorkshopSchema.array().safeParse(res.data);
+  if (parsedData.success) {
+    return parsedData.data as Workshop[];
   }
 }

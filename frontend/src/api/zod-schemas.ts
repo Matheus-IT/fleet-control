@@ -9,6 +9,7 @@ export const VehicleSchema = z.object({
 });
 
 export const WorkshopSchema = z.object({
+  id: z.number(),
   name: z.string(),
 });
 

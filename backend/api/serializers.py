@@ -16,7 +16,7 @@ class VehicleSerializer(serializers.ModelSerializer):
 class WorkshopSerializer(serializers.ModelSerializer):
     class Meta:
         model = Workshop
-        fields = ["name"]
+        fields = ["id", "name"]
 
 
 class TeamSerializer(serializers.ModelSerializer):

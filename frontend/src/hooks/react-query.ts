@@ -4,6 +4,7 @@ import {
   getTeams,
   getVehicle,
   getVehicleEntries,
+  getWorkshops,
 } from "@/api/request-queries";
 
 export function useGetProfileInfo() {
@@ -26,9 +27,17 @@ export function useGetVehicle(slug: string) {
     queryFn: () => getVehicle(slug),
   });
 }
+
 export function useGetTeams() {
   return useQuery({
     queryKey: ["getTeams"],
     queryFn: getTeams,
+  });
+}
+
+export function useGetWorkshops() {
+  return useQuery({
+    queryKey: ["getWorkshops"],
+    queryFn: getWorkshops,
   });
 }
