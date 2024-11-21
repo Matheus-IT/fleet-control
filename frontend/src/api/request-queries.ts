@@ -1,5 +1,5 @@
 import { ResponsableTeam, VehicleEntryRegistry, Workshop } from "@/types/api";
-import { axiosInstanceAuth } from "./axios-instance";
+import { axiosClientAuth } from "./axios-instance";
 import {
   ResponsableTeamSchema,
   VehicleEntryRegistrySchema,
@@ -11,7 +11,7 @@ import { UserInfo } from "@/types/user";
 export async function getVehicleEntries(
   searchQuery: string
 ): Promise<VehicleEntryRegistry[]> {
-  const response = await axiosInstanceAuth.get("/api/vehicle-overview/", {
+  const response = await axiosClientAuth.get("/api/vehicle-overview/", {
     params: {
       search_query: searchQuery,
     },
@@ -29,7 +29,7 @@ export async function getVehicleEntries(
 }
 
 export const getProfileInfo = async (): Promise<UserInfo> => {
-  const response = await axiosInstanceAuth.get("/api/profile-info/");
+  const response = await axiosClientAuth.get("/api/profile-info/");
   return {
     userProfiles: response.data.user_profiles,
     nameOfUser: response.data.user_name,
@@ -37,7 +37,7 @@ export const getProfileInfo = async (): Promise<UserInfo> => {
 };
 
 export async function getVehicle(slug: string) {
-  const res = await axiosInstanceAuth.get(`/api/vehicles/${slug}`);
+  const res = await axiosClientAuth.get(`/api/vehicles/${slug}`);
   const parsedData = VehicleSchema.safeParse(res.data);
   if (parsedData.success) {
     return parsedData.data;
@@ -45,7 +45,7 @@ export async function getVehicle(slug: string) {
 }
 
 export async function getTeams() {
-  const res = await axiosInstanceAuth.get("/api/teams/");
+  const res = await axiosClientAuth.get("/api/teams/");
   const parsedData = ResponsableTeamSchema.array().safeParse(res.data);
   if (parsedData.success) {
     return parsedData.data as ResponsableTeam[];
@@ -53,7 +53,7 @@ export async function getTeams() {
 }
 
 export async function getWorkshops() {
-  const res = await axiosInstanceAuth.get("/api/workshops/");
+  const res = await axiosClientAuth.get("/api/workshops/");
   const parsedData = WorkshopSchema.array().safeParse(res.data);
   if (parsedData.success) {
     return parsedData.data as Workshop[];

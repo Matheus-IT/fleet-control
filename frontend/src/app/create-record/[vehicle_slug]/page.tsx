@@ -13,6 +13,11 @@ import { useState } from "react";
 import { Button, Input } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
 
+type FormData = {
+  kilometer: string; // Input is typically string from react-hook-form
+  problem_reported: string;
+};
+
 export default function CreateRecordPage({ params }: PageProps) {
   const { data: vehicle } = useGetVehicle(params.vehicle_slug);
   const { data: teams } = useGetTeams();
@@ -26,16 +31,13 @@ export default function CreateRecordPage({ params }: PageProps) {
   const { register, handleSubmit } = useForm();
   const mutation = useCreateRecordMutation();
 
-  const onSubmit = async (formData: any) => {
+  const onSubmit = async (formData: FormData) => {
     try {
       await mutation.mutateAsync({
         ...formData,
-        team_id: selectedTeam?.id,
-        workshop_id: selectedWorkshop?.id,
+        team_id: selectedTeam?.id ?? 0,
+        workshop_id: selectedWorkshop?.id ?? 0,
       });
-      // Invalidate relevant queries after successful submission
-      // queryClient.invalidateQueries(['records']);
-      // queryClient.invalidateQueries(['vehicle', params.vehicle_slug]);
     } catch (error) {
       console.error("Failed to submit record:", error);
     }
@@ -91,14 +93,14 @@ export default function CreateRecordPage({ params }: PageProps) {
           onChange={(option: Workshop) => setSelectedWorkshop(option)}
         />
 
-        <Button color="primary" type="submit" disabled={mutation.isLoading}>
-          {mutation.isLoading ? "Submitting..." : "Confirmar"}
+        <Button color="primary" type="submit" disabled={mutation.isPending}>
+          {mutation.isPending ? "Submitting..." : "Confirmar"}
         </Button>
       </form>
 
       {mutation.isError && (
         <div style={{ color: "red", marginTop: "10px" }}>
-          Falha ao submeter formulário: {mutation.error}
+          Falha ao submeter formulário: {mutation.error.message}
         </div>
       )}
     </main>

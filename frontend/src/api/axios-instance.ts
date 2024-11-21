@@ -17,10 +17,10 @@ const config = {
 
 export const axiosClient = axios.create(config);
 
-export const axiosInstanceAuth = axios.create(config);
+export const axiosClientAuth = axios.create(config);
 
 // Request interceptor to add auth token
-axiosInstanceAuth.interceptors.request.use(
+axiosClientAuth.interceptors.request.use(
   (config) => {
     const token = getAccessToken();
     if (token) {
@@ -34,7 +34,7 @@ axiosInstanceAuth.interceptors.request.use(
 );
 
 // Response interceptor to handle token refresh
-axiosInstanceAuth.interceptors.response.use(
+axiosClientAuth.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
@@ -61,7 +61,7 @@ axiosInstanceAuth.interceptors.response.use(
         // Retry the original request with new token
         originalRequest.headers.Authorization = `Bearer ${access}`;
 
-        return axiosInstanceAuth(originalRequest);
+        return axiosClientAuth(originalRequest);
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (refreshError) {
