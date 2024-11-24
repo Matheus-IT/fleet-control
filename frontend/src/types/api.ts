@@ -25,3 +25,13 @@ export interface User {
 }
 
 export type VehicleEntryRegistry = z.infer<typeof VehicleEntryRegistrySchema>;
+
+export type SubmitLoginCredentials = {
+  email: string;
+  password: string;
+};
+
+export type AuthCredentials = {
+  access: string;
+  refresh: string;
+};

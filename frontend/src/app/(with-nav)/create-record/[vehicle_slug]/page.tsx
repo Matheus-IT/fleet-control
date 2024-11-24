@@ -5,7 +5,7 @@ import {
   useGetVehicle,
   useGetWorkshops,
 } from "@/hooks/react-query";
-import { PageProps } from "../../../../.next/types/app/page";
+import { PageProps } from "../../../../../.next/types/app/page";
 import SearchableSelect from "@/components/searchable-select";
 import { ResponsableTeam, Workshop } from "@/types/api";
 import { useState } from "react";

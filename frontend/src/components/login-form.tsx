@@ -1,13 +1,18 @@
 "use client";
 
 import { storeAuthTokens } from "@/api/auth-tokens";
+import { submitLogin } from "@/api/request-queries";
+import { SubmitLoginCredentials } from "@/types/api";
 import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useState } from "react";
 
 export default function LoginForm() {
-  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [formData, setFormData] = useState<SubmitLoginCredentials>({
+    email: "",
+    password: "",
+  });
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
@@ -22,28 +27,16 @@ export default function LoginForm() {
     try {
       setIsLoading(true);
 
-      const res = await fetch("http://localhost:8000/api/token/", {
-        method: "POST",
-        body: JSON.stringify(payload),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const responseData = await submitLogin(payload);
 
-      if (res.ok) {
-        const responseData = await res.json();
+      const { refresh, access } = responseData;
 
-        const { refresh, access } = responseData;
+      console.log(refresh, access);
 
-        console.log(refresh, access);
+      storeAuthTokens(refresh, access);
 
-        storeAuthTokens(refresh, access);
-
-        router.push("/");
-        return;
-      }
-
-      console.log("error", res);
+      router.push("/");
+      return;
     } catch (error) {
       console.log("error", error);
     } finally {

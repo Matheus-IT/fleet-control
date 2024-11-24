@@ -15,7 +15,7 @@ const config = {
   },
 };
 
-export const axiosClient = axios.create(config);
+export const axiosInstance = axios.create(config);
 
 export const axiosInstanceAuth = axios.create(config);
 
@@ -24,6 +24,8 @@ axiosInstanceAuth.interceptors.request.use(
   (config) => {
     const token = getAccessToken();
     if (token) {
+      console.log("No access token!");
+
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
@@ -46,8 +48,8 @@ axiosInstanceAuth.interceptors.response.use(
       try {
         const refreshToken = getRefreshToken();
         if (!refreshToken) {
-          redirectToLogin();
-          return;
+          console.log("No refresh token!");
+          throw new Error("No refresh token!");
         }
 
         // Try to refresh the token
@@ -65,11 +67,13 @@ axiosInstanceAuth.interceptors.response.use(
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (refreshError) {
+        console.log("Error here:", refreshError);
+
         // refresh token expirou
         if (error instanceof AxiosError && error.response?.status === 401) {
           setAuthCredentials(null, null);
           redirectToLogin();
-          return;
+          return Promise.reject(error);
         }
       }
     }

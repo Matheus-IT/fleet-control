@@ -1,5 +1,11 @@
-import { ResponsableTeam, VehicleEntryRegistry, Workshop } from "@/types/api";
-import { axiosInstanceAuth } from "./axios-instance";
+import {
+  AuthCredentials,
+  ResponsableTeam,
+  SubmitLoginCredentials,
+  VehicleEntryRegistry,
+  Workshop,
+} from "@/types/api";
+import { axiosInstance, axiosInstanceAuth } from "./axios-instance";
 import {
   ResponsableTeamSchema,
   VehicleEntryRegistrySchema,
@@ -58,4 +64,11 @@ export async function getWorkshops() {
   if (parsedData.success) {
     return parsedData.data as Workshop[];
   }
+}
+
+export async function submitLogin(
+  credentials: SubmitLoginCredentials
+): Promise<AuthCredentials> {
+  const res = await axiosInstance.post("/api/token/", credentials);
+  return res.data;
 }
