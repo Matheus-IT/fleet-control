@@ -1,4 +1,7 @@
-import { VehicleEntryRegistrySchema } from "@/api/zod-schemas";
+import {
+  VehicleEntryRegistrySchema,
+  VehicleEntrySchema,
+} from "@/api/zod-schemas";
 import { z } from "zod";
 
 export interface Vehicle {
@@ -25,6 +28,8 @@ export interface User {
 }
 
 export type VehicleEntryRegistry = z.infer<typeof VehicleEntryRegistrySchema>;
+
+export type VehicleEntry = z.infer<typeof VehicleEntrySchema>;
 
 export type SubmitLoginCredentials = {
   email: string;

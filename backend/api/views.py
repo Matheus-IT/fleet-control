@@ -14,6 +14,7 @@ from api.serializers import (
     VehicleSerializer,
     TeamSerializer,
     WorkshopSerializer,
+    VehicleEntrySerializer,
 )
 
 
@@ -69,7 +70,11 @@ def vehicles_overview_view(request: Request):
 @authentication_classes([JWTAuthentication])
 def profile_info_view(request: Request):
     return Response(
-        {"user_name": request.user.name, "user_profiles": request.user.profiles}
+        {
+            "id": request.user.id,
+            "user_name": request.user.name,
+            "user_profiles": request.user.profiles,
+        }
     )
 
 
@@ -90,3 +95,9 @@ class WorkshopViewset(ModelViewSet):
     permission_classes = [IsAuthenticated]
     queryset = Workshop.objects.all()
     serializer_class = WorkshopSerializer
+
+
+class VehicleEntryRegistryViewSet(ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    queryset = VehicleEntryRegistry.objects.all()
+    serializer_class = VehicleEntrySerializer

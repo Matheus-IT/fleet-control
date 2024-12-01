@@ -1,15 +1,19 @@
 "use client";
 
 import {
+  useCreateRecordMutation,
   useGetTeams,
   useGetVehicle,
   useGetWorkshops,
+  useCreateRecordMutation,
 } from "@/hooks/react-query";
 import { PageProps } from "../../../../../.next/types/app/page";
 import SearchableSelect from "@/components/searchable-select";
 import { ResponsableTeam, Workshop } from "@/types/api";
 import { useState } from "react";
 import { Button, Input } from "@nextui-org/react";
+import { useForm } from "react-hook-form";
+import { useUserInfoStore } from "@/stores/user-info";
 
 export default function CreateRecordPage({ params }: PageProps) {
   const { data: vehicle } = useGetVehicle(params.vehicle_slug);
@@ -21,6 +25,33 @@ export default function CreateRecordPage({ params }: PageProps) {
   const [selectedWorkshop, setSelectedWorkshop] = useState<Workshop | null>(
     null
   );
+  const { userInfo } = useUserInfoStore((state) => state);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+  const mutation = useCreateRecordMutation();
+
+  async function onSubmit(formData) {
+    console.log("formData", formData);
+
+    try {
+      await mutation.mutateAsync({
+        vehicle: vehicle!.id,
+        vehicle_km: parseInt(formData.kilometer),
+        workshop: selectedWorkshop!.id,
+        problem_reported: formData.problem_reported,
+        responsable_team: selectedTeam!.id,
+        author: userInfo!.id,
+      });
+    } catch (error) {
+      console.error("Failed to submit record:", error);
+    }
+  }
+
+  if (!teams || !workshops) return <div>Loading...</div>;
 
   return (
     <main className="container mx-auto pt-4">
@@ -36,10 +67,23 @@ export default function CreateRecordPage({ params }: PageProps) {
           {vehicle?.is_at_workshop ? "sim" : "não"}
         </strong>
       </h1>
-      <Input label="Quilometragem (km):" size="sm" className="mb-4" />
-      <Input label="Problema relatado:" size="sm" className="mb-4" />
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Input
+          label="Quilometragem (km):"
+          size="sm"
+          className="mb-4"
+          {...register("kilometer", { required: true })}
+        />
+        {errors.kilometer && <p>Quilometragem é obrigatória.</p>}
 
-      {teams && (
+        <Input
+          label="Problema relatado:"
+          size="sm"
+          className="mb-4"
+          {...register("problem_reported", { required: true })}
+        />
+        {errors.problem_reported && <p>Problema relatado é obrigatório.</p>}
+
         <SearchableSelect
           options={teams}
           placeholder="Selecione uma equipe"
@@ -50,9 +94,7 @@ export default function CreateRecordPage({ params }: PageProps) {
           getOptionValue={(option: ResponsableTeam) => option.id.toString()}
           onChange={(option: ResponsableTeam) => setSelectedTeam(option)}
         />
-      )}
 
-      {workshops && (
         <SearchableSelect
           options={workshops}
           placeholder="Selecione uma oficina"
@@ -61,9 +103,17 @@ export default function CreateRecordPage({ params }: PageProps) {
           getOptionValue={(option: Workshop) => option.id.toString()}
           onChange={(option: Workshop) => setSelectedWorkshop(option)}
         />
-      )}
 
-      <Button color="primary">Confirmar</Button>
+        <Button color="primary" type="submit" disabled={mutation.isPending}>
+          {mutation.isPending ? "Submitting..." : "Confirmar"}
+        </Button>
+      </form>
+
+      {mutation.isError && (
+        <div style={{ color: "red", marginTop: "10px" }}>
+          Falha ao submeter formulário: {mutation.error.message}
+        </div>
+      )}
     </main>
   );
 }

@@ -1,11 +1,13 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   getProfileInfo,
   getTeams,
   getVehicle,
   getVehicleEntries,
   getWorkshops,
+  submitCreateVehicleEntry,
 } from "@/api/request-queries";
+import { errorToast, successToast } from "./toast";
 
 export function useGetProfileInfo() {
   return useQuery({
@@ -39,5 +41,20 @@ export function useGetWorkshops() {
   return useQuery({
     queryKey: ["getWorkshops"],
     queryFn: getWorkshops,
+  });
+}
+
+export function useCreateRecordMutation() {
+  return useMutation({
+    mutationFn: submitCreateVehicleEntry,
+    onSuccess: (data) => {
+      console.log("Record created successfully:", data);
+      successToast("Entrada registrada com sucesso!");
+    },
+    onError: (error) => {
+      console.error("Error creating record:", error);
+      errorToast("Ocorreu um erro!");
+      throw error;
+    },
   });
 }
