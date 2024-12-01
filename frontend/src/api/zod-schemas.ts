@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const VehicleSchema = z.object({
+  id: z.number(),
   model: z.string(),
   organization: z.number(),
   licence_plate: z.string(),
@@ -35,4 +36,20 @@ export const VehicleEntryRegistrySchema = z.object({
     .transform((value) =>
       typeof value === "string" ? new Date(value) : value
     ), // Convert string to Date
+});
+
+export const VehicleEntrySchema = z.object({
+  vehicle: z.number(),
+  vehicle_km: z.number(),
+  workshop: z.number(),
+  problem_reported: z.string(),
+  responsable_team: z.number(),
+  author: z.number(),
+  created_at: z.optional(
+    z
+      .union([z.string(), z.date()]) // Allow both string and Date formats
+      .transform((value) =>
+        typeof value === "string" ? new Date(value) : value
+      )
+  ), // Convert string to Date
 });

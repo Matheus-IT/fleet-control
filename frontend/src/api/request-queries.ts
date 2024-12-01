@@ -1,8 +1,16 @@
-import { ResponsableTeam, VehicleEntryRegistry, Workshop } from "@/types/api";
-import { axiosClientAuth } from "./axios-instance";
+import {
+  AuthCredentials,
+  ResponsableTeam,
+  SubmitLoginCredentials,
+  VehicleEntry,
+  VehicleEntryRegistry,
+  Workshop,
+} from "@/types/api";
+import { axiosInstance, axiosInstanceAuth } from "./axios-instance";
 import {
   ResponsableTeamSchema,
   VehicleEntryRegistrySchema,
+  VehicleEntrySchema,
   VehicleSchema,
   WorkshopSchema,
 } from "./zod-schemas";
@@ -31,6 +39,7 @@ export async function getVehicleEntries(
 export const getProfileInfo = async (): Promise<UserInfo> => {
   const response = await axiosClientAuth.get("/api/profile-info/");
   return {
+    id: response.data.id,
     userProfiles: response.data.user_profiles,
     nameOfUser: response.data.user_name,
   };
@@ -58,4 +67,24 @@ export async function getWorkshops() {
   if (parsedData.success) {
     return parsedData.data as Workshop[];
   }
+}
+
+export async function submitLogin(
+  credentials: SubmitLoginCredentials
+): Promise<AuthCredentials> {
+  const res = await axiosInstance.post("/api/token/", credentials);
+  return res.data;
+}
+
+export async function submitCreateVehicleEntry(data: VehicleEntry) {
+  const response = await axiosInstanceAuth.post(
+    "/api/vehicle-entry-registries/",
+    data
+  );
+  const parsedData = VehicleEntrySchema.safeParse(response.data);
+  if (parsedData.success) {
+    console.log("parsedData.success");
+    return parsedData.data as VehicleEntry;
+  }
+  console.log("parsedData deu ruim :(");
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useCreateRecordMutation,
   useGetTeams,
   useGetVehicle,
   useGetWorkshops,
@@ -12,11 +13,7 @@ import { ResponsableTeam, Workshop } from "@/types/api";
 import { useState } from "react";
 import { Button, Input } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
-
-type FormData = {
-  kilometer: string; // Input is typically string from react-hook-form
-  problem_reported: string;
-};
+import { useUserInfoStore } from "@/stores/user-info";
 
 export default function CreateRecordPage({ params }: PageProps) {
   const { data: vehicle } = useGetVehicle(params.vehicle_slug);
@@ -28,20 +25,31 @@ export default function CreateRecordPage({ params }: PageProps) {
   const [selectedWorkshop, setSelectedWorkshop] = useState<Workshop | null>(
     null
   );
-  const { register, handleSubmit } = useForm();
+  const { userInfo } = useUserInfoStore((state) => state);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
   const mutation = useCreateRecordMutation();
 
-  const onSubmit = async (formData: FormData) => {
+  async function onSubmit(formData) {
+    console.log("formData", formData);
+
     try {
       await mutation.mutateAsync({
-        ...formData,
-        team_id: selectedTeam?.id ?? 0,
-        workshop_id: selectedWorkshop?.id ?? 0,
+        vehicle: vehicle!.id,
+        vehicle_km: parseInt(formData.kilometer),
+        workshop: selectedWorkshop!.id,
+        problem_reported: formData.problem_reported,
+        responsable_team: selectedTeam!.id,
+        author: userInfo!.id,
       });
     } catch (error) {
       console.error("Failed to submit record:", error);
     }
-  };
+  }
 
   if (!teams || !workshops) return <div>Loading...</div>;
 
@@ -64,14 +72,17 @@ export default function CreateRecordPage({ params }: PageProps) {
           label="Quilometragem (km):"
           size="sm"
           className="mb-4"
-          {...register("kilometer")}
+          {...register("kilometer", { required: true })}
         />
+        {errors.kilometer && <p>Quilometragem é obrigatória.</p>}
+
         <Input
           label="Problema relatado:"
           size="sm"
           className="mb-4"
-          {...register("problem_reported")}
+          {...register("problem_reported", { required: true })}
         />
+        {errors.problem_reported && <p>Problema relatado é obrigatório.</p>}
 
         <SearchableSelect
           options={teams}

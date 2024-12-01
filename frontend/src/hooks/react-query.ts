@@ -5,8 +5,9 @@ import {
   getVehicle,
   getVehicleEntries,
   getWorkshops,
+  submitCreateVehicleEntry,
 } from "@/api/request-queries";
-import { axiosClientAuth } from "@/api/axios-instance";
+import { errorToast, successToast } from "./toast";
 
 export function useGetProfileInfo() {
   return useQuery({
@@ -43,28 +44,16 @@ export function useGetWorkshops() {
   });
 }
 
-interface CreateRecordData {
-  vehicle_id?: number;
-  kilometer: string;
-  problem_reported: string;
-  team_id?: number;
-  workshop_id?: number;
-}
-
 export function useCreateRecordMutation() {
   return useMutation({
-    mutationFn: async (data: CreateRecordData) => {
-      const response = await axiosClientAuth.post(
-        "/api/vehicle-registry",
-        data
-      );
-      return response.data;
-    },
+    mutationFn: submitCreateVehicleEntry,
     onSuccess: (data) => {
       console.log("Record created successfully:", data);
+      successToast("Entrada registrada com sucesso!");
     },
     onError: (error) => {
       console.error("Error creating record:", error);
+      errorToast("Ocorreu um erro!");
       throw error;
     },
   });

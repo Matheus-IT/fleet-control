@@ -7,7 +7,14 @@ class VehicleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Vehicle
-        fields = ["model", "organization", "licence_plate", "slug", "is_at_workshop"]
+        fields = [
+            "id",
+            "model",
+            "organization",
+            "licence_plate",
+            "slug",
+            "is_at_workshop",
+        ]
 
     def get_is_at_workshop(self, obj):
         return obj.is_at_workshop
@@ -60,3 +67,17 @@ class VehicleEntryRegistrySerializer(serializers.ModelSerializer):
         if obj.author:
             return {"name": obj.author.name}
         return None
+
+
+class VehicleEntrySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VehicleEntryRegistry
+        fields = [
+            "vehicle",
+            "vehicle_km",
+            "workshop",
+            "problem_reported",
+            "responsable_team",
+            "author",
+            "created_at",
+        ]
