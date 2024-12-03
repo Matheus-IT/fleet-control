@@ -12,10 +12,12 @@ import LogoutButton from "./logout-button";
 import { useUserInfoStore } from "@/stores/user-info";
 import { useGetProfileInfo } from "@/hooks/react-query";
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function MyNavbar() {
   const { data, error } = useGetProfileInfo();
   const { setUserInfo } = useUserInfoStore((state) => state);
+  const router = useRouter();
 
   useEffect(() => {
     if (data) {
@@ -26,7 +28,10 @@ export default function MyNavbar() {
   return (
     <>
       <Navbar isBordered>
-        <span className="inline-flex items-center w-fit">
+        <span
+          className="inline-flex items-center w-fit hover:cursor-pointer"
+          onClick={() => router.replace("/")}
+        >
           <Logo />
           <span className="font-bold ml-2">DPL Construções</span>
         </span>
