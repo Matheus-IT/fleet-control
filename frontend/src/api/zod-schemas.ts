@@ -53,3 +53,15 @@ export const VehicleEntrySchema = z.object({
       )
   ), // Convert string to Date
 });
+
+export const VehicleExitRegistrySchema = z.object({
+  entry_record: z.number(),
+  author: z.number(),
+  created_at: z.optional(
+    z
+      .union([z.string(), z.date()]) // Allow both string and Date formats
+      .transform((value) =>
+        typeof value === "string" ? new Date(value) : value
+      )
+  ), // Convert string to Date
+});

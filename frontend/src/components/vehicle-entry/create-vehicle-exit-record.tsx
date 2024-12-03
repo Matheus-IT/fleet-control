@@ -1,3 +1,4 @@
+import { useCreateVehicleExitRecordMutation } from "@/hooks/react-query";
 import { Vehicle } from "@/types/api";
 import { Button } from "@nextui-org/react";
 
@@ -6,8 +7,11 @@ export default function CreateVehicleExitRecord({
 }: {
   vehicle: Vehicle;
 }) {
-  function handleCreateVehicleExitRecord() {
-    console.log("hey!");
+  const mutation = useCreateVehicleExitRecordMutation(vehicle.id);
+
+  async function handleCreateVehicleExitRecord() {
+    await mutation.mutateAsync();
+    window.location.reload();
   }
   return (
     <main className="container mx-auto pt-4">

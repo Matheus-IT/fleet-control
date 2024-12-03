@@ -1,5 +1,12 @@
 from rest_framework import serializers
-from .models import Vehicle, VehicleEntryRegistry, Workshop, User, Team
+from .models import (
+    Vehicle,
+    VehicleEntryRegistry,
+    VehicleExitRegistry,
+    Workshop,
+    User,
+    Team,
+)
 
 
 class VehicleSerializer(serializers.ModelSerializer):
@@ -78,6 +85,16 @@ class VehicleEntrySerializer(serializers.ModelSerializer):
             "workshop",
             "problem_reported",
             "responsable_team",
+            "author",
+            "created_at",
+        ]
+
+
+class VehicleExitSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VehicleExitRegistry
+        fields = [
+            "entry_record",
             "author",
             "created_at",
         ]

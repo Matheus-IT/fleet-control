@@ -4,6 +4,7 @@ import {
   SubmitLoginCredentials,
   VehicleEntry,
   VehicleEntryRegistry,
+  VehicleExitRegistry,
   Workshop,
 } from "@/types/api";
 import { axiosInstance, axiosInstanceAuth } from "./axios-instance";
@@ -11,6 +12,7 @@ import {
   ResponsableTeamSchema,
   VehicleEntryRegistrySchema,
   VehicleEntrySchema,
+  VehicleExitRegistrySchema,
   VehicleSchema,
   WorkshopSchema,
 } from "./zod-schemas";
@@ -48,6 +50,8 @@ export const getProfileInfo = async (): Promise<UserInfo> => {
 export async function getVehicle(slug: string) {
   const res = await axiosInstanceAuth.get(`/api/vehicles/${slug}`);
   const parsedData = VehicleSchema.safeParse(res.data);
+  console.log("parsedData", parsedData);
+
   if (parsedData.success) {
     return parsedData.data;
   }
@@ -85,6 +89,19 @@ export async function submitCreateVehicleEntry(data: VehicleEntry) {
   if (parsedData.success) {
     console.log("parsedData.success");
     return parsedData.data as VehicleEntry;
+  }
+  console.log("parsedData deu ruim :(");
+}
+
+export async function submitCreateVehicleExitRecord(vehicle_id: number) {
+  const response = await axiosInstanceAuth.post(
+    "/api/create-vehicle-exit-record/",
+    { vehicle_id }
+  );
+  const parsedData = VehicleExitRegistrySchema.safeParse(response.data);
+  if (parsedData.success) {
+    console.log("parsedData.success");
+    return parsedData.data as VehicleExitRegistry;
   }
   console.log("parsedData deu ruim :(");
 }

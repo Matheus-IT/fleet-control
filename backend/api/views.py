@@ -1,3 +1,4 @@
+from rest_framework import status
 from rest_framework.decorators import (
     api_view,
     permission_classes,
@@ -8,13 +9,19 @@ from rest_framework.request import Request
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from api.models import Vehicle, VehicleEntryRegistry, Team, Workshop
+from api.models import (
+    Vehicle,
+    VehicleEntryRegistry,
+    Team,
+    Workshop,
+)
 from api.serializers import (
     VehicleEntryRegistrySerializer,
     VehicleSerializer,
     TeamSerializer,
     WorkshopSerializer,
     VehicleEntrySerializer,
+    VehicleExitSerializer,
 )
 
 
@@ -101,3 +108,33 @@ class VehicleEntryRegistryViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
     queryset = VehicleEntryRegistry.objects.all()
     serializer_class = VehicleEntrySerializer
+
+
+@api_view(http_method_names=["post"])
+@permission_classes([IsAuthenticated])
+@authentication_classes([JWTAuthentication])
+def create_vehicle_exit_record_view(request: Request):
+    print("request.data", request.data)
+
+    vehicle_id = request.data.get("vehicle_id")
+
+    entry_record = VehicleEntryRegistry.objects.filter(vehicle_id=vehicle_id).last()
+    print("entry_record", entry_record)
+    if not entry_record:
+        return Response(
+            {"error": "Corresponding vehicle entry not found"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    payload = {
+        "author": request.user.id,
+        "entry_record": entry_record.id,
+    }
+    serializer = VehicleExitSerializer(data=payload)
+    if serializer.is_valid():
+        created = serializer.create(serializer.validated_data)
+        print("created", created)
+        return_serializer = VehicleExitSerializer(instance=created)
+        return Response(return_serializer.data, status=status.HTTP_201_CREATED)
+    print("here!!!", serializer.errors)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

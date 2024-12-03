@@ -6,6 +6,7 @@ import {
   getVehicleEntries,
   getWorkshops,
   submitCreateVehicleEntry,
+  submitCreateVehicleExitRecord,
 } from "@/api/request-queries";
 import { errorToast, successToast } from "./toast";
 
@@ -50,6 +51,21 @@ export function useCreateRecordMutation() {
     onSuccess: (data) => {
       console.log("Record created successfully:", data);
       successToast("Entrada registrada com sucesso!");
+    },
+    onError: (error) => {
+      console.error("Error creating record:", error);
+      errorToast("Ocorreu um erro!");
+      throw error;
+    },
+  });
+}
+
+export function useCreateVehicleExitRecordMutation(vehicle_id: number) {
+  return useMutation({
+    mutationFn: () => submitCreateVehicleExitRecord(vehicle_id),
+    onSuccess: (data) => {
+      console.log("Record created successfully:", data);
+      successToast("Saída registrada com sucesso!");
     },
     onError: (error) => {
       console.error("Error creating record:", error);

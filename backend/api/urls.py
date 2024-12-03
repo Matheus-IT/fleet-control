@@ -10,6 +10,7 @@ from api.views import (
     VehicleViewset,
     WorkshopViewset,
     VehicleEntryRegistryViewSet,
+    create_vehicle_exit_record_view,
 )
 
 from rest_framework.routers import DefaultRouter
@@ -33,6 +34,11 @@ urlpatterns = [
         name="vehicle_overview_view",
     ),
     path("profile-info/", profile_info_view, name="profile_info_view"),
+    path(
+        "create-vehicle-exit-record/",
+        create_vehicle_exit_record_view,
+        name="create_vehicle_exit_record",
+    ),
     path("token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("", include(router.urls)),

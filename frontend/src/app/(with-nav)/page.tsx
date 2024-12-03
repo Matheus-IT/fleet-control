@@ -15,7 +15,7 @@ export default function Home() {
   }
 
   function handleDriverClickVehicleEntry(vehicle: Vehicle) {
-    router.push(`create-record/${vehicle.slug}`);
+    router.push(`vehicle-detail/${vehicle.slug}`);
   }
 
   function handleSupervisorDriverClickVehicleEntry() {

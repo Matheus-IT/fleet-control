@@ -17,7 +17,6 @@ export function CreateVehicleEntryRecord({ vehicle }: { vehicle: Vehicle }) {
     formState: { errors },
   } = useForm();
   const mutation = useCreateRecordMutation();
-
   const { data: teams } = useGetTeams();
   const { data: workshops } = useGetWorkshops();
   const [selectedTeam, setSelectedTeam] = useState<ResponsableTeam | null>(
@@ -41,6 +40,8 @@ export function CreateVehicleEntryRecord({ vehicle }: { vehicle: Vehicle }) {
         responsable_team: selectedTeam!.id,
         author: userInfo!.id,
       });
+
+      window.location.reload();
     } catch (error) {
       console.error("Failed to submit record:", error);
     }
