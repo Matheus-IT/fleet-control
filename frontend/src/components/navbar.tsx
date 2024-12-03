@@ -13,10 +13,11 @@ import { useUserInfoStore } from "@/stores/user-info";
 import { useGetProfileInfo } from "@/hooks/react-query";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { DRIVER_PROFILE } from "@/api/user";
 
 export default function MyNavbar() {
   const { data, error } = useGetProfileInfo();
-  const { setUserInfo } = useUserInfoStore((state) => state);
+  const { setUserInfo, userInfo } = useUserInfoStore((state) => state);
   const router = useRouter();
 
   useEffect(() => {
@@ -59,7 +60,11 @@ export default function MyNavbar() {
               isBordered
               className="transition-transform"
               size="sm"
-              src="https://i.pravatar.cc/140"
+              src={
+                userInfo?.userProfiles.includes(DRIVER_PROFILE)
+                  ? "/images/driver.png"
+                  : "/images/supervisor.png"
+              }
             />
           </div>
 
