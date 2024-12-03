@@ -113,11 +113,15 @@ class Vehicle(models.Model):
         latest_entry = VehicleEntryRegistry.objects.filter(vehicle=self).last()
         if not latest_entry:
             return False
-        try:
+
+        if hasattr(latest_entry, "exit_record"):
+            return False
+
+        if (not hasattr(latest_entry, "exit_record")) and latest_entry.author == None:
             # if the record doesn't have author, it is the creation of the vehicle
-            return latest_entry.author != None and latest_entry.exit_record != None
-        except VehicleEntryRegistry.exit_record.RelatedObjectDoesNotExist:
-            return True
+            return False
+
+        return True
 
 
 class Workshop(models.Model):
