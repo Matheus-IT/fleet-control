@@ -6,12 +6,17 @@ import {
   Navbar,
   NavbarContent,
   NavbarItem,
+  NavbarMenu,
+  NavbarMenuItem,
+  NavbarMenuToggle,
 } from "@nextui-org/react";
 import Logo from "./logo";
-import LogoutButton from "./logout-button";
+import { setAuthCredentials } from "@/api/auth-tokens";
+import { redirectToLogin } from "@/api/axios-instance";
+
 import { useUserInfoStore } from "@/stores/user-info";
 import { useGetProfileInfo } from "@/hooks/react-query";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { DRIVER_PROFILE } from "@/api/user";
 
@@ -19,6 +24,7 @@ export default function MyNavbar() {
   const { data, error } = useGetProfileInfo();
   const { setUserInfo, userInfo } = useUserInfoStore((state) => state);
   const router = useRouter();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     if (data) {
@@ -26,9 +32,14 @@ export default function MyNavbar() {
     }
   }, [data, setUserInfo]);
 
+  function handleLogout() {
+    setAuthCredentials(null, null);
+    redirectToLogin();
+  }
+
   return (
     <>
-      <Navbar isBordered>
+      <Navbar onMenuOpenChange={setIsMenuOpen} isBordered>
         <span
           className="inline-flex items-center w-fit hover:cursor-pointer"
           onClick={() => router.replace("/")}
@@ -37,20 +48,52 @@ export default function MyNavbar() {
           <span className="font-bold ml-2">DPL Construções</span>
         </span>
 
-        <NavbarContent justify="start" className="grow justify-between ml-32">
+        <NavbarMenuToggle
+          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+          className="sm:hidden"
+        />
+
+        <NavbarMenu>
+          <NavbarMenuItem>
+            <Link color="primary" className="w-full" href="#" size="lg">
+              Veículos
+            </Link>
+          </NavbarMenuItem>
+          <NavbarMenuItem>
+            <Link color="primary" className="w-full" href="#" size="lg">
+              Configurações
+            </Link>
+          </NavbarMenuItem>
+          <NavbarMenuItem>
+            <Link
+              onClick={handleLogout}
+              color="primary"
+              className="w-full"
+              href="#"
+              size="lg"
+            >
+              Sair
+            </Link>
+          </NavbarMenuItem>
+        </NavbarMenu>
+
+        <NavbarContent
+          justify="start"
+          className="grow justify-between ml-32 hidden sm:flex"
+        >
           <NavbarItem isActive>
             <Link href="#" aria-current="page">
-              Início
-            </Link>
-          </NavbarItem>
-          <NavbarItem>
-            <Link href="#" aria-current="page">
-              Equipes
+              Veículos
             </Link>
           </NavbarItem>
           <NavbarItem>
             <Link href="#" aria-current="page">
               Configurações
+            </Link>
+          </NavbarItem>
+          <NavbarItem>
+            <Link onClick={handleLogout} aria-current="page">
+              Sair
             </Link>
           </NavbarItem>
 
@@ -67,8 +110,6 @@ export default function MyNavbar() {
               }
             />
           </div>
-
-          <LogoutButton />
         </NavbarContent>
       </Navbar>
 

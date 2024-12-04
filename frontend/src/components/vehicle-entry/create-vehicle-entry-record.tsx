@@ -55,7 +55,7 @@ export function CreateVehicleEntryRecord({ vehicle }: { vehicle: Vehicle }) {
     );
 
   return (
-    <main className="container mx-auto pt-4">
+    <main className="container mx-auto pt-4 max-sm:px-4">
       <h1>Modelo: {vehicle?.model}</h1>
       <h1>Placa: {vehicle?.licence_plate}</h1>
       <h1>
