@@ -82,17 +82,21 @@ export default function MyNavbar() {
           className="grow justify-between ml-32 hidden sm:flex"
         >
           <NavbarItem isActive>
-            <Link href="#" aria-current="page">
+            <Link href="#" className="hover:cursor-pointer" aria-current="page">
               Veículos
             </Link>
           </NavbarItem>
           <NavbarItem>
-            <Link href="#" aria-current="page">
+            <Link href="#" className="hover:cursor-pointer" aria-current="page">
               Configurações
             </Link>
           </NavbarItem>
           <NavbarItem>
-            <Link onClick={handleLogout} aria-current="page">
+            <Link
+              onClick={handleLogout}
+              className="hover:cursor-pointer"
+              aria-current="page"
+            >
               Sair
             </Link>
           </NavbarItem>
