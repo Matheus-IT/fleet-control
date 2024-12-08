@@ -24,6 +24,22 @@ export const UserSchema = z.object({
   name: z.string(),
 });
 
+export const VehicleHistorySchema = z.array(
+  z.object({
+    vehicle_km: z.number(),
+    workshop: z.nullable(WorkshopSchema),
+    problem_reported: z.string(),
+    responsable_team: ResponsableTeamSchema,
+    author: UserSchema,
+    created_at: z.string().transform((value) => new Date(value)), // Convert string to Date
+  })
+);
+
+export const VehicleHistoryReturnSchema = z.object({
+  vehicle: VehicleSchema,
+  history: VehicleHistorySchema,
+});
+
 export const VehicleEntryRegistrySchema = z.object({
   vehicle: VehicleSchema,
   vehicle_km: z.nullable(z.number()),

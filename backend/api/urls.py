@@ -11,6 +11,7 @@ from api.views import (
     WorkshopViewset,
     VehicleEntryRegistryViewSet,
     create_vehicle_exit_record_view,
+    vehicle_history_view,
 )
 
 from rest_framework.routers import DefaultRouter
@@ -31,6 +32,11 @@ urlpatterns = [
     path(
         "vehicle-overview/",
         vehicles_overview_view,
+        name="vehicle_overview_view",
+    ),
+    path(
+        "vehicle-history/<str:slug>/",
+        vehicle_history_view,
         name="vehicle_overview_view",
     ),
     path("profile-info/", profile_info_view, name="profile_info_view"),

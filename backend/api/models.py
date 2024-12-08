@@ -139,6 +139,16 @@ class Team(models.Model):
         return f"{self.name} - {self.type}"
 
 
+class VehicleEntryRegistryQuerySet(models.QuerySet):
+    def exclude_created_by_system(self):
+        return self.exclude(author=None)
+
+
+class VehicleEntryRegistryManager(models.Manager):
+    def get_queryset(self):
+        return VehicleEntryRegistryQuerySet(self.model, using=self._db)
+
+
 class VehicleEntryRegistry(models.Model):
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
     vehicle_km = models.IntegerField(null=True)
@@ -147,6 +157,8 @@ class VehicleEntryRegistry(models.Model):
     responsable_team = models.ForeignKey(Team, on_delete=models.CASCADE, null=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    objects = VehicleEntryRegistryManager()
 
     def __str__(self):
         return f"{self.problem_reported} - {self.vehicle.model}"

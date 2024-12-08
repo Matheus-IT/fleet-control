@@ -13,6 +13,7 @@ import {
   VehicleEntryRegistrySchema,
   VehicleEntrySchema,
   VehicleExitRegistrySchema,
+  VehicleHistoryReturnSchema,
   VehicleSchema,
   WorkshopSchema,
 } from "./zod-schemas";
@@ -55,6 +56,15 @@ export async function getVehicle(slug: string) {
   if (parsedData.success) {
     return parsedData.data;
   }
+}
+
+export async function getVehicleHistory(slug: string) {
+  const res = await axiosInstanceAuth.get(`/api/vehicle-history/${slug}`);
+
+  const parsedData = VehicleHistoryReturnSchema.safeParse(res.data);
+
+  if (parsedData.success) return parsedData.data;
+  else console.log("Error at getVehicleHistory", parsedData.error);
 }
 
 export async function getTeams() {

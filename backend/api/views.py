@@ -92,6 +92,33 @@ class VehicleViewset(ModelViewSet):
     lookup_field = "slug"
 
 
+@api_view(http_method_names=["get"])
+@permission_classes([IsAuthenticated])
+@authentication_classes([JWTAuthentication])
+def vehicle_history_view(request: Request, slug: str):
+    from django.shortcuts import get_object_or_404
+    from api.serializers import VehicleHistoryReturnSerializer
+
+    print("\n>>>", slug)
+    vehicle = get_object_or_404(Vehicle, slug=slug)
+
+    history = (
+        VehicleEntryRegistry.objects.filter(vehicle=vehicle)
+        .exclude_created_by_system()
+        .order_by("-created_at")
+    )
+    print("history", history)
+
+    serializer = VehicleHistoryReturnSerializer(
+        {
+            "vehicle": vehicle,
+            "history": history,
+        }
+    )
+
+    return Response(serializer.data)
+
+
 class TeamViewset(ModelViewSet):
     permission_classes = [IsAuthenticated]
     queryset = Team.objects.all()

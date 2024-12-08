@@ -10,8 +10,8 @@ export default function Home() {
   const { userInfo } = useUserInfoStore((state) => state);
   const router = useRouter();
 
-  function handleSupervisorClickVehicleEntry() {
-    console.log("Salut!");
+  function handleSupervisorClickVehicleEntry(vehicle: Vehicle) {
+    router.push(`vehicle-history/${vehicle.slug}`);
   }
 
   function handleDriverClickVehicleEntry(vehicle: Vehicle) {

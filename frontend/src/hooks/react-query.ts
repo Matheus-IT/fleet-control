@@ -4,6 +4,7 @@ import {
   getTeams,
   getVehicle,
   getVehicleEntries,
+  getVehicleHistory,
   getWorkshops,
   submitCreateVehicleEntry,
   submitCreateVehicleExitRecord,
@@ -28,6 +29,19 @@ export function useGetVehicle(slug: string) {
   return useQuery({
     queryKey: ["getVehicle"],
     queryFn: () => getVehicle(slug),
+  });
+}
+
+export function useGetVehicleHistory(slug: string) {
+  return useQuery({
+    queryKey: ["getVehicleHistory"],
+    queryFn: () => {
+      try {
+        return getVehicleHistory(slug);
+      } catch (e) {
+        console.log("error", e);
+      }
+    },
   });
 }
 
