@@ -27,6 +27,12 @@ export const UserSchema = z.object({
 export const VehicleHistorySchema = z.array(
   z.object({
     vehicle_km: z.number(),
+    exit_record: z.nullable(
+      z.object({
+        author: z.object({ name: z.string() }),
+        created_at: z.string().transform((value) => new Date(value)), // Convert string to Date
+      })
+    ),
     workshop: z.nullable(WorkshopSchema),
     problem_reported: z.string(),
     responsable_team: ResponsableTeamSchema,

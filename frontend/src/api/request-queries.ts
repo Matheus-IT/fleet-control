@@ -60,6 +60,7 @@ export async function getVehicle(slug: string) {
 
 export async function getVehicleHistory(slug: string) {
   const res = await axiosInstanceAuth.get(`/api/vehicle-history/${slug}`);
+  console.log("res.data", res.data);
 
   const parsedData = VehicleHistoryReturnSchema.safeParse(res.data);
 

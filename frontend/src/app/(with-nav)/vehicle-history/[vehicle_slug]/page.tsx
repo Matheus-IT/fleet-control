@@ -7,13 +7,6 @@ import { Spinner } from "@nextui-org/react";
 export default function CreateRecordPage({ params }: PageProps) {
   const { data: historyData } = useGetVehicleHistory(params.vehicle_slug);
 
-  if (!historyData)
-    return (
-      <div className="h-screen flex items-center justify-center">
-        <Spinner size="lg" />
-      </div>
-    );
-
   console.log("historyData", historyData);
 
   function formatDate(date: Date): string {
@@ -32,6 +25,13 @@ export default function CreateRecordPage({ params }: PageProps) {
     return `${hours}:${minutes}:${seconds}`;
   }
 
+  if (!historyData)
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <Spinner size="lg" />
+      </div>
+    );
+
   return (
     <main className="container mx-auto mt-6">
       <h1 className="text-lg mb-2">Histórico do {historyData.vehicle.model}</h1>
@@ -39,21 +39,40 @@ export default function CreateRecordPage({ params }: PageProps) {
         {historyData.history.map((e) => (
           <div
             key={e.created_at.toString()}
-            className="w-full shadow-md rounded-lg p-4 border-l-5 border-l-green-700 cursor-pointer hover:border-l-green-800 hover:shadow-lg"
+            className="w-full shadow-md rounded-lg p-4 border-l-5 border-l-purple-700 cursor-pointer hover:border-l-purple-800 hover:shadow-lg"
           >
             <p className="text-base">Quilometragem: {e.vehicle_km}</p>
+
             <p className="text-base">Oficina: {e.workshop!.name}</p>
+
             <p className="text-base">
               Time responsável: {e.responsable_team.name}
             </p>
+
             <p className="text-base">Problema: {e.problem_reported}</p>
+
             <p className="text-base">Autor: {e.author.name}</p>
+
             <p className="text-base">
-              Criado em: <strong>{formatDate(e.created_at)}</strong> as{" "}
-              {formatTime(e.created_at)}
+              <strong>Entrou</strong> na oficina em: {formatDate(e.created_at)}{" "}
+              as {formatTime(e.created_at)}
             </p>
+
+            {e.exit_record && (
+              <p>
+                <strong>Saiu</strong> da oficina em{" "}
+                {formatDate(e.exit_record.created_at)} as{" "}
+                {formatTime(e.exit_record.created_at)}
+              </p>
+            )}
           </div>
         ))}
+
+        {historyData.history.length == 0 && (
+          <h1 className="text-lg">
+            Não há histórico para esse veiculo ainda...
+          </h1>
+        )}
       </div>
     </main>
   );

@@ -90,14 +90,33 @@ class VehicleEntrySerializer(serializers.ModelSerializer):
         ]
 
 
+class VehicleExitSerializer(serializers.ModelSerializer):
+    author = serializers.SerializerMethodField()
+
+    class Meta:
+        model = VehicleExitRegistry
+        fields = [
+            "entry_record",
+            "author",
+            "created_at",
+        ]
+
+    def get_author(self, obj):
+        if obj.author:
+            return {"name": obj.author.name}
+        return None
+
+
 class VehicleHistorySerializer(serializers.ModelSerializer):
     workshop = WorkshopSerializer()
     responsable_team = TeamSerializer()
     author = serializers.SerializerMethodField()
+    exit_record = VehicleExitSerializer()
 
     class Meta:
         model = VehicleEntryRegistry
         fields = [
+            "exit_record",
             "vehicle_km",
             "workshop",
             "problem_reported",
@@ -115,13 +134,3 @@ class VehicleHistorySerializer(serializers.ModelSerializer):
 class VehicleHistoryReturnSerializer(serializers.Serializer):
     vehicle = VehicleSerializer()
     history = serializers.ListField(child=VehicleHistorySerializer())
-
-
-class VehicleExitSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = VehicleExitRegistry
-        fields = [
-            "entry_record",
-            "author",
-            "created_at",
-        ]
