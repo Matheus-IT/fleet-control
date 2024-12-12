@@ -46,7 +46,7 @@ export default function CreateRecordPage({ params }: PageProps) {
             <p className="text-base">Oficina: {e.workshop!.name}</p>
 
             <p className="text-base">
-              Time responsável: {e.responsable_team.name}
+              Equipe responsável: {e.responsable_team.name}
             </p>
 
             <p className="text-base">Problema: {e.problem_reported}</p>
