@@ -22,6 +22,8 @@ import { UserInfo } from "@/types/user";
 export async function getVehicleEntries(
   searchQuery: string
 ): Promise<VehicleEntryRegistry[]> {
+  console.log("Requesting vehicles again...");
+
   const response = await axiosInstanceAuth.get("/api/vehicle-overview/", {
     params: {
       search_query: searchQuery,

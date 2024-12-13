@@ -1,7 +1,7 @@
 import VehicleEntryTile from "@/components/vehicle-entry";
 import { useGetVehicleEntries } from "@/hooks/react-query";
 import { Vehicle } from "@/types/api";
-import { Spinner } from "@nextui-org/react";
+import { Button, Spinner } from "@nextui-org/react";
 import { useMemo, useState } from "react";
 
 export default function VehicleEntryRegistryList({
@@ -10,23 +10,32 @@ export default function VehicleEntryRegistryList({
   onEntryClick: (vehicle: Vehicle) => void;
 }) {
   const [searchQuery, setSearchQuery] = useState("");
-
+  const [filterAtWorkshop, setFilterAtWorkshop] = useState(false);
+  const [filterNotAtWorkshop, setFilterNotAtWorkshop] = useState(false);
   const { data, isPending, error } = useGetVehicleEntries(searchQuery);
 
   const filteredData = useMemo(() => {
     if (!data) return [];
-    if (!searchQuery.trim()) return data;
+
+    if (!searchQuery.trim() && !filterAtWorkshop && !filterNotAtWorkshop)
+      return data;
 
     const query = searchQuery.toLowerCase().trim();
+    console.log(query ? true : false);
+
     return data.filter((entry) => {
       const vehicle = entry.vehicle;
+      console.log("here", vehicle.is_at_workshop);
       return (
-        vehicle.licence_plate.toLowerCase().includes(query) ||
-        vehicle.model.toLowerCase().includes(query) ||
-        entry?.workshop?.name.toLowerCase().includes(query)
+        (query &&
+          (vehicle.licence_plate.toLowerCase().includes(query) ||
+            vehicle.model.toLowerCase().includes(query) ||
+            entry?.workshop?.name.toLowerCase().includes(query))) ||
+        (filterAtWorkshop == true && vehicle.is_at_workshop == true) ||
+        (filterNotAtWorkshop == true && vehicle.is_at_workshop == false)
       );
     });
-  }, [data, searchQuery]);
+  }, [data, searchQuery, filterAtWorkshop, filterNotAtWorkshop]);
 
   return (
     <main className="container mx-auto">
@@ -34,13 +43,45 @@ export default function VehicleEntryRegistryList({
         {data && data.length > 0 && (
           <>
             <h1 className="text-2xl text-center mt-6">Registros de veículos</h1>
-            <input
-              type="text"
-              placeholder="Buscar por placa, oficina ou modelo..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full max-w-md px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+
+            <div className="flex gap-4">
+              <input
+                type="text"
+                placeholder="Buscar por placa, oficina ou modelo..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full max-w-md px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+
+              <div className="flex gap-2 items-center">
+                <span>Filtros:</span>
+                <Button
+                  onClick={() => {
+                    setFilterAtWorkshop(!filterAtWorkshop);
+                    if (filterNotAtWorkshop) {
+                      setFilterNotAtWorkshop(false);
+                    }
+                  }}
+                  color="primary"
+                  variant={filterAtWorkshop ? "solid" : "bordered"}
+                >
+                  Está na oficina
+                </Button>
+
+                <Button
+                  onClick={() => {
+                    setFilterNotAtWorkshop(!filterNotAtWorkshop);
+                    if (filterAtWorkshop) {
+                      setFilterAtWorkshop(false);
+                    }
+                  }}
+                  color="primary"
+                  variant={filterNotAtWorkshop ? "solid" : "bordered"}
+                >
+                  Não está na oficina
+                </Button>
+              </div>
+            </div>
 
             {filteredData.length > 0 && (
               <div className="flex flex-col gap-4">
