@@ -158,18 +158,18 @@ export function CreateVehicleEntryRecord({ vehicle }: { vehicle: Vehicle }) {
                 label="Quantidade"
                 size="sm"
                 type="number"
-                className="w-24"
+                className="w-32 max-sm:w-[5rem]"
                 {...register(`vehicleParts.${index}.quantity`, {
                   required: true,
                   min: 1,
                 })}
               />
               <Input
-                label="Valor Unitário"
+                label="V. Unitário"
                 size="sm"
                 type="number"
                 step="0.01"
-                className="w-32"
+                className="w-32 max-sm:w-[5.3rem]"
                 {...register(`vehicleParts.${index}.unitValue`, {
                   required: true,
                   min: 0,

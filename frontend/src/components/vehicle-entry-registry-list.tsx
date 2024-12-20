@@ -44,7 +44,7 @@ export default function VehicleEntryRegistryList({
           <>
             <h1 className="text-2xl text-center mt-6">Registros de veículos</h1>
 
-            <div className="flex gap-4">
+            <div className="flex gap-4 max-sm:flex-col">
               <input
                 type="text"
                 placeholder="Buscar por placa, oficina ou modelo..."
