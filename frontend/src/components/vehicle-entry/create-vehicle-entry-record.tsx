@@ -1,21 +1,34 @@
+import { useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
 import SearchableSelect from "@/components/searchable-select";
 import { Button, Input, Spinner } from "@nextui-org/react";
+import { Plus, Trash2 } from "lucide-react";
 import {
   useCreateRecordMutation,
   useGetTeams,
   useGetWorkshops,
 } from "@/hooks/react-query";
-import { useForm } from "react-hook-form";
 import { ResponsableTeam, Vehicle, Workshop } from "@/types/api";
-import { useState } from "react";
 import { useUserInfoStore } from "@/stores/user-info";
 
 export function CreateVehicleEntryRecord({ vehicle }: { vehicle: Vehicle }) {
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+    watch,
+  } = useForm({
+    defaultValues: {
+      vehicleParts: [{ name: "", quantity: "1", unitValue: "0" }],
+    },
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "vehicleParts",
+  });
+
   const mutation = useCreateRecordMutation();
   const { data: teams } = useGetTeams();
   const { data: workshops } = useGetWorkshops();
@@ -27,10 +40,15 @@ export function CreateVehicleEntryRecord({ vehicle }: { vehicle: Vehicle }) {
   );
   const { userInfo } = useUserInfoStore((state) => state);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async function onSubmit(formData: any) {
-    console.log("formData", formData);
+  // Watch all vehicle parts to calculate total
+  const vehicleParts = watch("vehicleParts");
+  const total = vehicleParts.reduce((sum, part) => {
+    const quantity = parseFloat(part.quantity) || 0;
+    const unitValue = parseFloat(part.unitValue) || 0;
+    return sum + quantity * unitValue;
+  }, 0);
 
+  async function onSubmit(formData: any) {
     try {
       await mutation.mutateAsync({
         vehicle: vehicle.id,
@@ -39,6 +57,11 @@ export function CreateVehicleEntryRecord({ vehicle }: { vehicle: Vehicle }) {
         problem_reported: formData.problem_reported,
         responsable_team: selectedTeam!.id,
         author: userInfo!.id,
+        vehicle_parts: formData.vehicleParts.map((part) => ({
+          ...part,
+          quantity: parseInt(part.quantity),
+          unitValue: parseFloat(part.unitValue),
+        })),
       });
 
       window.location.reload();
@@ -68,27 +91,29 @@ export function CreateVehicleEntryRecord({ vehicle }: { vehicle: Vehicle }) {
           {vehicle?.is_at_workshop ? "sim" : "não"}
         </strong>
       </h1>
-      <form onSubmit={handleSubmit(onSubmit)}>
+
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <Input
           label="Quilometragem (km):"
           size="sm"
-          className="mb-4"
           {...register("kilometer", { required: true })}
         />
-        {errors.kilometer && <p>Quilometragem é obrigatória.</p>}
+        {errors.kilometer && (
+          <p className="text-red-500">Quilometragem é obrigatória.</p>
+        )}
 
         <Input
           label="Problema relatado:"
           size="sm"
-          className="mb-4"
           {...register("problem_reported", { required: true })}
         />
-        {errors.problem_reported && <p>Problema relatado é obrigatório.</p>}
+        {errors.problem_reported && (
+          <p className="text-red-500">Problema relatado é obrigatório.</p>
+        )}
 
         <SearchableSelect
           options={teams}
           placeholder="Selecione uma equipe"
-          className="mb-3"
           getOptionLabel={(option: ResponsableTeam) =>
             `${option.name} - ${option.type}`
           }
@@ -99,11 +124,79 @@ export function CreateVehicleEntryRecord({ vehicle }: { vehicle: Vehicle }) {
         <SearchableSelect
           options={workshops}
           placeholder="Selecione uma oficina"
-          className="mb-3"
           getOptionLabel={(option: Workshop) => option.name}
           getOptionValue={(option: Workshop) => option.id.toString()}
           onChange={(option: Workshop) => setSelectedWorkshop(option)}
         />
+
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold">Peças do Veículo</h2>
+            <Button
+              size="sm"
+              color="primary"
+              isIconOnly
+              disabled={fields.length >= 10}
+              onClick={() =>
+                append({ name: "", quantity: "1", unitValue: "0" })
+              }
+              type="button"
+            >
+              <Plus className="h-4 w-4" />
+            </Button>
+          </div>
+
+          {fields.map((field, index) => (
+            <div key={field.id} className="flex gap-2 items-start">
+              <Input
+                label="Nome da Peça"
+                size="sm"
+                className="flex-1"
+                {...register(`vehicleParts.${index}.name`, { required: true })}
+              />
+              <Input
+                label="Quantidade"
+                size="sm"
+                type="number"
+                className="w-24"
+                {...register(`vehicleParts.${index}.quantity`, {
+                  required: true,
+                  min: 1,
+                })}
+              />
+              <Input
+                label="Valor Unitário"
+                size="sm"
+                type="number"
+                step="0.01"
+                className="w-32"
+                {...register(`vehicleParts.${index}.unitValue`, {
+                  required: true,
+                  min: 0,
+                })}
+              />
+              <Button
+                size="sm"
+                color="danger"
+                isIconOnly
+                className="mt-1"
+                onClick={() => remove(index)}
+                type="button"
+                disabled={fields.length === 1}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+          ))}
+
+          {fields.length > 0 && (
+            <div className="flex justify-end pt-2">
+              <p className="text-lg font-semibold">
+                Total: R$ {total.toFixed(2)}
+              </p>
+            </div>
+          )}
+        </div>
 
         <Button color="primary" type="submit" disabled={mutation.isPending}>
           {mutation.isPending ? "Submitting..." : "Confirmar"}
@@ -111,10 +204,12 @@ export function CreateVehicleEntryRecord({ vehicle }: { vehicle: Vehicle }) {
       </form>
 
       {mutation.isError && (
-        <div style={{ color: "red", marginTop: "10px" }}>
+        <div className="text-red-500 mt-4">
           Falha ao submeter formulário: {mutation.error.message}
         </div>
       )}
     </main>
   );
 }
+
+export default CreateVehicleEntryRecord;
