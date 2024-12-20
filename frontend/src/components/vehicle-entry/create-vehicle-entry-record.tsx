@@ -57,10 +57,10 @@ export function CreateVehicleEntryRecord({ vehicle }: { vehicle: Vehicle }) {
         problem_reported: formData.problem_reported,
         responsable_team: selectedTeam!.id,
         author: userInfo!.id,
-        vehicle_parts: formData.vehicleParts.map((part) => ({
+        parts: formData.vehicleParts.map((part) => ({
           ...part,
           quantity: parseInt(part.quantity),
-          unitValue: parseFloat(part.unitValue),
+          unit_value: parseFloat(part.unitValue),
         })),
       });
 

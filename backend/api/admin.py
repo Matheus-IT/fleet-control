@@ -12,6 +12,7 @@ from api.models import (
     Workshop,
     Team,
     VehicleEntryRegistry,
+    VehiclePart,
     VehicleExitRegistry,
 )
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
@@ -165,6 +166,10 @@ class VehicleEntryRegistryAdmin(admin.ModelAdmin):
     )
 
 
+class VehiclePartAdmin(admin.ModelAdmin):
+    list_display = ["id", "entry", "name", "quantity", "unit_value"]
+
+
 class VehicleExitRegistryAdmin(admin.ModelAdmin):
     list_display = (
         "id",
@@ -185,4 +190,5 @@ admin.site.register(Vehicle, VehicleAdmin)
 admin.site.register(Workshop, WorkshopAdmin)
 admin.site.register(Team, TeamAdmin)
 admin.site.register(VehicleEntryRegistry, VehicleEntryRegistryAdmin)
+admin.site.register(VehiclePart, VehiclePartAdmin)
 admin.site.register(VehicleExitRegistry, VehicleExitRegistryAdmin)

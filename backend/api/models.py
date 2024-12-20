@@ -164,6 +164,18 @@ class VehicleEntryRegistry(models.Model):
         return f"{self.problem_reported} - {self.vehicle.model}"
 
 
+class VehiclePart(models.Model):
+    entry = models.ForeignKey(
+        VehicleEntryRegistry, related_name="parts", on_delete=models.CASCADE
+    )
+    name = models.CharField(max_length=50)
+    quantity = models.IntegerField()
+    unit_value = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.name} ({self.quantity}x) - R${self.unit_value}"
+
+
 class VehicleExitRegistry(models.Model):
     entry_record = models.OneToOneField(
         VehicleEntryRegistry, related_name="exit_record", on_delete=models.CASCADE

@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import (
     Vehicle,
     VehicleEntryRegistry,
+    VehiclePart,
     VehicleExitRegistry,
     Workshop,
     User,
@@ -76,7 +77,15 @@ class VehicleEntryRegistrySerializer(serializers.ModelSerializer):
         return None
 
 
+class VehiclePartSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VehiclePart
+        fields = ["name", "quantity", "unit_value"]
+
+
 class VehicleEntrySerializer(serializers.ModelSerializer):
+    parts = VehiclePartSerializer(many=True)
+
     class Meta:
         model = VehicleEntryRegistry
         fields = [
@@ -86,8 +95,33 @@ class VehicleEntrySerializer(serializers.ModelSerializer):
             "problem_reported",
             "responsable_team",
             "author",
+            "parts",
             "created_at",
         ]
+
+    def create(self, validated_data):
+        parts_data = validated_data.pop("parts", [])
+        entry = VehicleEntryRegistry.objects.create(**validated_data)
+
+        for part_data in parts_data:
+            VehiclePart.objects.create(entry=entry, **part_data)
+
+        return entry
+
+    def update(self, instance, validated_data):
+        parts_data = validated_data.pop("parts", [])
+
+        # Update the main entry
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+
+        # Handle parts update
+        instance.parts.all().delete()  # Remove existing parts
+        for part_data in parts_data:
+            VehiclePart.objects.create(entry=instance, **part_data)
+
+        return instance
 
 
 class VehicleExitSerializer(serializers.ModelSerializer):
