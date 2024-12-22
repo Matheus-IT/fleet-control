@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import SearchableSelect from "@/components/searchable-select";
 import { Button, Input, Spinner } from "@nextui-org/react";
@@ -10,19 +10,36 @@ import {
 } from "@/hooks/react-query";
 import { ResponsableTeam, Vehicle, Workshop } from "@/types/api";
 import { useUserInfoStore } from "@/stores/user-info";
+import { getLastEntryRecordFromVehicle } from "@/api/request-queries";
+import { useQuery } from "@tanstack/react-query";
 
 export function CreateVehicleEntryRecord({ vehicle }: { vehicle: Vehicle }) {
+  const { data: lastEntryData } = useQuery({
+    queryFn: () => getLastEntryRecordFromVehicle(vehicle),
+    queryKey: ["getLastEntryRecordFromVehicle"],
+  });
   const {
     register,
     control,
+    resetField,
     handleSubmit,
     formState: { errors },
     watch,
   } = useForm({
     defaultValues: {
       vehicleParts: [{ name: "", quantity: "1", unitValue: "0" }],
+      kilometer: "",
+      problem_reported: "",
     },
   });
+
+  useEffect(() => {
+    if (lastEntryData) {
+      resetField("kilometer", {
+        defaultValue: lastEntryData.vehicle_km?.toString(),
+      });
+    }
+  }, [lastEntryData, resetField]);
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -38,7 +55,7 @@ export function CreateVehicleEntryRecord({ vehicle }: { vehicle: Vehicle }) {
   const [selectedWorkshop, setSelectedWorkshop] = useState<Workshop | null>(
     null
   );
-  const { _userInfo: userInfo } = useUserInfoStore((state) => state);
+  const { userInfo } = useUserInfoStore((state) => state);
 
   // Watch all vehicle parts to calculate total
   const vehicleParts = watch("vehicleParts");
@@ -48,6 +65,7 @@ export function CreateVehicleEntryRecord({ vehicle }: { vehicle: Vehicle }) {
     return sum + quantity * unitValue;
   }, 0);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async function onSubmit(formData: any) {
     try {
       await mutation.mutateAsync({
@@ -57,7 +75,8 @@ export function CreateVehicleEntryRecord({ vehicle }: { vehicle: Vehicle }) {
         problem_reported: formData.problem_reported,
         responsable_team: selectedTeam!.id,
         author: userInfo!.id,
-        parts: formData.vehicleParts.map((part) => ({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        parts: formData.vehicleParts.map((part: any) => ({
           ...part,
           quantity: parseInt(part.quantity),
           unit_value: parseFloat(part.unitValue),

@@ -2,11 +2,14 @@ import {
   VehicleEntryRegistrySchema,
   VehicleEntrySchema,
   VehicleExitRegistrySchema,
+  VehiclePartSchema,
   VehicleSchema,
 } from "@/api/zod-schemas";
 import { z } from "zod";
 
 export type Vehicle = z.infer<typeof VehicleSchema>;
+
+export type VehiclePart = z.infer<typeof VehiclePartSchema>;
 
 export interface Workshop {
   id: number;

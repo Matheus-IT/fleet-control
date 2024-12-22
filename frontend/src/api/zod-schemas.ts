@@ -1,5 +1,11 @@
 import { z } from "zod";
 
+export const VehiclePartSchema = z.object({
+  name: z.string(),
+  quantity: z.number(),
+  unit_value: z.number(),
+});
+
 export const VehicleSchema = z.object({
   id: z.number(),
   model: z.string(),
@@ -65,6 +71,7 @@ export const VehicleEntryRegistrySchema = z.object({
 export const VehicleEntrySchema = z.object({
   vehicle: z.number(),
   vehicle_km: z.number(),
+  parts: z.array(VehiclePartSchema),
   workshop: z.number(),
   problem_reported: z.string(),
   responsable_team: z.number(),
