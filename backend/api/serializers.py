@@ -149,6 +149,17 @@ class VehicleExitSerializer(serializers.ModelSerializer):
         return None
 
 
+class VehicleExitCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VehicleExitRegistry
+        fields = [
+            "entry_record",
+            "author",
+            "created_at",
+        ]
+        read_only_fields = ["created_at"]
+
+
 class VehicleHistorySerializer(serializers.ModelSerializer):
     workshop = WorkshopSerializer()
     responsable_team = TeamSerializer()

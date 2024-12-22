@@ -142,12 +142,11 @@ class VehicleEntryRegistryViewSet(ModelViewSet):
 @permission_classes([IsAuthenticated])
 @authentication_classes([JWTAuthentication])
 def create_vehicle_exit_record_view(request: Request):
-    print("request.data", request.data)
+    from api.serializers import VehicleExitCreateSerializer
 
     vehicle_id = request.data.get("vehicle_id")
 
     entry_record = VehicleEntryRegistry.objects.filter(vehicle_id=vehicle_id).last()
-    print("entry_record", entry_record)
     if not entry_record:
         return Response(
             {"error": "Corresponding vehicle entry not found"},
@@ -158,13 +157,12 @@ def create_vehicle_exit_record_view(request: Request):
         "author": request.user.id,
         "entry_record": entry_record.id,
     }
-    serializer = VehicleExitSerializer(data=payload)
+    serializer = VehicleExitCreateSerializer(data=payload)
     if serializer.is_valid():
-        created = serializer.create(serializer.validated_data)
-        print("created", created)
-        return_serializer = VehicleExitSerializer(instance=created)
+        created = serializer.save()
+        return_serializer = VehicleExitCreateSerializer(instance=created)
         return Response(return_serializer.data, status=status.HTTP_201_CREATED)
-    print("here!!!", serializer.errors)
+
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
