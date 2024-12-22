@@ -152,6 +152,7 @@ class VehicleEntryRegistryAdmin(admin.ModelAdmin):
         "vehicle",
         "vehicle_km",
         "workshop",
+        "status",
         "problem_reported",
         "responsable_team",
         "created_at",

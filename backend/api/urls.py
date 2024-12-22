@@ -12,6 +12,7 @@ from api.views import (
     VehicleEntryRegistryViewSet,
     create_vehicle_exit_record_view,
     vehicle_history_view,
+    get_last_entry_record_from_vehicle_view,
 )
 
 from rest_framework.routers import DefaultRouter
@@ -38,6 +39,11 @@ urlpatterns = [
         "vehicle-history/<str:slug>/",
         vehicle_history_view,
         name="vehicle_overview_view",
+    ),
+    path(
+        "get-last-entry-record-from-vehicle/<int:vehicle_id>/",
+        get_last_entry_record_from_vehicle_view,
+        name="get_last_entry_record_from_vehicle_view",
     ),
     path("profile-info/", profile_info_view, name="profile_info_view"),
     path(

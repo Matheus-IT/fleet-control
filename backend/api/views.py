@@ -55,6 +55,7 @@ def vehicles_overview_view(request: Request):
             latest_entry = VehicleEntryRegistry.objects.create(
                 vehicle=v,
                 problem_reported="",
+                status=VehicleEntryRegistry.StatusChoices.APPROVED.value,
             )
 
         # Skip if no matching search terms
@@ -165,3 +166,20 @@ def create_vehicle_exit_record_view(request: Request):
         return Response(return_serializer.data, status=status.HTTP_201_CREATED)
     print("here!!!", serializer.errors)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(http_method_names=["get"])
+@permission_classes([IsAuthenticated])
+@authentication_classes([JWTAuthentication])
+def get_last_entry_record_from_vehicle_view(request, vehicle_id: int):
+    from api.serializers import VehicleEntryRegistrySerializer
+
+    print("vehicle_id", vehicle_id)
+
+    vehicle = Vehicle.objects.get(id=vehicle_id)
+
+    serializer = VehicleEntryRegistrySerializer(
+        instance=vehicle.get_last_entry_record()
+    )
+
+    return Response(serializer.data)

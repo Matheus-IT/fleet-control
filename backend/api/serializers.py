@@ -12,6 +12,7 @@ from .models import (
 
 class VehicleSerializer(serializers.ModelSerializer):
     is_at_workshop = serializers.SerializerMethodField()
+    can_enter_workshop = serializers.SerializerMethodField()
 
     class Meta:
         model = Vehicle
@@ -22,10 +23,14 @@ class VehicleSerializer(serializers.ModelSerializer):
             "licence_plate",
             "slug",
             "is_at_workshop",
+            "can_enter_workshop",
         ]
 
     def get_is_at_workshop(self, obj):
         return obj.is_at_workshop
+
+    def get_can_enter_workshop(self, obj):
+        return obj.can_enter_workshop
 
 
 class WorkshopSerializer(serializers.ModelSerializer):

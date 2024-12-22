@@ -110,7 +110,7 @@ class Vehicle(models.Model):
 
     @property
     def is_at_workshop(self):
-        latest_entry = VehicleEntryRegistry.objects.filter(vehicle=self).last()
+        latest_entry = self.get_last_entry_record()
         if not latest_entry:
             return False
 
@@ -122,6 +122,16 @@ class Vehicle(models.Model):
             return False
 
         return True
+
+    @property
+    def can_enter_workshop(self):
+        latest_entry = self.get_last_entry_record()
+        print("latest_entry", latest_entry)
+        return latest_entry.status == VehicleEntryRegistry.StatusChoices.APPROVED
+
+    def get_last_entry_record(self):
+        """Return last entry record as a django orm object"""
+        return VehicleEntryRegistry.objects.filter(vehicle=self).last()
 
 
 class Workshop(models.Model):
