@@ -7,6 +7,7 @@ export const VehicleSchema = z.object({
   licence_plate: z.string(),
   slug: z.string(),
   is_at_workshop: z.boolean(),
+  can_enter_workshop: z.boolean(),
 });
 
 export const WorkshopSchema = z.object({

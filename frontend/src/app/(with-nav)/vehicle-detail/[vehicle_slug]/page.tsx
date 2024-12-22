@@ -5,6 +5,7 @@ import { PageProps } from "../../../../../.next/types/app/page";
 import { useGetVehicle } from "@/hooks/react-query";
 import { Spinner } from "@nextui-org/react";
 import CreateVehicleExitRecord from "@/components/vehicle-entry/create-vehicle-exit-record";
+import WaitingApproval from "@/components/vehicle-entry/waiting-approval";
 
 export default function CreateRecordPage({ params }: PageProps) {
   const { data: vehicle } = useGetVehicle(params.vehicle_slug);
@@ -16,7 +17,10 @@ export default function CreateRecordPage({ params }: PageProps) {
       </div>
     );
 
+  if (!vehicle.can_enter_workshop) return <WaitingApproval vehicle={vehicle} />;
+
   if (vehicle.is_at_workshop)
     return <CreateVehicleExitRecord vehicle={vehicle} />;
+
   return <CreateVehicleEntryRecord vehicle={vehicle} />;
 }

@@ -2,6 +2,7 @@ import {
   AuthCredentials,
   ResponsableTeam,
   SubmitLoginCredentials,
+  Vehicle,
   VehicleEntry,
   VehicleEntryRegistry,
   VehicleExitRegistry,
@@ -117,4 +118,15 @@ export async function submitCreateVehicleExitRecord(vehicle_id: number) {
     return parsedData.data as VehicleExitRegistry;
   }
   console.log("parsedData deu ruim :(");
+}
+
+export async function getLastEntryRecordFromVehicle(
+  vehicle: Vehicle
+): Promise<VehicleEntryRegistry> {
+  const res = await axiosInstanceAuth.get(
+    `/api/get-last-entry-record-from-vehicle/${vehicle.id}/`
+  );
+  console.log("res.data", res.data);
+
+  return res.data;
 }
