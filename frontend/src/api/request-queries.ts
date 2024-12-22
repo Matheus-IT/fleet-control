@@ -5,6 +5,7 @@ import {
   Vehicle,
   VehicleEntry,
   VehicleEntryRegistry,
+  VehicleEntryRegistryChoices,
   VehicleExitRegistry,
   Workshop,
 } from "@/types/api";
@@ -126,7 +127,20 @@ export async function getLastEntryRecordFromVehicle(
   const res = await axiosInstanceAuth.get(
     `/api/get-last-entry-record-from-vehicle/${vehicle.id}/`
   );
+  const parsedData = VehicleEntryRegistrySchema.parse(res.data);
+  return parsedData;
+}
+
+export async function approveEntryRequest(
+  last_entry_request_id: number
+): Promise<VehicleEntryRegistry> {
+  const res = await axiosInstanceAuth.patch(
+    `/api/vehicle-entry-registries/${last_entry_request_id}/`,
+    { status: VehicleEntryRegistryChoices.APPROVED }
+  );
+  console.log("res", res);
   console.log("res.data", res.data);
 
-  return res.data;
+  const parsedData = VehicleEntryRegistrySchema.parse(res.data);
+  return parsedData;
 }

@@ -22,7 +22,9 @@ import { DRIVER_PROFILE } from "@/api/user";
 
 export default function MyNavbar() {
   const { data, error } = useGetProfileInfo();
-  const { setUserInfo, userInfo } = useUserInfoStore((state) => state);
+  const { setUserInfo, _userInfo: userInfo } = useUserInfoStore(
+    (state) => state
+  );
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 

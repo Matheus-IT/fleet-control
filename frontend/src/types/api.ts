@@ -23,6 +23,11 @@ export interface User {
   name: string;
 }
 
+export enum VehicleEntryRegistryChoices {
+  APPROVED = "Aprovado",
+  WAITING_APPROVAL = "Aguardando aprovação",
+}
+
 export type VehicleEntryRegistry = z.infer<typeof VehicleEntryRegistrySchema>;
 
 export type VehicleEntry = z.infer<typeof VehicleEntrySchema>;

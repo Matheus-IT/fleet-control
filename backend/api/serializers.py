@@ -67,6 +67,7 @@ class VehicleEntryRegistrySerializer(serializers.ModelSerializer):
     class Meta:
         model = VehicleEntryRegistry
         fields = [
+            "id",
             "vehicle",
             "vehicle_km",
             "workshop",
@@ -74,6 +75,7 @@ class VehicleEntryRegistrySerializer(serializers.ModelSerializer):
             "responsable_team",
             "author",
             "created_at",
+            "status",
         ]
 
     def get_author(self, obj):
@@ -102,6 +104,7 @@ class VehicleEntrySerializer(serializers.ModelSerializer):
             "author",
             "parts",
             "created_at",
+            "status",
         ]
 
     def create(self, validated_data):

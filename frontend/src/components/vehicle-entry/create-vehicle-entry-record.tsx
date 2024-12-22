@@ -38,7 +38,7 @@ export function CreateVehicleEntryRecord({ vehicle }: { vehicle: Vehicle }) {
   const [selectedWorkshop, setSelectedWorkshop] = useState<Workshop | null>(
     null
   );
-  const { userInfo } = useUserInfoStore((state) => state);
+  const { _userInfo: userInfo } = useUserInfoStore((state) => state);
 
   // Watch all vehicle parts to calculate total
   const vehicleParts = watch("vehicleParts");

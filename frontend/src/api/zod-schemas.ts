@@ -48,6 +48,7 @@ export const VehicleHistoryReturnSchema = z.object({
 });
 
 export const VehicleEntryRegistrySchema = z.object({
+  id: z.number(),
   vehicle: VehicleSchema,
   vehicle_km: z.nullable(z.number()),
   workshop: z.nullable(WorkshopSchema),

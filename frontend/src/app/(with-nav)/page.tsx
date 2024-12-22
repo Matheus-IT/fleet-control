@@ -11,7 +11,7 @@ export default function Home() {
   const router = useRouter();
 
   function handleSupervisorClickVehicleEntry(vehicle: Vehicle) {
-    router.push(`vehicle-history/${vehicle.slug}`);
+    router.push(`vehicle-detail/${vehicle.slug}`);
   }
 
   function handleDriverClickVehicleEntry(vehicle: Vehicle) {
