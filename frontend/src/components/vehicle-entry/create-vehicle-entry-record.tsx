@@ -69,7 +69,7 @@ export function CreateVehicleEntryRecord({
   const {
     register,
     control,
-    resetField,
+    setValue,
     handleSubmit,
     formState: { errors },
     watch,
@@ -89,11 +89,9 @@ export function CreateVehicleEntryRecord({
 
   useEffect(() => {
     if (lastEntryData?.vehicle_km) {
-      resetField("kilometer", {
-        defaultValue: lastEntryData.vehicle_km.toString(),
-      });
+      setValue("kilometer", lastEntryData.vehicle_km.toString());
     }
-  }, [lastEntryData, resetField]);
+  }, [lastEntryData, setValue]);
 
   // Calculate total
   const vehicleParts = watch("vehicleParts");
