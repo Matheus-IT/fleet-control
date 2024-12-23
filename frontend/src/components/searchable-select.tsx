@@ -4,6 +4,8 @@ const SearchableSelect = ({
   options,
   placeholder,
   className,
+  isDisabled,
+  styles = {},
   getOptionLabel,
   getOptionValue,
   onChange,
@@ -11,6 +13,8 @@ const SearchableSelect = ({
   options: unknown[];
   placeholder: string;
   className?: string;
+  isDisabled: boolean;
+  styles?: object;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getOptionLabel: (o: any) => string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -22,10 +26,12 @@ const SearchableSelect = ({
     <div>
       <Select
         className={className}
+        isDisabled={isDisabled}
         styles={{
           control: (baseStyles) => ({
             ...baseStyles,
             borderRadius: "var(--nextui-radius-small)",
+            ...styles,
           }),
         }}
         options={options}

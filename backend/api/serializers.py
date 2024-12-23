@@ -106,6 +106,7 @@ class VehicleEntrySerializer(serializers.ModelSerializer):
             "created_at",
             "status",
         ]
+        read_only_fields = ["status"]
 
     def create(self, validated_data):
         parts_data = validated_data.pop("parts", [])

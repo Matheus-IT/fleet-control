@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import SearchableSelect from "@/components/searchable-select";
 import { Button, Input, Spinner } from "@nextui-org/react";
 import { Plus, Trash2 } from "lucide-react";
@@ -13,11 +15,57 @@ import { useUserInfoStore } from "@/stores/user-info";
 import { getLastEntryRecordFromVehicle } from "@/api/request-queries";
 import { useQuery } from "@tanstack/react-query";
 
-export function CreateVehicleEntryRecord({ vehicle }: { vehicle: Vehicle }) {
+// Schema definitions
+const vehiclePartSchema = z.object({
+  name: z.string().min(1, "Nome da peça é obrigatório"),
+  quantity: z.string().min(1, "Quantidade deve ser maior que 0"),
+  unitValue: z.string().min(0, "Valor unitário deve ser maior ou igual a 0"),
+});
+
+const formSchema = z.object({
+  vehicleParts: z
+    .array(vehiclePartSchema)
+    .min(1, "Pelo menos uma peça é obrigatória"),
+  kilometer: z.string().min(1, "Quilometragem é obrigatória"),
+  problem_reported: z.string().min(1, "Problema relatado é obrigatório"),
+});
+
+const errorSelectStyles = {
+  borderColor: "#ef4444",
+  "&:hover": {
+    borderColor: "#ef4444",
+  },
+};
+
+type FormSchema = z.infer<typeof formSchema>;
+
+interface CreateVehicleEntryRecordProps {
+  vehicle: Vehicle;
+}
+
+export function CreateVehicleEntryRecord({
+  vehicle,
+}: CreateVehicleEntryRecordProps) {
+  const [selectedTeam, setSelectedTeam] = useState<ResponsableTeam | null>(
+    null
+  );
+  const [selectedWorkshop, setSelectedWorkshop] = useState<Workshop | null>(
+    null
+  );
+  const [formError, setFormError] = useState<{
+    team?: string;
+    workshop?: string;
+  }>({});
+  const { userInfo } = useUserInfoStore();
+  const { data: teams } = useGetTeams();
+  const { data: workshops } = useGetWorkshops();
+  const mutation = useCreateRecordMutation();
+
   const { data: lastEntryData } = useQuery({
     queryFn: () => getLastEntryRecordFromVehicle(vehicle),
     queryKey: ["getLastEntryRecordFromVehicle"],
   });
+
   const {
     register,
     control,
@@ -25,59 +73,69 @@ export function CreateVehicleEntryRecord({ vehicle }: { vehicle: Vehicle }) {
     handleSubmit,
     formState: { errors },
     watch,
-  } = useForm({
+  } = useForm<FormSchema>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       vehicleParts: [{ name: "", quantity: "1", unitValue: "0" }],
-      kilometer: "",
+      kilometer: "0",
       problem_reported: "",
     },
   });
-
-  useEffect(() => {
-    if (lastEntryData) {
-      resetField("kilometer", {
-        defaultValue: lastEntryData.vehicle_km?.toString(),
-      });
-    }
-  }, [lastEntryData, resetField]);
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: "vehicleParts",
   });
 
-  const mutation = useCreateRecordMutation();
-  const { data: teams } = useGetTeams();
-  const { data: workshops } = useGetWorkshops();
-  const [selectedTeam, setSelectedTeam] = useState<ResponsableTeam | null>(
-    null
-  );
-  const [selectedWorkshop, setSelectedWorkshop] = useState<Workshop | null>(
-    null
-  );
-  const { userInfo } = useUserInfoStore((state) => state);
+  useEffect(() => {
+    if (lastEntryData?.vehicle_km) {
+      resetField("kilometer", {
+        defaultValue: lastEntryData.vehicle_km.toString(),
+      });
+    }
+  }, [lastEntryData, resetField]);
 
-  // Watch all vehicle parts to calculate total
+  // Calculate total
   const vehicleParts = watch("vehicleParts");
   const total = vehicleParts.reduce((sum, part) => {
-    const quantity = parseFloat(part.quantity) || 0;
-    const unitValue = parseFloat(part.unitValue) || 0;
-    return sum + quantity * unitValue;
+    const quantity = part.quantity;
+    const unitValue = part.unitValue;
+    return sum + parseInt(quantity) * parseFloat(unitValue);
   }, 0);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async function onSubmit(formData: any) {
+  const onSubmit = async (formData: FormSchema) => {
+    // Reset previous errors
+    setFormError({});
+
+    console.log("selectedTeam", selectedTeam, selectedTeam ? true : false);
+    console.log(
+      "selectedWorkshop",
+      selectedWorkshop,
+      selectedWorkshop ? true : false
+    );
+
+    // Validate selects
+    if (!selectedTeam) {
+      setFormError((prev) => ({ ...prev, team: "Equipe é obrigatória" }));
+    }
+    if (!selectedWorkshop) {
+      setFormError((prev) => ({ ...prev, workshop: "Oficina é obrigatória" }));
+    }
+
+    if (!userInfo || !selectedTeam || !selectedWorkshop) {
+      return;
+    }
+
     try {
       await mutation.mutateAsync({
         vehicle: vehicle.id,
         vehicle_km: parseInt(formData.kilometer),
-        workshop: selectedWorkshop!.id,
+        workshop: selectedWorkshop.id,
         problem_reported: formData.problem_reported,
-        responsable_team: selectedTeam!.id,
-        author: userInfo!.id,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        parts: formData.vehicleParts.map((part: any) => ({
-          ...part,
+        responsable_team: selectedTeam.id,
+        author: userInfo.id,
+        parts: formData.vehicleParts.map((part) => ({
+          name: part.name,
           quantity: parseInt(part.quantity),
           unit_value: parseFloat(part.unitValue),
         })),
@@ -87,14 +145,15 @@ export function CreateVehicleEntryRecord({ vehicle }: { vehicle: Vehicle }) {
     } catch (error) {
       console.error("Failed to submit record:", error);
     }
-  }
+  };
 
-  if (!teams || !workshops)
+  if (!teams || !workshops) {
     return (
       <div className="h-screen flex items-center justify-center">
         <Spinner size="lg" />
       </div>
     );
+  }
 
   return (
     <main className="container mx-auto pt-4 max-sm:px-4">
@@ -112,23 +171,25 @@ export function CreateVehicleEntryRecord({ vehicle }: { vehicle: Vehicle }) {
       </h1>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <Input
-          label="Quilometragem (km):"
-          size="sm"
-          {...register("kilometer", { required: true })}
-        />
-        {errors.kilometer && (
-          <p className="text-red-500">Quilometragem é obrigatória.</p>
-        )}
+        <div>
+          <Input
+            label="Quilometragem (km):"
+            size="sm"
+            {...register("kilometer")}
+            isInvalid={!!errors.kilometer}
+            errorMessage={errors.kilometer?.message}
+          />
+        </div>
 
-        <Input
-          label="Problema relatado:"
-          size="sm"
-          {...register("problem_reported", { required: true })}
-        />
-        {errors.problem_reported && (
-          <p className="text-red-500">Problema relatado é obrigatório.</p>
-        )}
+        <div>
+          <Input
+            label="Problema relatado:"
+            size="sm"
+            {...register("problem_reported")}
+            isInvalid={!!errors.problem_reported}
+            errorMessage={errors.problem_reported?.message}
+          />
+        </div>
 
         <SearchableSelect
           options={teams}
@@ -137,16 +198,32 @@ export function CreateVehicleEntryRecord({ vehicle }: { vehicle: Vehicle }) {
             `${option.name} - ${option.type}`
           }
           getOptionValue={(option: ResponsableTeam) => option.id.toString()}
-          onChange={(option: ResponsableTeam) => setSelectedTeam(option)}
+          onChange={(option: ResponsableTeam) => {
+            setSelectedTeam(option);
+            setFormError((prev) => ({ ...prev, team: undefined }));
+          }}
+          isDisabled={mutation.isPending && !selectedTeam}
+          styles={formError.team ? errorSelectStyles : {}}
         />
+        {formError.team && (
+          <p className="text-red-500 text-sm mt-1">{formError.team}</p>
+        )}
 
         <SearchableSelect
           options={workshops}
           placeholder="Selecione uma oficina"
           getOptionLabel={(option: Workshop) => option.name}
           getOptionValue={(option: Workshop) => option.id.toString()}
-          onChange={(option: Workshop) => setSelectedWorkshop(option)}
+          onChange={(option: Workshop) => {
+            setSelectedWorkshop(option);
+            setFormError((prev) => ({ ...prev, workshop: undefined }));
+          }}
+          isDisabled={mutation.isPending && !selectedWorkshop}
+          styles={formError.team ? errorSelectStyles : {}}
         />
+        {formError.workshop && (
+          <p className="text-red-500 text-sm mt-1">{formError.workshop}</p>
+        )}
 
         <div className="space-y-4">
           <div className="flex items-center justify-between">
@@ -171,17 +248,18 @@ export function CreateVehicleEntryRecord({ vehicle }: { vehicle: Vehicle }) {
                 label="Nome da Peça"
                 size="sm"
                 className="flex-1"
-                {...register(`vehicleParts.${index}.name`, { required: true })}
+                {...register(`vehicleParts.${index}.name`)}
+                isInvalid={!!errors.vehicleParts?.[index]?.name}
+                errorMessage={errors.vehicleParts?.[index]?.name?.message}
               />
               <Input
                 label="Quantidade"
                 size="sm"
                 type="number"
                 className="w-32 max-sm:w-[5rem]"
-                {...register(`vehicleParts.${index}.quantity`, {
-                  required: true,
-                  min: 1,
-                })}
+                {...register(`vehicleParts.${index}.quantity`)}
+                isInvalid={!!errors.vehicleParts?.[index]?.quantity}
+                errorMessage={errors.vehicleParts?.[index]?.quantity?.message}
               />
               <Input
                 label="V. Unitário"
@@ -189,10 +267,9 @@ export function CreateVehicleEntryRecord({ vehicle }: { vehicle: Vehicle }) {
                 type="number"
                 step="0.01"
                 className="w-32 max-sm:w-[5.3rem]"
-                {...register(`vehicleParts.${index}.unitValue`, {
-                  required: true,
-                  min: 0,
-                })}
+                {...register(`vehicleParts.${index}.unitValue`)}
+                isInvalid={!!errors.vehicleParts?.[index]?.unitValue}
+                errorMessage={errors.vehicleParts?.[index]?.unitValue?.message}
               />
               <Button
                 size="sm"
@@ -208,6 +285,10 @@ export function CreateVehicleEntryRecord({ vehicle }: { vehicle: Vehicle }) {
             </div>
           ))}
 
+          {errors.vehicleParts && !Array.isArray(errors.vehicleParts) && (
+            <p className="text-red-500">{errors.vehicleParts.message}</p>
+          )}
+
           {fields.length > 0 && (
             <div className="flex justify-end pt-2">
               <p className="text-lg font-semibold">
@@ -217,8 +298,13 @@ export function CreateVehicleEntryRecord({ vehicle }: { vehicle: Vehicle }) {
           )}
         </div>
 
-        <Button color="primary" type="submit" disabled={mutation.isPending}>
-          {mutation.isPending ? "Submitting..." : "Confirmar"}
+        <Button
+          color="primary"
+          variant={mutation.isPending ? "bordered" : "solid"}
+          type="submit"
+          disabled={mutation.isPending}
+        >
+          {mutation.isPending ? "Enviando..." : "Confirmar"}
         </Button>
       </form>
 
