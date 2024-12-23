@@ -33,6 +33,10 @@ const SearchableSelect = ({
             borderRadius: "var(--nextui-radius-small)",
             ...styles,
           }),
+          menu: (baseStyles) => ({
+            ...baseStyles,
+            zIndex: 9999,
+          }),
         }}
         options={options}
         placeholder={placeholder}
