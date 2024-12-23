@@ -55,7 +55,6 @@ export const getProfileInfo = async (): Promise<UserInfo> => {
 export async function getVehicle(slug: string) {
   const res = await axiosInstanceAuth.get(`/api/vehicles/${slug}`);
   const parsedData = VehicleSchema.safeParse(res.data);
-  console.log("parsedData", parsedData);
 
   if (parsedData.success) {
     return parsedData.data;

@@ -24,8 +24,6 @@ axiosInstanceAuth.interceptors.request.use(
   (config) => {
     const token = getAccessToken();
     if (token) {
-      console.log("No access token!");
-
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
