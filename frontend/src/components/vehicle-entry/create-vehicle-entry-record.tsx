@@ -60,16 +60,16 @@ export function CreateVehicleEntryRecord({
   const { data: teams } = useGetTeams();
   const { data: workshops } = useGetWorkshops();
   const mutation = useCreateRecordMutation();
-
   const { data: lastEntryData } = useQuery({
     queryFn: () => getLastEntryRecordFromVehicle(vehicle),
     queryKey: ["getLastEntryRecordFromVehicle"],
   });
+  const [kilometer, setKilometer] = useState("0");
 
   const {
     register,
     control,
-    setValue,
+    reset,
     handleSubmit,
     formState: { errors },
     watch,
@@ -89,9 +89,9 @@ export function CreateVehicleEntryRecord({
 
   useEffect(() => {
     if (lastEntryData?.vehicle_km) {
-      setValue("kilometer", lastEntryData.vehicle_km.toString());
+      setKilometer(lastEntryData.vehicle_km.toString());
     }
-  }, [lastEntryData, setValue]);
+  }, [lastEntryData, reset, watch]);
 
   // Calculate total
   const vehicleParts = watch("vehicleParts");
@@ -174,6 +174,7 @@ export function CreateVehicleEntryRecord({
             label="Quilometragem (km):"
             size="sm"
             {...register("kilometer")}
+            value={kilometer}
             isInvalid={!!errors.kilometer}
             errorMessage={errors.kilometer?.message}
           />
@@ -198,7 +199,10 @@ export function CreateVehicleEntryRecord({
           getOptionValue={(option: ResponsableTeam) => option.id.toString()}
           onChange={(option: ResponsableTeam) => {
             setSelectedTeam(option);
-            setFormError((prev) => ({ ...prev, team: undefined }));
+            setFormError((prev) => {
+              console.log("workshop prev", prev);
+              return { ...prev, team: undefined };
+            });
           }}
           isDisabled={mutation.isPending && !selectedTeam}
           styles={formError.team ? errorSelectStyles : {}}
@@ -214,10 +218,13 @@ export function CreateVehicleEntryRecord({
           getOptionValue={(option: Workshop) => option.id.toString()}
           onChange={(option: Workshop) => {
             setSelectedWorkshop(option);
-            setFormError((prev) => ({ ...prev, workshop: undefined }));
+            setFormError((prev) => {
+              console.log("workshop prev", prev);
+              return { ...prev, workshop: undefined };
+            });
           }}
           isDisabled={mutation.isPending && !selectedWorkshop}
-          styles={formError.team ? errorSelectStyles : {}}
+          styles={formError.workshop ? errorSelectStyles : {}}
         />
         {formError.workshop && (
           <p className="text-red-500 text-sm mt-1">{formError.workshop}</p>
