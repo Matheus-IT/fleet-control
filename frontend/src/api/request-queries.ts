@@ -141,3 +141,21 @@ export async function approveEntryRequest(
   const parsedData = VehicleEntryRegistrySchema.parse(res.data);
   return parsedData;
 }
+
+export async function doNotApproveEntryRequest(
+  last_entry_request_id: number,
+  observation: string
+): Promise<VehicleEntryRegistry> {
+  const res = await axiosInstanceAuth.patch(
+    `/api/vehicle-entry-registries/${last_entry_request_id}/`,
+    {
+      status: VehicleEntryRegistryChoices.NOT_APPROVED,
+      observation: observation,
+    }
+  );
+  console.log("res", res);
+  console.log("res.data", res.data);
+
+  const parsedData = VehicleEntryRegistrySchema.parse(res.data);
+  return parsedData;
+}
