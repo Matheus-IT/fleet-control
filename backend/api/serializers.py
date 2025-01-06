@@ -76,6 +76,7 @@ class VehicleEntryRegistrySerializer(serializers.ModelSerializer):
             "author",
             "created_at",
             "status",
+            'observation'
         ]
 
     def get_author(self, obj):
@@ -105,6 +106,7 @@ class VehicleEntrySerializer(serializers.ModelSerializer):
             "parts",
             "created_at",
             "status",
+            'observation'
         ]
         read_only_fields = ["status"]
 
