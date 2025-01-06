@@ -10,7 +10,12 @@ import {
   useGetTeams,
   useGetWorkshops,
 } from "@/hooks/react-query";
-import { ResponsableTeam, Vehicle, Workshop } from "@/types/api";
+import {
+  ResponsableTeam,
+  Vehicle,
+  VehicleEntryRegistryChoices,
+  Workshop,
+} from "@/types/api";
 import { useUserInfoStore } from "@/stores/user-info";
 import { getLastEntryRecordFromVehicle } from "@/api/request-queries";
 import { useQuery } from "@tanstack/react-query";
@@ -137,6 +142,7 @@ export function CreateVehicleEntryRecord({
           quantity: parseInt(part.quantity),
           unit_value: parseFloat(part.unitValue),
         })),
+        status: VehicleEntryRegistryChoices.WAITING_APPROVAL,
       });
 
       window.location.reload();
