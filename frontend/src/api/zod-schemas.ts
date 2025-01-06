@@ -66,6 +66,8 @@ export const VehicleEntryRegistrySchema = z.object({
     .transform((value) =>
       typeof value === "string" ? new Date(value) : value
     ), // Convert string to Date
+  status: z.string(),
+  observation: z.string(),
 });
 
 export const VehicleEntrySchema = z.object({
@@ -83,6 +85,7 @@ export const VehicleEntrySchema = z.object({
         typeof value === "string" ? new Date(value) : value
       )
   ), // Convert string to Date
+  status: z.string(),
 });
 
 export const VehicleExitRegistrySchema = z.object({
