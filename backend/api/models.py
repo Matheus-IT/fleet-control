@@ -162,6 +162,7 @@ class VehicleEntryRegistryManager(models.Manager):
 class VehicleEntryRegistry(models.Model):
     class StatusChoices(models.TextChoices):
         APPROVED = "Aprovado"
+        NOT_APPROVED = "Não aprovado"
         WAITING_APPROVAL = "Aguardando aprovação"
 
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
