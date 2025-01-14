@@ -1,5 +1,7 @@
 import {
   VehicleEntryRegistrySchema,
+  VehicleEntryRegistrySchemaDetail,
+  VehicleRegistrySchemaList as VehicleEntryRegistrySchemaList,
   VehicleEntrySchema,
   VehicleExitRegistrySchema,
   VehiclePartSchema,
@@ -26,12 +28,19 @@ export interface User {
   name: string;
 }
 
-export enum VehicleEntryRegistryChoices {
+export enum VehicleEntryStatus {
   APPROVED = "Aprovado",
+  NOT_APPROVED = "Não aprovado",
   WAITING_APPROVAL = "Aguardando aprovação",
 }
 
 export type VehicleEntryRegistry = z.infer<typeof VehicleEntryRegistrySchema>;
+export type VehicleEntryRegistryList = z.infer<
+  typeof VehicleEntryRegistrySchemaList
+>;
+export type VehicleEntryRegistryDetail = z.infer<
+  typeof VehicleEntryRegistrySchemaDetail
+>;
 
 export type VehicleEntry = z.infer<typeof VehicleEntrySchema>;
 

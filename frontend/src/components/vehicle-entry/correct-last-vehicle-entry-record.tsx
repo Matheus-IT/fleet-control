@@ -1,10 +1,4 @@
-import { useEffect, useState } from "react";
-import { useForm, useFieldArray } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import SearchableSelect from "@/components/searchable-select";
-import { Button, Input, Spinner } from "@nextui-org/react";
-import { Plus, Trash2 } from "lucide-react";
+import React, { useState } from "react";
 import {
   useCreateRecordMutation,
   useGetTeams,
@@ -12,13 +6,16 @@ import {
 } from "@/hooks/react-query";
 import {
   ResponsableTeam,
-  Vehicle,
-  VehicleEntryStatus,
+  VehicleEntryRegistryDetail,
   Workshop,
 } from "@/types/api";
+import { Button, Spinner, Input } from "@nextui-org/react";
+import { Plus, Trash2 } from "lucide-react";
+import { useFieldArray, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { useUserInfoStore } from "@/stores/user-info";
-import { getLastEntryRecordFromVehicle } from "@/api/request-queries";
-import { useQuery } from "@tanstack/react-query";
+import SearchableSelect from "../searchable-select";
 
 // Schema definitions
 const vehiclePartSchema = z.object({
@@ -35,6 +32,8 @@ const formSchema = z.object({
   problem_reported: z.string().min(1, "Problema relatado é obrigatório"),
 });
 
+type FormSchema = z.infer<typeof formSchema>;
+
 const errorSelectStyles = {
   borderColor: "#ef4444",
   "&:hover": {
@@ -42,20 +41,16 @@ const errorSelectStyles = {
   },
 };
 
-type FormSchema = z.infer<typeof formSchema>;
-
-interface CreateVehicleEntryRecordProps {
-  vehicle: Vehicle;
-}
-
-export function CreateVehicleEntryRecord({
-  vehicle,
-}: CreateVehicleEntryRecordProps) {
+export default function CorrectLastVehicleEntryRecord({
+  lastEntry,
+}: {
+  lastEntry: VehicleEntryRegistryDetail;
+}) {
   const [selectedTeam, setSelectedTeam] = useState<ResponsableTeam | null>(
-    null
+    lastEntry.responsable_team
   );
   const [selectedWorkshop, setSelectedWorkshop] = useState<Workshop | null>(
-    null
+    lastEntry.workshop
   );
   const [formError, setFormError] = useState<{
     team?: string;
@@ -65,25 +60,23 @@ export function CreateVehicleEntryRecord({
   const { data: teams } = useGetTeams();
   const { data: workshops } = useGetWorkshops();
   const mutation = useCreateRecordMutation();
-  const { data: lastEntryData } = useQuery({
-    queryFn: () => getLastEntryRecordFromVehicle(vehicle),
-    queryKey: ["getLastEntryRecordFromVehicle"],
-  });
-  const [kilometer, setKilometer] = useState("0");
 
   const {
     register,
     control,
-    reset,
     handleSubmit,
     formState: { errors },
     watch,
   } = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      vehicleParts: [{ name: "", quantity: "1", unitValue: "0" }],
-      kilometer: "0",
-      problem_reported: "",
+      vehicleParts: lastEntry.parts.map((p) => ({
+        name: p.name,
+        quantity: p.quantity,
+        unit_value: p.unit_value,
+      })),
+      kilometer: lastEntry.vehicle_km!.toString(),
+      problem_reported: lastEntry.problem_reported,
     },
   });
 
@@ -91,12 +84,6 @@ export function CreateVehicleEntryRecord({
     control,
     name: "vehicleParts",
   });
-
-  useEffect(() => {
-    if (lastEntryData?.vehicle_km) {
-      setKilometer(lastEntryData.vehicle_km.toString());
-    }
-  }, [lastEntryData, reset, watch]);
 
   // Calculate total
   const vehicleParts = watch("vehicleParts");
@@ -130,10 +117,10 @@ export function CreateVehicleEntryRecord({
     }
 
     try {
-      console.log("Ready to submit!!!");
+      console.log("ready to submit!!!");
 
       // await mutation.mutateAsync({
-      //   vehicle: vehicle.id,
+      //   vehicle: lastEntry.vehicle.id,
       //   vehicle_km: parseInt(formData.kilometer),
       //   workshop: selectedWorkshop.id,
       //   problem_reported: formData.problem_reported,
@@ -146,6 +133,7 @@ export function CreateVehicleEntryRecord({
       //   })),
       //   status: VehicleEntryStatus.WAITING_APPROVAL,
       // });
+
       // window.location.reload();
     } catch (error) {
       console.error("Failed to submit record:", error);
@@ -162,22 +150,17 @@ export function CreateVehicleEntryRecord({
 
   return (
     <main className="container mx-auto pt-4 max-sm:px-4">
-      <h1 className="text-lg font-semibold border-b-green-500 border-b-3 w-fit mb-2">
-        Solicitar registro de entrada
+      <h1 className="text-lg font-semibold border-b-orange-500 border-b-3 w-fit mb-2">
+        Corrigir entrada
       </h1>
 
-      <h1>Modelo: {vehicle?.model}</h1>
-      <h1>Placa: {vehicle?.licence_plate}</h1>
       <h1>
-        Na oficina:&nbsp;
-        <strong
-          className={
-            vehicle?.is_at_workshop ? "text-green-700" : "text-red-600"
-          }
-        >
-          {vehicle?.is_at_workshop ? "sim" : "não"}
-        </strong>
+        Esta entrada{" "}
+        <strong className="text-danger-500">não foi aprovada</strong>
       </h1>
+      <h1>Observação: {lastEntry.observation}</h1>
+      <h1>Modelo: {lastEntry.vehicle.model}</h1>
+      <h1>Placa: {lastEntry.vehicle.licence_plate}</h1>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
@@ -185,7 +168,6 @@ export function CreateVehicleEntryRecord({
             label="Quilometragem (km):"
             size="sm"
             {...register("kilometer")}
-            value={kilometer}
             isInvalid={!!errors.kilometer}
             errorMessage={errors.kilometer?.message}
           />
@@ -202,6 +184,9 @@ export function CreateVehicleEntryRecord({
         </div>
 
         <SearchableSelect
+          value={`${lastEntry.responsable_team!.name} - ${
+            lastEntry.responsable_team!.type
+          }`}
           options={teams}
           placeholder="Selecione uma equipe"
           getOptionLabel={(option: ResponsableTeam) =>
@@ -223,6 +208,7 @@ export function CreateVehicleEntryRecord({
         )}
 
         <SearchableSelect
+          value={lastEntry.workshop!.name}
           options={workshops}
           placeholder="Selecione uma oficina"
           getOptionLabel={(option: Workshop) => option.name}
@@ -249,9 +235,7 @@ export function CreateVehicleEntryRecord({
               color="primary"
               isIconOnly
               disabled={fields.length >= 10}
-              onClick={() =>
-                append({ name: "", quantity: "1", unitValue: "0" })
-              }
+              onClick={() => append({ name: "", quantity: 1, unitValue: 0 })}
               type="button"
             >
               <Plus className="h-4 w-4" />
@@ -332,5 +316,3 @@ export function CreateVehicleEntryRecord({
     </main>
   );
 }
-
-export default CreateVehicleEntryRecord;

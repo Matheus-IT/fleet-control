@@ -3,38 +3,40 @@ import {
   ResponsableTeam,
   SubmitLoginCredentials,
   Vehicle,
+  VehicleEntryRegistryDetail,
   VehicleEntry,
-  VehicleEntryRegistry,
-  VehicleEntryRegistryChoices,
+  VehicleEntryRegistryList,
+  VehicleEntryStatus,
   VehicleExitRegistry,
   Workshop,
+  VehicleEntryRegistry,
 } from "@/types/api";
 import { axiosInstance, axiosInstanceAuth } from "./axios-instance";
 import {
   ResponsableTeamSchema,
-  VehicleEntryRegistrySchema,
+  VehicleEntryRegistrySchemaDetail,
+  VehicleRegistrySchemaList,
   VehicleEntrySchema,
   VehicleExitRegistrySchema,
   VehicleHistoryReturnSchema,
   VehicleSchema,
   WorkshopSchema,
+  VehicleEntryRegistrySchema,
 } from "./zod-schemas";
 import { UserInfo } from "@/types/user";
 
 export async function getVehicleEntries(
   searchQuery: string
-): Promise<VehicleEntryRegistry[]> {
+): Promise<VehicleEntryRegistryList[]> {
   const response = await axiosInstanceAuth.get("/api/vehicle-overview/", {
     params: {
       search_query: searchQuery,
     },
   });
 
-  const parsedData = VehicleEntryRegistrySchema.array().safeParse(
-    response.data
-  );
+  const parsedData = VehicleRegistrySchemaList.array().safeParse(response.data);
   if (parsedData.success) {
-    const vehicleEntries: VehicleEntryRegistry[] = parsedData.data;
+    const vehicleEntries: VehicleEntryRegistryList[] = parsedData.data;
     return vehicleEntries;
   }
 
@@ -120,42 +122,47 @@ export async function submitCreateVehicleExitRecord(vehicle_id: number) {
 
 export async function getLastEntryRecordFromVehicle(
   vehicle: Vehicle
-): Promise<VehicleEntryRegistry> {
+): Promise<VehicleEntryRegistryDetail> {
   const res = await axiosInstanceAuth.get(
     `/api/get-last-entry-record-from-vehicle/${vehicle.id}/`
   );
-  const parsedData = VehicleEntryRegistrySchema.parse(res.data);
+  const parsedData = VehicleEntryRegistrySchemaDetail.parse(res.data);
   return parsedData;
 }
 
 export async function approveEntryRequest(
   last_entry_request_id: number
-): Promise<VehicleEntryRegistry> {
+): Promise<VehicleEntryRegistryList> {
   const res = await axiosInstanceAuth.patch(
     `/api/vehicle-entry-registries/${last_entry_request_id}/`,
-    { status: VehicleEntryRegistryChoices.APPROVED }
+    { status: VehicleEntryStatus.APPROVED }
   );
-  console.log("res", res);
-  console.log("res.data", res.data);
 
-  const parsedData = VehicleEntryRegistrySchema.parse(res.data);
+  const parsedData = VehicleRegistrySchemaList.parse(res.data);
   return parsedData;
 }
 
 export async function doNotApproveEntryRequest(
   last_entry_request_id: number,
   observation: string
-): Promise<VehicleEntryRegistry> {
-  const res = await axiosInstanceAuth.patch(
-    `/api/vehicle-entry-registries/${last_entry_request_id}/`,
-    {
-      status: VehicleEntryRegistryChoices.NOT_APPROVED,
-      observation: observation,
-    }
-  );
-  console.log("res", res);
-  console.log("res.data", res.data);
+): Promise<VehicleEntryRegistry | undefined> {
+  try {
+    console.log("last_entry_request_id", last_entry_request_id);
 
-  const parsedData = VehicleEntryRegistrySchema.parse(res.data);
-  return parsedData;
+    const res = await axiosInstanceAuth.patch(
+      `/api/vehicle-entry-registries/${last_entry_request_id}/`,
+      {
+        status: VehicleEntryStatus.NOT_APPROVED,
+        observation: observation,
+      }
+    );
+    console.log("doNotApproveEntryRequest");
+    console.log("res", res);
+    console.log("res.data", res.data);
+
+    const parsedData = VehicleEntryRegistrySchema.parse(res.data);
+    return parsedData;
+  } catch (e) {
+    console.log("e", e);
+  }
 }

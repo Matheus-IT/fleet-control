@@ -58,6 +58,12 @@ class UserSerializer(serializers.ModelSerializer):
         ]
 
 
+class VehiclePartSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VehiclePart
+        fields = ["name", "quantity", "unit_value"]
+
+
 class VehicleEntryRegistrySerializer(serializers.ModelSerializer):
     vehicle = VehicleSerializer()
     workshop = WorkshopSerializer()
@@ -76,7 +82,7 @@ class VehicleEntryRegistrySerializer(serializers.ModelSerializer):
             "author",
             "created_at",
             "status",
-            'observation'
+            "observation",
         ]
 
     def get_author(self, obj):
@@ -85,10 +91,33 @@ class VehicleEntryRegistrySerializer(serializers.ModelSerializer):
         return None
 
 
-class VehiclePartSerializer(serializers.ModelSerializer):
+class VehicleDetailEntrySerializer(serializers.ModelSerializer):
+    vehicle = VehicleSerializer()
+    workshop = WorkshopSerializer()
+    responsable_team = TeamSerializer()
+    author = serializers.SerializerMethodField()
+    parts = VehiclePartSerializer(many=True)
+
     class Meta:
-        model = VehiclePart
-        fields = ["name", "quantity", "unit_value"]
+        model = VehicleEntryRegistry
+        fields = [
+            "id",
+            "vehicle",
+            "vehicle_km",
+            "workshop",
+            "problem_reported",
+            "responsable_team",
+            "author",
+            "parts",
+            "created_at",
+            "status",
+            "observation",
+        ]
+
+    def get_author(self, obj):
+        if obj.author:
+            return {"name": obj.author.name}
+        return None
 
 
 class VehicleEntrySerializer(serializers.ModelSerializer):
@@ -106,9 +135,8 @@ class VehicleEntrySerializer(serializers.ModelSerializer):
             "parts",
             "created_at",
             "status",
-            'observation'
+            "observation",
         ]
-        read_only_fields = ["status"]
 
     def create(self, validated_data):
         parts_data = validated_data.pop("parts", [])
@@ -123,14 +151,17 @@ class VehicleEntrySerializer(serializers.ModelSerializer):
         parts_data = validated_data.pop("parts", [])
 
         # Update the main entry
+        print("validated_data", validated_data.items())
         for attr, value in validated_data.items():
+            print("instance", instance, "attr", attr, "value", value)
             setattr(instance, attr, value)
         instance.save()
 
         # Handle parts update
-        instance.parts.all().delete()  # Remove existing parts
-        for part_data in parts_data:
-            VehiclePart.objects.create(entry=instance, **part_data)
+        if parts_data:
+            instance.parts.all().delete()  # Remove existing parts
+            for part_data in parts_data:
+                VehiclePart.objects.create(entry=instance, **part_data)
 
         return instance
 

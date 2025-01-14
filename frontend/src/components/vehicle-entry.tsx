@@ -1,4 +1,4 @@
-import { VehicleEntryRegistry } from "@/types/api";
+import { VehicleEntryRegistryList, VehicleEntryStatus } from "@/types/api";
 import { Chip, Tooltip } from "@nextui-org/react";
 import { CircleAlert } from "lucide-react";
 // import { formatDate, formatTime } from "../../utils/date-time";
@@ -7,7 +7,7 @@ export default function VehicleEntryTile({
   vehicleEntry,
   onClick,
 }: {
-  vehicleEntry: VehicleEntryRegistry;
+  vehicleEntry: VehicleEntryRegistryList;
   onClick: () => void;
 }) {
   return (
@@ -36,9 +36,17 @@ export default function VehicleEntryTile({
       </div>
 
       <div>
-        {!vehicleEntry.vehicle.can_enter_workshop && (
+        {vehicleEntry.status == VehicleEntryStatus.WAITING_APPROVAL && (
           <Tooltip content="Aguardando aprovação">
             <div className="rounded-full p-1 bg-warning-500">
+              <CircleAlert />
+            </div>
+          </Tooltip>
+        )}
+
+        {vehicleEntry.status == VehicleEntryStatus.NOT_APPROVED && (
+          <Tooltip content="Não aprovado">
+            <div className="rounded-full p-1 bg-danger-500">
               <CircleAlert />
             </div>
           </Tooltip>

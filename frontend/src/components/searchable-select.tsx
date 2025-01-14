@@ -1,6 +1,7 @@
 import Select from "react-select";
 
 const SearchableSelect = ({
+  value = "",
   options,
   placeholder,
   className,
@@ -10,6 +11,7 @@ const SearchableSelect = ({
   getOptionValue,
   onChange,
 }: {
+  value?: string;
   options: unknown[];
   placeholder: string;
   className?: string;
