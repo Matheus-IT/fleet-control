@@ -25,7 +25,7 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import { formatDate, formatTime } from "../../utils/date-time";
 import { useRouter } from "next/navigation";
-import { Clock, Car, Wrench, AlertTriangle } from "lucide-react";
+import { Clock, Car, Wrench, AlertTriangle, User, Users } from "lucide-react";
 
 export default function VehicleDetail({
   lastEntryData,
@@ -99,8 +99,8 @@ export default function VehicleDetail({
         <Divider />
         <CardBody>
           <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <Wrench className="w-5 h-5" />
+            <p className="flex items-center gap-2">
+              <Wrench className="w-4 h-4 text-gray-500" />
               <span className="text-base">
                 Na oficina:{" "}
                 <strong
@@ -113,10 +113,25 @@ export default function VehicleDetail({
                   {vehicle.is_at_workshop ? "Sim" : "Não"}
                 </strong>
               </span>
-            </div>
+            </p>
+
+            <p className="text-base flex items-center gap-2">
+              <User className="w-4 h-4 text-gray-500" />
+              <span className="text-gray-600">Solicitante:</span>{" "}
+              <strong>{lastEntryData.author!.name}</strong>
+            </p>
+
+            <p className="text-base flex items-center gap-2">
+              <Users className="w-4 h-4 text-gray-500" />
+              <span className="text-gray-600">Equipe responsável:</span>{" "}
+              <strong>
+                {lastEntryData.responsable_team!.name} -{" "}
+                {lastEntryData.responsable_team!.type}
+              </strong>
+            </p>
 
             {vehicle.is_at_workshop && (
-              <div className="space-y-2 pl-7">
+              <div className="mt-2 pl-6">
                 <p className="text-base">
                   <span className="text-gray-600">Problema reportado:</span>{" "}
                   <strong>{lastEntryData.problem_reported}</strong>
@@ -133,7 +148,7 @@ export default function VehicleDetail({
             {lastEntryData.parts &&
               lastEntryData.parts.length > 0 &&
               vehicle.is_at_workshop && (
-                <div className="mt-4">
+                <div className="ml-5 p-2 border border-gray-300 rounded-lg">
                   <span className="text-gray-600 font-medium">Peças:</span>
                   <div className="mt-2 space-y-3">
                     {lastEntryData.parts.map((part, index) => (
