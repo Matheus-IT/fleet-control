@@ -47,13 +47,11 @@ export default function CorrectLastVehicleEntryRecord({
 }: {
   lastEntry: VehicleEntryRegistryDetail;
 }) {
-  const [selectedTeam, setSelectedTeam] = useState<ResponsableTeam | null>(
-    // lastEntry.responsable_team
-    null
+  const [selectedTeam, setSelectedTeam] = useState<ResponsableTeam>(
+    lastEntry.responsable_team!
   );
-  const [selectedWorkshop, setSelectedWorkshop] = useState<Workshop | null>(
-    // lastEntry.workshop
-    null
+  const [selectedWorkshop, setSelectedWorkshop] = useState<Workshop>(
+    lastEntry.workshop!
   );
   const [formError, setFormError] = useState<{
     team?: string;
@@ -76,7 +74,7 @@ export default function CorrectLastVehicleEntryRecord({
       vehicleParts: lastEntry.parts.map((p) => ({
         name: p.name,
         quantity: p.quantity,
-        unit_value: p.unit_value,
+        unitValue: p.unit_value,
       })),
       kilometer: lastEntry.vehicle_km!.toString(),
       problem_reported: lastEntry.problem_reported,
@@ -151,9 +149,6 @@ export default function CorrectLastVehicleEntryRecord({
     );
   }
 
-  console.log("lastEntry.responsable_team", lastEntry.responsable_team);
-  console.log("lastEntry.workshop", lastEntry.workshop);
-
   return (
     <main className="container mx-auto pt-4 max-sm:px-4">
       <h1 className="text-lg font-semibold border-b-orange-500 border-b-3 w-fit mb-2">
@@ -190,10 +185,7 @@ export default function CorrectLastVehicleEntryRecord({
         </div>
 
         <SearchableSelect
-          // value={{
-          //   value: selectedTeam!.id,
-          //   label: `${selectedTeam!.name} - ${selectedTeam!.type}`,
-          // }}
+          value={selectedTeam}
           options={teams}
           placeholder="Selecione uma equipe"
           getOptionLabel={(option: ResponsableTeam) =>
@@ -215,10 +207,7 @@ export default function CorrectLastVehicleEntryRecord({
         )}
 
         <SearchableSelect
-          // value={{
-          //   value: selectedWorkshop!.id,
-          //   label: selectedWorkshop!.name,
-          // }}
+          value={selectedWorkshop}
           options={workshops}
           placeholder="Selecione uma oficina"
           getOptionLabel={(option: Workshop) => option.name}

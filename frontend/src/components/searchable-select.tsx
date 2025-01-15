@@ -27,7 +27,7 @@ const SearchableSelect = ({
   return (
     <div>
       <Select
-        // value={value}
+        value={value}
         className={className}
         isDisabled={isDisabled}
         styles={{
