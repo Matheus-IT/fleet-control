@@ -1,8 +1,6 @@
 "use client";
 
 import { CreateVehicleEntryRecord } from "@/components/vehicle-entry/create-vehicle-entry-record";
-import { PageProps } from "../../../../../../.next/types/app/page";
-import { useGetVehicle } from "@/hooks/react-query";
 import { Spinner } from "@nextui-org/react";
 import CreateVehicleExitRecord from "@/components/vehicle-entry/create-vehicle-exit-record";
 import WaitingApproval from "@/components/vehicle-entry/waiting-approval";
@@ -14,22 +12,27 @@ import { getLastEntryRecordFromVehicle } from "@/api/request-queries";
 import { VehicleEntryStatus } from "@/types/api";
 import CorrectLastVehicleEntryRecord from "@/components/vehicle-entry/correct-last-vehicle-entry-record";
 
-export default function VehicleDetailPage({ params }: PageProps) {
-  const { data: vehicle } = useGetVehicle(params.vehicle_slug);
+export default function VehicleDetailPage({
+  params,
+}: {
+  params: { vehicle_slug: string };
+}) {
+  console.log("--------------------------------------------------------------");
+
   const { data: lastEntryData, isPending } = useQuery({
     queryFn: () => {
       try {
-        return getLastEntryRecordFromVehicle(vehicle!);
+        console.log("Performing request!!!");
+        return getLastEntryRecordFromVehicle(params.vehicle_slug);
       } catch (e) {
         console.log("e", e);
       }
     },
-    enabled: vehicle != undefined,
-    queryKey: ["getLastEntryRecordFromVehicle"],
+    queryKey: ["getLastEntryRecordFromVehicle", params.vehicle_slug],
   });
   const { userInfo } = useUserInfoStore((state) => state);
 
-  if (!vehicle || lastEntryData == undefined || isPending)
+  if (!lastEntryData || isPending)
     return (
       <div className="h-screen flex items-center justify-center">
         <Spinner size="lg" />
@@ -38,21 +41,34 @@ export default function VehicleDetailPage({ params }: PageProps) {
 
   // logic for supervisor
   if (userInfo?.userProfiles.includes(SUPERVISOR_PROFILE)) {
-    return <VehicleDetail vehicle={vehicle} />;
+    console.log("Supervisor profile");
+    return <VehicleDetail lastEntryData={lastEntryData} />;
   }
 
   // logic for driver
   if (userInfo?.userProfiles.includes(DRIVER_PROFILE)) {
-    if (lastEntryData.status == VehicleEntryStatus.WAITING_APPROVAL)
-      return <WaitingApproval vehicle={vehicle} />;
+    console.log("Driver profile");
 
-    if (lastEntryData.status == VehicleEntryStatus.NOT_APPROVED)
+    if (lastEntryData.status == VehicleEntryStatus.WAITING_APPROVAL) {
+      console.log("Waiting approval");
+      return <WaitingApproval lastEntryData={lastEntryData} />;
+    }
+
+    if (lastEntryData.status == VehicleEntryStatus.NOT_APPROVED) {
+      console.log("Not approved");
       return <CorrectLastVehicleEntryRecord lastEntry={lastEntryData} />;
+    }
 
-    if (vehicle.is_at_workshop)
-      return <CreateVehicleExitRecord vehicle={vehicle} />;
+    if (
+      lastEntryData.vehicle.is_at_workshop &&
+      lastEntryData.status == VehicleEntryStatus.APPROVED
+    ) {
+      console.log("Create exit record");
+      return <CreateVehicleExitRecord lastEntryData={lastEntryData} />;
+    }
 
-    return <CreateVehicleEntryRecord vehicle={vehicle} />;
+    console.log("Create entry record");
+    return <CreateVehicleEntryRecord lastEntryData={lastEntryData} />;
   }
   return <p>Perfil desconhecido...</p>;
 }

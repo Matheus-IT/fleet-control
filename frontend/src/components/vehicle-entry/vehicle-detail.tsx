@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import {
   approveEntryRequest,
   doNotApproveEntryRequest,
-  getLastEntryRecordFromVehicle,
 } from "@/api/request-queries";
-import { Vehicle, VehicleEntryStatus, VehiclePart } from "@/types/api";
+import {
+  VehicleEntryRegistryDetail,
+  VehicleEntryStatus,
+  VehiclePart,
+} from "@/types/api";
 import {
   Button,
-  Spinner,
   Card,
   CardBody,
   CardHeader,
@@ -20,26 +22,22 @@ import {
   ModalFooter,
   Textarea,
 } from "@nextui-org/react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { formatDate, formatTime } from "../../utils/date-time";
 import { useRouter } from "next/navigation";
 import { Clock, Car, Wrench, AlertTriangle } from "lucide-react";
 
-export default function VehicleDetail({ vehicle }: { vehicle: Vehicle }) {
+export default function VehicleDetail({
+  lastEntryData,
+}: {
+  lastEntryData: VehicleEntryRegistryDetail;
+}) {
+  console.log("VehicleDetail lastEntryData", lastEntryData);
+
+  const vehicle = lastEntryData.vehicle;
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [observation, setObservation] = useState("");
-
-  const { data: lastEntryData, isPending } = useQuery({
-    queryFn: () => {
-      try {
-        return getLastEntryRecordFromVehicle(vehicle);
-      } catch (e) {
-        console.log("e", e);
-      }
-    },
-    queryKey: ["getLastEntryRecordFromVehicle"],
-  });
 
   const mutation = useMutation({
     mutationFn: () => approveEntryRequest(lastEntryData!.id),
@@ -85,18 +83,6 @@ export default function VehicleDetail({ vehicle }: { vehicle: Vehicle }) {
       currency: "BRL",
     }).format(value);
   };
-
-  if (isPending) {
-    return (
-      <div className="h-screen flex items-center justify-center">
-        <Spinner size="lg" />
-      </div>
-    );
-  }
-
-  if (!lastEntryData) {
-    return null;
-  }
 
   return (
     <main className="container mx-auto py-6 px-4 max-w-3xl">
@@ -144,42 +130,44 @@ export default function VehicleDetail({ vehicle }: { vehicle: Vehicle }) {
               </div>
             )}
 
-            {lastEntryData.parts && lastEntryData.parts.length > 0 && (
-              <div className="mt-4">
-                <span className="text-gray-600 font-medium">Peças:</span>
-                <div className="mt-2 space-y-3">
-                  {lastEntryData.parts.map((part, index) => (
-                    <div key={index} className="bg-gray-50 p-3 rounded-lg">
-                      <div className="grid grid-cols-3 gap-2 text-sm">
-                        <div>
-                          <span className="text-gray-600">Peça:</span>{" "}
-                          <strong>{part.name}</strong>
-                        </div>
-                        <div>
-                          <span className="text-gray-600">Quantidade:</span>{" "}
-                          <strong>{part.quantity}</strong>
-                        </div>
-                        <div>
-                          <span className="text-gray-600">Valor unitário:</span>{" "}
-                          <strong>{formatCurrency(part.unit_value)}</strong>
+            {lastEntryData.parts &&
+              lastEntryData.parts.length > 0 &&
+              vehicle.is_at_workshop && (
+                <div className="mt-4">
+                  <span className="text-gray-600 font-medium">Peças:</span>
+                  <div className="mt-2 space-y-3">
+                    {lastEntryData.parts.map((part, index) => (
+                      <div key={index} className="bg-gray-50 p-3 rounded-lg">
+                        <div className="grid grid-cols-3 gap-2 text-sm">
+                          <div>
+                            <span className="text-gray-600">Peça:</span>{" "}
+                            <strong>{part.name}</strong>
+                          </div>
+                          <div>
+                            <span className="text-gray-600">Quantidade:</span>{" "}
+                            <strong>{part.quantity}</strong>
+                          </div>
+                          <div>
+                            <span className="text-gray-600">
+                              Valor unitário:
+                            </span>{" "}
+                            <strong>{formatCurrency(part.unit_value)}</strong>
+                          </div>
                         </div>
                       </div>
+                    ))}
+                    <div className="mt-2 text-right font-medium">
+                      Valor total:{" "}
+                      {formatCurrency(calculateTotal(lastEntryData.parts))}
                     </div>
-                  ))}
-                  <div className="mt-2 text-right font-medium">
-                    Valor total:{" "}
-                    {formatCurrency(calculateTotal(lastEntryData.parts))}
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
             {lastEntryData.parts && lastEntryData.parts.length == 0 && (
               <div className="space-y-2 pl-7">
-                <p className="text-base">
-                  <div className="text-gray-600">
-                    Não há peças nessa entrada...
-                  </div>
+                <p className="text-base text-gray-600">
+                  Não há peças nessa entrada...
                 </p>
               </div>
             )}
@@ -193,6 +181,18 @@ export default function VehicleDetail({ vehicle }: { vehicle: Vehicle }) {
                   <p className="text-base">
                     <span className="text-gray-600">Motivo: </span>
                     <strong>{lastEntryData.observation}</strong>
+                  </p>
+                </div>
+              </>
+            )}
+
+            {lastEntryData.status == VehicleEntryStatus.WAITING_APPROVAL && (
+              <>
+                <div className="space-y-2 pl-7">
+                  <p className="text-base">
+                    <span className="text-orange-600">
+                      Aguardando aprovação
+                    </span>
                   </p>
                 </div>
               </>

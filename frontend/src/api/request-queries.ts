@@ -121,10 +121,10 @@ export async function submitCreateVehicleExitRecord(vehicle_id: number) {
 }
 
 export async function getLastEntryRecordFromVehicle(
-  vehicle: Vehicle
+  vehicle_slug: string
 ): Promise<VehicleEntryRegistryDetail> {
   const res = await axiosInstanceAuth.get(
-    `/api/get-last-entry-record-from-vehicle/${vehicle.id}/`
+    `/api/get-last-entry-record-from-vehicle/${vehicle_slug}/`
   );
   const parsedData = VehicleEntryRegistrySchemaDetail.parse(res.data);
   return parsedData;

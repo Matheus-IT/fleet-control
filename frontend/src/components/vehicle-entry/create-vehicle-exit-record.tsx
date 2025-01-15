@@ -1,6 +1,6 @@
 import React from "react";
 import { useCreateVehicleExitRecordMutation } from "@/hooks/react-query";
-import { Vehicle } from "@/types/api";
+import { VehicleEntryRegistryDetail } from "@/types/api";
 import {
   Button,
   Card,
@@ -12,10 +12,11 @@ import {
 import { Car, LogOut } from "lucide-react";
 
 export default function CreateVehicleExitRecord({
-  vehicle,
+  lastEntryData,
 }: {
-  vehicle: Vehicle;
+  lastEntryData: VehicleEntryRegistryDetail;
 }) {
+  const vehicle = lastEntryData.vehicle;
   const mutation = useCreateVehicleExitRecordMutation(vehicle.id);
 
   async function handleCreateVehicleExitRecord() {

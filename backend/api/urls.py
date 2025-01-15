@@ -41,7 +41,7 @@ urlpatterns = [
         name="vehicle_overview_view",
     ),
     path(
-        "get-last-entry-record-from-vehicle/<int:vehicle_id>/",
+        "get-last-entry-record-from-vehicle/<str:vehicle_slug>/",
         get_last_entry_record_from_vehicle_view,
         name="get_last_entry_record_from_vehicle_view",
     ),

@@ -169,10 +169,10 @@ def create_vehicle_exit_record_view(request: Request):
 @api_view(http_method_names=["get"])
 @permission_classes([IsAuthenticated])
 @authentication_classes([JWTAuthentication])
-def get_last_entry_record_from_vehicle_view(request, vehicle_id: int):
+def get_last_entry_record_from_vehicle_view(request, vehicle_slug: str):
     from api.serializers import VehicleDetailEntrySerializer
 
-    vehicle = Vehicle.objects.get(id=vehicle_id)
+    vehicle = Vehicle.objects.get(slug=vehicle_slug)
     serializer = VehicleDetailEntrySerializer(instance=vehicle.get_last_entry_record())
 
     return Response(serializer.data)

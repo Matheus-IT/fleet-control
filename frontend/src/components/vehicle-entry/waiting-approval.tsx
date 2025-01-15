@@ -1,33 +1,14 @@
 import React from "react";
-import { getLastEntryRecordFromVehicle } from "@/api/request-queries";
-import { Vehicle } from "@/types/api";
-import {
-  Spinner,
-  Card,
-  CardBody,
-  CardHeader,
-  Divider,
-} from "@nextui-org/react";
-import { useQuery } from "@tanstack/react-query";
+import { VehicleEntryRegistryDetail } from "@/types/api";
+import { Card, CardBody, CardHeader, Divider } from "@nextui-org/react";
 import { Car, Wrench, AlertCircle, User, Building2 } from "lucide-react";
 
-export default function WaitingApproval({ vehicle }: { vehicle: Vehicle }) {
-  const { data: lastEntryData, isPending } = useQuery({
-    queryFn: () => getLastEntryRecordFromVehicle(vehicle),
-    queryKey: ["getLastEntryRecordFromVehicle"],
-  });
-
-  if (isPending) {
-    return (
-      <div className="h-screen flex items-center justify-center">
-        <Spinner size="lg" />
-      </div>
-    );
-  }
-
-  if (!lastEntryData) {
-    return null;
-  }
+export default function WaitingApproval({
+  lastEntryData,
+}: {
+  lastEntryData: VehicleEntryRegistryDetail;
+}) {
+  const vehicle = lastEntryData.vehicle;
 
   return (
     <main className="container mx-auto py-6 px-4 max-w-2xl">

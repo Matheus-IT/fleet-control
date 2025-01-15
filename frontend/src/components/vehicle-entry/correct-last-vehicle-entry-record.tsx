@@ -7,6 +7,7 @@ import {
 import {
   ResponsableTeam,
   VehicleEntryRegistryDetail,
+  VehicleEntryStatus,
   Workshop,
 } from "@/types/api";
 import { Button, Spinner, Input } from "@nextui-org/react";
@@ -47,10 +48,12 @@ export default function CorrectLastVehicleEntryRecord({
   lastEntry: VehicleEntryRegistryDetail;
 }) {
   const [selectedTeam, setSelectedTeam] = useState<ResponsableTeam | null>(
-    lastEntry.responsable_team
+    // lastEntry.responsable_team
+    null
   );
   const [selectedWorkshop, setSelectedWorkshop] = useState<Workshop | null>(
-    lastEntry.workshop
+    // lastEntry.workshop
+    null
   );
   const [formError, setFormError] = useState<{
     team?: string;
@@ -90,7 +93,7 @@ export default function CorrectLastVehicleEntryRecord({
   const total = vehicleParts.reduce((sum, part) => {
     const quantity = part.quantity;
     const unitValue = part.unitValue;
-    return sum + parseInt(quantity) * parseFloat(unitValue);
+    return sum + quantity * unitValue;
   }, 0);
 
   const onSubmit = async (formData: FormSchema) => {
@@ -119,22 +122,22 @@ export default function CorrectLastVehicleEntryRecord({
     try {
       console.log("ready to submit!!!");
 
-      // await mutation.mutateAsync({
-      //   vehicle: lastEntry.vehicle.id,
-      //   vehicle_km: parseInt(formData.kilometer),
-      //   workshop: selectedWorkshop.id,
-      //   problem_reported: formData.problem_reported,
-      //   responsable_team: selectedTeam.id,
-      //   author: userInfo.id,
-      //   parts: formData.vehicleParts.map((part) => ({
-      //     name: part.name,
-      //     quantity: parseInt(part.quantity),
-      //     unit_value: parseFloat(part.unitValue),
-      //   })),
-      //   status: VehicleEntryStatus.WAITING_APPROVAL,
-      // });
+      await mutation.mutateAsync({
+        vehicle: lastEntry.vehicle.id,
+        vehicle_km: parseInt(formData.kilometer),
+        workshop: selectedWorkshop.id,
+        problem_reported: formData.problem_reported,
+        responsable_team: selectedTeam.id,
+        author: userInfo.id,
+        parts: formData.vehicleParts.map((part) => ({
+          name: part.name,
+          quantity: part.quantity,
+          unit_value: part.unitValue,
+        })),
+        status: VehicleEntryStatus.WAITING_APPROVAL,
+      });
 
-      // window.location.reload();
+      window.location.reload();
     } catch (error) {
       console.error("Failed to submit record:", error);
     }
@@ -147,6 +150,9 @@ export default function CorrectLastVehicleEntryRecord({
       </div>
     );
   }
+
+  console.log("lastEntry.responsable_team", lastEntry.responsable_team);
+  console.log("lastEntry.workshop", lastEntry.workshop);
 
   return (
     <main className="container mx-auto pt-4 max-sm:px-4">
@@ -184,9 +190,10 @@ export default function CorrectLastVehicleEntryRecord({
         </div>
 
         <SearchableSelect
-          value={`${lastEntry.responsable_team!.name} - ${
-            lastEntry.responsable_team!.type
-          }`}
+          // value={{
+          //   value: selectedTeam!.id,
+          //   label: `${selectedTeam!.name} - ${selectedTeam!.type}`,
+          // }}
           options={teams}
           placeholder="Selecione uma equipe"
           getOptionLabel={(option: ResponsableTeam) =>
@@ -208,7 +215,10 @@ export default function CorrectLastVehicleEntryRecord({
         )}
 
         <SearchableSelect
-          value={lastEntry.workshop!.name}
+          // value={{
+          //   value: selectedWorkshop!.id,
+          //   label: selectedWorkshop!.name,
+          // }}
           options={workshops}
           placeholder="Selecione uma oficina"
           getOptionLabel={(option: Workshop) => option.name}
@@ -256,6 +266,7 @@ export default function CorrectLastVehicleEntryRecord({
                 label="Quantidade"
                 size="sm"
                 type="number"
+                min="1"
                 className="w-32 max-sm:w-[5rem]"
                 {...register(`vehicleParts.${index}.quantity`)}
                 isInvalid={!!errors.vehicleParts?.[index]?.quantity}
@@ -266,6 +277,7 @@ export default function CorrectLastVehicleEntryRecord({
                 size="sm"
                 type="number"
                 step="0.01"
+                min="0"
                 className="w-32 max-sm:w-[5.3rem]"
                 {...register(`vehicleParts.${index}.unitValue`)}
                 isInvalid={!!errors.vehicleParts?.[index]?.unitValue}

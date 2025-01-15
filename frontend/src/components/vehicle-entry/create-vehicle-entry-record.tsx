@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -12,13 +12,11 @@ import {
 } from "@/hooks/react-query";
 import {
   ResponsableTeam,
-  Vehicle,
+  VehicleEntryRegistryDetail,
   VehicleEntryStatus,
   Workshop,
 } from "@/types/api";
 import { useUserInfoStore } from "@/stores/user-info";
-import { getLastEntryRecordFromVehicle } from "@/api/request-queries";
-import { useQuery } from "@tanstack/react-query";
 
 // Schema definitions
 const vehiclePartSchema = z.object({
@@ -45,12 +43,13 @@ const errorSelectStyles = {
 type FormSchema = z.infer<typeof formSchema>;
 
 interface CreateVehicleEntryRecordProps {
-  vehicle: Vehicle;
+  lastEntryData: VehicleEntryRegistryDetail;
 }
 
 export function CreateVehicleEntryRecord({
-  vehicle,
+  lastEntryData,
 }: CreateVehicleEntryRecordProps) {
+  const vehicle = lastEntryData.vehicle;
   const [selectedTeam, setSelectedTeam] = useState<ResponsableTeam | null>(
     null
   );
@@ -65,24 +64,18 @@ export function CreateVehicleEntryRecord({
   const { data: teams } = useGetTeams();
   const { data: workshops } = useGetWorkshops();
   const mutation = useCreateRecordMutation();
-  const { data: lastEntryData } = useQuery({
-    queryFn: () => getLastEntryRecordFromVehicle(vehicle),
-    queryKey: ["getLastEntryRecordFromVehicle"],
-  });
-  const [kilometer, setKilometer] = useState("0");
 
   const {
     register,
     control,
-    reset,
     handleSubmit,
     formState: { errors },
     watch,
   } = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      vehicleParts: [{ name: "", quantity: "1", unitValue: "0" }],
-      kilometer: "0",
+      vehicleParts: [{ name: "", quantity: 1, unitValue: 0 }],
+      kilometer: lastEntryData.vehicle_km?.toString() ?? "0",
       problem_reported: "",
     },
   });
@@ -92,18 +85,12 @@ export function CreateVehicleEntryRecord({
     name: "vehicleParts",
   });
 
-  useEffect(() => {
-    if (lastEntryData?.vehicle_km) {
-      setKilometer(lastEntryData.vehicle_km.toString());
-    }
-  }, [lastEntryData, reset, watch]);
-
   // Calculate total
   const vehicleParts = watch("vehicleParts");
   const total = vehicleParts.reduce((sum, part) => {
     const quantity = part.quantity;
     const unitValue = part.unitValue;
-    return sum + parseInt(quantity) * parseFloat(unitValue);
+    return sum + quantity * unitValue;
   }, 0);
 
   const onSubmit = async (formData: FormSchema) => {
@@ -132,21 +119,21 @@ export function CreateVehicleEntryRecord({
     try {
       console.log("Ready to submit!!!");
 
-      // await mutation.mutateAsync({
-      //   vehicle: vehicle.id,
-      //   vehicle_km: parseInt(formData.kilometer),
-      //   workshop: selectedWorkshop.id,
-      //   problem_reported: formData.problem_reported,
-      //   responsable_team: selectedTeam.id,
-      //   author: userInfo.id,
-      //   parts: formData.vehicleParts.map((part) => ({
-      //     name: part.name,
-      //     quantity: parseInt(part.quantity),
-      //     unit_value: parseFloat(part.unitValue),
-      //   })),
-      //   status: VehicleEntryStatus.WAITING_APPROVAL,
-      // });
-      // window.location.reload();
+      await mutation.mutateAsync({
+        vehicle: vehicle.id,
+        vehicle_km: parseInt(formData.kilometer),
+        workshop: selectedWorkshop.id,
+        problem_reported: formData.problem_reported,
+        responsable_team: selectedTeam.id,
+        author: userInfo.id,
+        parts: formData.vehicleParts.map((part) => ({
+          name: part.name,
+          quantity: part.quantity,
+          unit_value: part.unitValue,
+        })),
+        status: VehicleEntryStatus.WAITING_APPROVAL,
+      });
+      window.location.reload();
     } catch (error) {
       console.error("Failed to submit record:", error);
     }
@@ -185,7 +172,6 @@ export function CreateVehicleEntryRecord({
             label="Quilometragem (km):"
             size="sm"
             {...register("kilometer")}
-            value={kilometer}
             isInvalid={!!errors.kilometer}
             errorMessage={errors.kilometer?.message}
           />
@@ -249,9 +235,7 @@ export function CreateVehicleEntryRecord({
               color="primary"
               isIconOnly
               disabled={fields.length >= 10}
-              onClick={() =>
-                append({ name: "", quantity: "1", unitValue: "0" })
-              }
+              onClick={() => append({ name: "", quantity: 1, unitValue: 0 })}
               type="button"
             >
               <Plus className="h-4 w-4" />

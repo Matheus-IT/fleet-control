@@ -31,8 +31,6 @@ export default function LoginForm() {
 
       const { refresh, access } = responseData;
 
-      console.log(refresh, access);
-
       storeAuthTokens(refresh, access);
 
       router.push("/");
