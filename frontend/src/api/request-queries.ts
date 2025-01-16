@@ -2,7 +2,6 @@ import {
   AuthCredentials,
   ResponsableTeam,
   SubmitLoginCredentials,
-  Vehicle,
   VehicleEntryRegistryDetail,
   VehicleEntry,
   VehicleEntryRegistryList,

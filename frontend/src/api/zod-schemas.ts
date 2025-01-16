@@ -45,6 +45,8 @@ export const VehicleHistorySchema = z.array(
     responsable_team: ResponsableTeamSchema,
     author: UserSchema,
     created_at: z.string().transform((value) => new Date(value)), // Convert string to Date
+    status: z.string(),
+    observation: z.string(),
   })
 );
 

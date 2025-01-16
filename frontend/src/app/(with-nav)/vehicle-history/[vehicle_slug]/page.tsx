@@ -1,13 +1,15 @@
 "use client";
 
-import { PageProps } from "../../../../../.next/types/app/page";
 import { useGetVehicleHistory } from "@/hooks/react-query";
+import { VehicleEntryStatus } from "@/types/api";
 import { Spinner } from "@nextui-org/react";
 
-export default function CreateRecordPage({ params }: PageProps) {
+export default function CreateRecordPage({
+  params,
+}: {
+  params: { vehicle_slug: string };
+}) {
   const { data: historyData } = useGetVehicleHistory(params.vehicle_slug);
-
-  console.log("historyData", historyData);
 
   function formatDate(date: Date): string {
     const day = String(date.getDate()).padStart(2, "0");
@@ -52,6 +54,23 @@ export default function CreateRecordPage({ params }: PageProps) {
             <p className="text-base">Problema: {e.problem_reported}</p>
 
             <p className="text-base">Autor: {e.author.name}</p>
+
+            <p className="text-base">
+              Status:{" "}
+              {e.status == VehicleEntryStatus.WAITING_APPROVAL && (
+                <span className="text-orange-500">Aguardando aprovação</span>
+              )}
+              {e.status == VehicleEntryStatus.APPROVED && (
+                <span className="text-green-500">Aprovado</span>
+              )}
+              {e.status == VehicleEntryStatus.NOT_APPROVED && (
+                <span className="text-danger-500">Não aprovado</span>
+              )}
+            </p>
+
+            {e.status == VehicleEntryStatus.NOT_APPROVED && (
+              <p className="text-base">Motivo: {e.observation}</p>
+            )}
 
             <p className="text-base">
               <strong>Entrou</strong> na oficina em: {formatDate(e.created_at)}{" "}

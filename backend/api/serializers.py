@@ -209,6 +209,8 @@ class VehicleHistorySerializer(serializers.ModelSerializer):
             "problem_reported",
             "responsable_team",
             "author",
+            "status",
+            "observation",
             "created_at",
         ]
 
