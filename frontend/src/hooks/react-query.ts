@@ -18,10 +18,14 @@ export function useGetProfileInfo() {
   });
 }
 
-export function useGetVehicleEntries(searchQuery: string) {
+export function useGetVehicleEntries(
+  searchQuery: string,
+  itemsPerPage: number,
+  currentPage: number
+) {
   return useQuery({
-    queryKey: ["getVehicleEntries"],
-    queryFn: () => getVehicleEntries(searchQuery),
+    queryKey: ["getVehicleEntries", currentPage],
+    queryFn: () => getVehicleEntries(searchQuery, itemsPerPage, currentPage),
   });
 }
 

@@ -23,6 +23,8 @@ from api.serializers import (
     VehicleEntrySerializer,
     VehicleExitSerializer,
 )
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from rest_framework.pagination import PageNumberPagination
 
 
 @api_view(http_method_names=["get"])
@@ -68,7 +70,17 @@ def vehicles_overview_view(request: Request):
 
         vehicle_registries.append(latest_entry)
 
-    serializer = VehicleEntryRegistrySerializer(vehicle_registries, many=True)
+    page_size = request.GET.get("per_page", 5)
+    paginator = Paginator(vehicle_registries, page_size)
+    page_number = request.GET.get("page", 1)
+    try:
+        page_obj = paginator.page(page_number)
+    except PageNotAnInteger:
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        page_obj = paginator.page(paginator.num_pages)
+
+    serializer = VehicleEntryRegistrySerializer(page_obj.object_list, many=True)
 
     return Response(serializer.data)
 

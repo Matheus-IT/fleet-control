@@ -25,11 +25,15 @@ import {
 import { UserInfo } from "@/types/user";
 
 export async function getVehicleEntries(
-  searchQuery: string
+  searchQuery: string,
+  itemsPerPage: number,
+  currentPage: number
 ): Promise<VehicleEntryRegistryList[]> {
   const response = await axiosInstanceAuth.get("/api/vehicle-overview/", {
     params: {
       search_query: searchQuery,
+      per_page: itemsPerPage,
+      page: currentPage,
     },
   });
 

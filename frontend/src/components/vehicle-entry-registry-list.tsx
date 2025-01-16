@@ -1,7 +1,7 @@
 import VehicleEntryTile from "@/components/vehicle-entry";
 import { useGetVehicleEntries } from "@/hooks/react-query";
 import { Vehicle } from "@/types/api";
-import { Button, Spinner } from "@nextui-org/react";
+import { Button, Spinner, Pagination } from "@nextui-org/react";
 import { useMemo, useState } from "react";
 
 export default function VehicleEntryRegistryList({
@@ -12,7 +12,14 @@ export default function VehicleEntryRegistryList({
   const [searchQuery, setSearchQuery] = useState("");
   const [filterAtWorkshop, setFilterAtWorkshop] = useState(false);
   const [filterNotAtWorkshop, setFilterNotAtWorkshop] = useState(false);
-  const { data, isPending, error } = useGetVehicleEntries(searchQuery);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  const { data, isPending, error } = useGetVehicleEntries(
+    searchQuery,
+    itemsPerPage,
+    currentPage
+  );
 
   const filteredData = useMemo(() => {
     if (!data) return [];
@@ -21,11 +28,9 @@ export default function VehicleEntryRegistryList({
       return data;
 
     const query = searchQuery.toLowerCase().trim();
-    console.log(query ? true : false);
 
     return data.filter((entry) => {
       const vehicle = entry.vehicle;
-      console.log("here", vehicle.is_at_workshop);
       return (
         (query &&
           (vehicle.licence_plate.toLowerCase().includes(query) ||
@@ -36,6 +41,12 @@ export default function VehicleEntryRegistryList({
       );
     });
   }, [data, searchQuery, filterAtWorkshop, filterNotAtWorkshop]);
+
+  // const paginatedData = useMemo(() => {
+  //   const startIndex = (currentPage - 1) * itemsPerPage;
+  //   const endIndex = startIndex + itemsPerPage;
+  //   return filteredData.slice(startIndex, endIndex);
+  // }, [filteredData, currentPage, itemsPerPage]);
 
   return (
     <main className="container mx-auto">
@@ -94,6 +105,12 @@ export default function VehicleEntryRegistryList({
                 ))}
               </div>
             )}
+
+            <Pagination
+              total={filteredData.length}
+              page={currentPage}
+              onChange={(newPage) => setCurrentPage(newPage)}
+            />
           </>
         )}
         {data && data.length == 0 && (
