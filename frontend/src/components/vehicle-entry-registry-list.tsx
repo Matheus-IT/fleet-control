@@ -25,11 +25,11 @@ export default function VehicleEntryRegistryList({
     if (!data) return [];
 
     if (!searchQuery.trim() && !filterAtWorkshop && !filterNotAtWorkshop)
-      return data;
+      return data.results;
 
     const query = searchQuery.toLowerCase().trim();
 
-    return data.filter((entry) => {
+    return data.results.filter((entry) => {
       const vehicle = entry.vehicle;
       return (
         (query &&
@@ -42,16 +42,10 @@ export default function VehicleEntryRegistryList({
     });
   }, [data, searchQuery, filterAtWorkshop, filterNotAtWorkshop]);
 
-  // const paginatedData = useMemo(() => {
-  //   const startIndex = (currentPage - 1) * itemsPerPage;
-  //   const endIndex = startIndex + itemsPerPage;
-  //   return filteredData.slice(startIndex, endIndex);
-  // }, [filteredData, currentPage, itemsPerPage]);
-
   return (
     <main className="container mx-auto">
       <div className="flex flex-col gap-4 max-sm:p-4">
-        {data && data.length > 0 && (
+        {data && data.results.length > 0 && (
           <>
             <h1 className="text-2xl text-center mt-6">Registros de veículos</h1>
 
@@ -107,13 +101,13 @@ export default function VehicleEntryRegistryList({
             )}
 
             <Pagination
-              total={filteredData.length}
+              total={data.numPages}
               page={currentPage}
               onChange={(newPage) => setCurrentPage(newPage)}
             />
           </>
         )}
-        {data && data.length == 0 && (
+        {data && data.results.length == 0 && (
           <h1 className="text-center text-lg">Nenhum registro de veículo.</h1>
         )}
         {isPending && (

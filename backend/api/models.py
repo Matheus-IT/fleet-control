@@ -126,7 +126,6 @@ class Vehicle(models.Model):
     @property
     def can_enter_workshop(self):
         latest_entry = self.get_last_entry_record()
-        print("latest_entry", latest_entry)
         return latest_entry.status == VehicleEntryRegistry.StatusChoices.APPROVED
 
     def get_last_entry_record(self):

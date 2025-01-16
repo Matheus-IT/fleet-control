@@ -28,7 +28,7 @@ export async function getVehicleEntries(
   searchQuery: string,
   itemsPerPage: number,
   currentPage: number
-): Promise<VehicleEntryRegistryList[]> {
+) {
   const response = await axiosInstanceAuth.get("/api/vehicle-overview/", {
     params: {
       search_query: searchQuery,
@@ -37,10 +37,20 @@ export async function getVehicleEntries(
     },
   });
 
-  const parsedData = VehicleRegistrySchemaList.array().safeParse(response.data);
+  console.log("response.data", response.data);
+
+  const parsedData = VehicleRegistrySchemaList.array().safeParse(
+    response.data.results
+  );
   if (parsedData.success) {
     const vehicleEntries: VehicleEntryRegistryList[] = parsedData.data;
-    return vehicleEntries;
+    return {
+      count: response.data.count,
+      next: response.data.next,
+      previous: response.data.previous,
+      results: vehicleEntries,
+      numPages: response.data.num_pages,
+    };
   }
 
   throw new Error(`Invalid data format from API: ${parsedData.error}`);

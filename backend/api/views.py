@@ -82,7 +82,17 @@ def vehicles_overview_view(request: Request):
 
     serializer = VehicleEntryRegistrySerializer(page_obj.object_list, many=True)
 
-    return Response(serializer.data)
+    return Response(
+        {
+            "count": paginator.count,
+            "next": page_obj.next_page_number() if page_obj.has_next() else None,
+            "previous": (
+                page_obj.previous_page_number() if page_obj.has_previous() else None
+            ),
+            "num_pages": paginator.num_pages,
+            "results": serializer.data,
+        }
+    )
 
 
 @api_view(http_method_names=["get"])
