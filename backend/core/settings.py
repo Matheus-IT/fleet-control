@@ -42,6 +42,8 @@ else:
     CORS_ALLOWED_ORIGINS = [
         config("FRONTEND_APP_URL"),
     ]
+    ALLOWED_HOSTS.append(config("FRONTEND_APP_URL"))
+    
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
