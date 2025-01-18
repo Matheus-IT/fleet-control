@@ -47,7 +47,8 @@ axiosInstanceAuth.interceptors.response.use(
         const refreshToken = getRefreshToken();
         if (!refreshToken) {
           console.log("No refresh token!");
-          throw new Error("No refresh token!");
+          redirectToLogin();
+          Promise.reject(new Error("No refresh token!"));
         }
 
         // Try to refresh the token
