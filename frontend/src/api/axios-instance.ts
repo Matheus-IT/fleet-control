@@ -48,7 +48,7 @@ axiosInstanceAuth.interceptors.response.use(
         if (!refreshToken) {
           console.log("No refresh token!");
           redirectToLogin();
-          Promise.reject(new Error("No refresh token!"));
+          return;
         }
 
         // Try to refresh the token
@@ -72,7 +72,7 @@ axiosInstanceAuth.interceptors.response.use(
         if (error instanceof AxiosError && error.response?.status === 401) {
           setAuthCredentials(null, null);
           redirectToLogin();
-          return Promise.reject(error);
+          return;
         }
       }
     }
