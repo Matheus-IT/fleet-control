@@ -12,7 +12,8 @@ const SearchableSelect = ({
   onChange,
 }: {
   value?: object;
-  options: unknown[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  options: any[];
   placeholder: string;
   className?: string;
   isDisabled: boolean;
