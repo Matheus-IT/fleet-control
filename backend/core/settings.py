@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config("SECRET_KEY")
 
-DEBUG = config('DEBUG', cast=bool)
+DEBUG = config("DEBUG", cast=bool)
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
@@ -42,8 +42,8 @@ else:
     CORS_ALLOWED_ORIGINS = [
         config("FRONTEND_APP_URL"),
     ]
-    ALLOWED_HOSTS.append(config("FRONTEND_APP_URL"))
-    
+    ALLOWED_HOSTS.append(config("API_URL"))
+
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
