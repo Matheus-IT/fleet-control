@@ -187,31 +187,26 @@ export default function VehicleDetail({
               </div>
             )}
 
-            {lastEntryData.status == VehicleEntryStatus.NOT_APPROVED && (
-              <>
-                <div className="space-y-2 pl-7">
-                  <p className="text-base">
+            <div className="space-y-2 pl-7">
+              <p className="text-base">
+                Status:{" "}
+                {lastEntryData.status == VehicleEntryStatus.NOT_APPROVED && (
+                  <>
                     <span className="text-danger-600">Não aprovado</span>
-                  </p>
-                  <p className="text-base">
+                    <br />
                     <span className="text-gray-600">Motivo: </span>
                     <strong>{lastEntryData.observation}</strong>
-                  </p>
-                </div>
-              </>
-            )}
-
-            {lastEntryData.status == VehicleEntryStatus.WAITING_APPROVAL && (
-              <>
-                <div className="space-y-2 pl-7">
-                  <p className="text-base">
-                    <span className="text-orange-600">
-                      Aguardando aprovação
-                    </span>
-                  </p>
-                </div>
-              </>
-            )}
+                  </>
+                )}
+                {lastEntryData.status ==
+                  VehicleEntryStatus.WAITING_APPROVAL && (
+                  <span className="text-orange-600">Aguardando aprovação</span>
+                )}
+                {lastEntryData.status == VehicleEntryStatus.APPROVED && (
+                  <span className="text-success-600">Aprovado</span>
+                )}
+              </p>
+            </div>
 
             <div className="flex items-center gap-2 text-sm text-gray-600">
               <Clock className="w-4 h-4" />
