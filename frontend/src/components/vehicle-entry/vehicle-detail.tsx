@@ -115,11 +115,13 @@ export default function VehicleDetail({
               </span>
             </p>
 
-            <p className="text-base flex items-center gap-2">
-              <User className="w-4 h-4 text-gray-500" />
-              <span className="text-gray-600">Solicitante:</span>{" "}
-              <strong>{lastEntryData.author!.name}</strong>
-            </p>
+            {!vehicle.is_at_workshop && (
+              <p className="text-base flex items-center gap-2">
+                <User className="w-4 h-4 text-gray-500" />
+                <span className="text-gray-600">Solicitante:</span>{" "}
+                <strong>{lastEntryData.author!.name}</strong>
+              </p>
+            )}
 
             <p className="text-base flex items-center gap-2">
               <Users className="w-4 h-4 text-gray-500" />
@@ -208,21 +210,21 @@ export default function VehicleDetail({
               </p>
             </div>
 
-            <div className="flex items-center gap-2 text-sm text-gray-600">
+            <div className="flex items-center gap-2 text-gray-600">
               <Clock className="w-4 h-4" />
               {lastEntryData.author ? (
-                <p>
+                <span>
                   Ultima atualização em{" "}
                   <strong>{formatDate(lastEntryData.created_at)}</strong> às{" "}
                   {formatTime(lastEntryData.created_at)} por{" "}
                   <strong>{lastEntryData.author.name}</strong>
-                </p>
+                </span>
               ) : (
-                <p>
+                <span>
                   Registro do veículo criado em{" "}
                   <strong>{formatDate(lastEntryData.created_at)}</strong> às{" "}
                   {formatTime(lastEntryData.created_at)}
-                </p>
+                </span>
               )}
             </div>
           </div>
