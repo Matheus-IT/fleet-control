@@ -116,12 +116,16 @@ export default function VehicleDetail({
             </p>
 
             {!vehicle.is_at_workshop && (
-              <p className="text-base flex items-center gap-2">
-                <User className="w-4 h-4 text-gray-500" />
-                <span className="text-gray-600">Solicitante:</span>{" "}
-                <strong>{lastEntryData.author!.name}</strong>
+              <p className="ml-6 text-xl">
+                <strong>Informações da última atualização:</strong>
               </p>
             )}
+
+            <p className="text-base flex items-center gap-2">
+              <User className="w-4 h-4 text-gray-500" />
+              <span className="text-gray-600">Solicitante:</span>{" "}
+              <strong>{lastEntryData.author!.name}</strong>
+            </p>
 
             <p className="text-base flex items-center gap-2">
               <Users className="w-4 h-4 text-gray-500" />
@@ -132,20 +136,18 @@ export default function VehicleDetail({
               </strong>
             </p>
 
-            {vehicle.is_at_workshop && (
-              <div className="mt-2 pl-6">
+            <div className="mt-2 pl-6">
+              <p className="text-base">
+                <span className="text-gray-600">Problema reportado:</span>{" "}
+                <strong>{lastEntryData.problem_reported}</strong>
+              </p>
+              {lastEntryData.workshop && (
                 <p className="text-base">
-                  <span className="text-gray-600">Problema reportado:</span>{" "}
-                  <strong>{lastEntryData.problem_reported}</strong>
+                  <span className="text-gray-600">Oficina:</span>{" "}
+                  <strong>{lastEntryData.workshop.name}</strong>
                 </p>
-                {lastEntryData.workshop && (
-                  <p className="text-base">
-                    <span className="text-gray-600">Oficina:</span>{" "}
-                    <strong>{lastEntryData.workshop.name}</strong>
-                  </p>
-                )}
-              </div>
-            )}
+              )}
+            </div>
 
             {lastEntryData.parts &&
               lastEntryData.parts.length > 0 &&
@@ -189,12 +191,14 @@ export default function VehicleDetail({
               </div>
             )}
 
-            <div className="space-y-2 pl-7">
+            <div className="space-y-2 ml-6">
               <p className="text-base">
                 Status:{" "}
                 {lastEntryData.status == VehicleEntryStatus.NOT_APPROVED && (
                   <>
-                    <span className="text-danger-600">Não aprovado</span>
+                    <span className="text-danger-600">
+                      <strong>Não aprovado</strong>
+                    </span>
                     <br />
                     <span className="text-gray-600">Motivo: </span>
                     <strong>{lastEntryData.observation}</strong>
@@ -202,10 +206,14 @@ export default function VehicleDetail({
                 )}
                 {lastEntryData.status ==
                   VehicleEntryStatus.WAITING_APPROVAL && (
-                  <span className="text-orange-600">Aguardando aprovação</span>
+                  <span className="text-orange-600">
+                    <strong>Aguardando aprovação</strong>
+                  </span>
                 )}
                 {lastEntryData.status == VehicleEntryStatus.APPROVED && (
-                  <span className="text-success-600">Aprovado</span>
+                  <span className="text-success-600">
+                    <strong>Aprovado</strong>
+                  </span>
                 )}
               </p>
             </div>
