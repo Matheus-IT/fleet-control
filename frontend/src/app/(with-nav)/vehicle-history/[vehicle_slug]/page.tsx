@@ -2,7 +2,7 @@
 
 import { useGetVehicleHistory } from "@/hooks/react-query";
 import { VehicleEntryStatus } from "@/types/api";
-import { Spinner } from "@nextui-org/react";
+import { Spinner } from "@heroui/react";
 
 export default function CreateRecordPage({
   params,

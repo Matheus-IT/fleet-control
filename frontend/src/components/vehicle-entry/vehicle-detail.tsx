@@ -21,7 +21,7 @@ import {
   ModalBody,
   ModalFooter,
   Textarea,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { useMutation } from "@tanstack/react-query";
 import { formatDate, formatTime } from "../../utils/date-time";
 import { useRouter } from "next/navigation";

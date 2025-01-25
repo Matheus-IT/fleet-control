@@ -34,7 +34,7 @@ const SearchableSelect = ({
         styles={{
           control: (baseStyles) => ({
             ...baseStyles,
-            borderRadius: "var(--nextui-radius-small)",
+            borderRadius: "var(--heroui-radius-small)",
             ...styles,
           }),
           menu: (baseStyles) => ({

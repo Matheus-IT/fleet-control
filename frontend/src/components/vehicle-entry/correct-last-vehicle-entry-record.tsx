@@ -10,7 +10,7 @@ import {
   VehicleEntryStatus,
   Workshop,
 } from "@/types/api";
-import { Button, Spinner, Input } from "@nextui-org/react";
+import { Button, Spinner, Input } from "@heroui/react";
 import { Plus, Trash2 } from "lucide-react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";

@@ -1,6 +1,6 @@
 import React from "react";
 import { VehicleEntryRegistryDetail, VehiclePart } from "@/types/api";
-import { Card, CardBody, CardHeader, Divider } from "@nextui-org/react";
+import { Card, CardBody, CardHeader, Divider } from "@heroui/react";
 import { Car, Wrench, AlertCircle, User, Building2, Users } from "lucide-react";
 import { formatCurrency } from "@/utils/currency";
 

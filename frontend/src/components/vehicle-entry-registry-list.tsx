@@ -1,7 +1,7 @@
 import VehicleEntryTile from "@/components/vehicle-entry";
 import { useGetVehicleEntries } from "@/hooks/react-query";
 import { Vehicle } from "@/types/api";
-import { Button, Spinner, Pagination } from "@nextui-org/react";
+import { Button, Spinner, Pagination } from "@heroui/react";
 import { useMemo, useState } from "react";
 
 export default function VehicleEntryRegistryList({

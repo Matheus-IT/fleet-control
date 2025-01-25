@@ -1,7 +1,7 @@
 "use client";
 
 import { CreateVehicleEntryRecord } from "@/components/vehicle-entry/create-vehicle-entry-record";
-import { Spinner } from "@nextui-org/react";
+import { Spinner } from "@heroui/react";
 import CreateVehicleExitRecord from "@/components/vehicle-entry/create-vehicle-exit-record";
 import WaitingApproval from "@/components/vehicle-entry/waiting-approval";
 import { useUserInfoStore } from "@/stores/user-info";

@@ -1,5 +1,5 @@
 import { VehicleEntryRegistryList, VehicleEntryStatus } from "@/types/api";
-import { Chip, Tooltip } from "@nextui-org/react";
+import { Chip, Tooltip } from "@heroui/react";
 import { CircleAlert } from "lucide-react";
 // import { formatDate, formatTime } from "../../utils/date-time";
 

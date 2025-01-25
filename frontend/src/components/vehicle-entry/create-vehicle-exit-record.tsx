@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardFooter,
   Divider,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { Car, LogOut } from "lucide-react";
 
 export default function CreateVehicleExitRecord({

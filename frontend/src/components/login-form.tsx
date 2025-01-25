@@ -3,8 +3,8 @@
 import { storeAuthTokens } from "@/api/auth-tokens";
 import { submitLogin } from "@/api/request-queries";
 import { SubmitLoginCredentials } from "@/types/api";
-import { Input } from "@nextui-org/input";
-import { Button } from "@nextui-org/react";
+import { Input } from "@heroui/input";
+import { Button } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, FormEvent, useState } from "react";
 

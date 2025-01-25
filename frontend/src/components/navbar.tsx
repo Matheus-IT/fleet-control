@@ -9,7 +9,7 @@ import {
   NavbarMenu,
   NavbarMenuItem,
   NavbarMenuToggle,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import Logo from "./logo";
 import { setAuthCredentials } from "@/api/auth-tokens";
 import { redirectToLogin } from "@/api/axios-instance";
