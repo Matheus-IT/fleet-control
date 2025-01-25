@@ -22,10 +22,9 @@ export default function LoginForm() {
     event.preventDefault();
 
     const result = SubmitLoginCredentialsSchema.safeParse(formData);
-    console.log("result", result);
 
     if (!result.success) {
-      setErrors(result.error.formErrors.fieldErrors);
+      setErrors(result.error?.formErrors.fieldErrors);
       return;
     }
 
@@ -58,7 +57,6 @@ export default function LoginForm() {
     <Form
       onSubmit={handleSubmitLogin}
       className="flex flex-col border-2 rounded-2xl p-5 w-72 max-sm:w-[80%]"
-      validationErrors={errors}
     >
       <h1 className="text-3xl text-center mb-3">Login</h1>
       <Input
@@ -68,6 +66,8 @@ export default function LoginForm() {
         value={formData.email}
         onChange={handleLoginFormChange}
         isRequired
+        errorMessage={errors.email}
+        isInvalid={!!errors.email}
       />
       <Input
         type="password"
@@ -77,11 +77,18 @@ export default function LoginForm() {
         value={formData.password}
         onChange={handleLoginFormChange}
         isRequired
+        errorMessage={errors.password}
+        isInvalid={!!errors.password}
       />
 
       <p className="text-sm text-center text-red-500 mb-3">{errors.detail}</p>
 
-      <Button type="submit" color="primary" isLoading={isLoading}>
+      <Button
+        className="w-full"
+        type="submit"
+        color="primary"
+        isLoading={isLoading}
+      >
         Entrar
       </Button>
     </Form>
