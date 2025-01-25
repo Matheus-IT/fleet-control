@@ -136,3 +136,8 @@ export const VehicleExitRegistrySchema = z.object({
       )
   ), // Convert string to Date
 });
+
+export const SubmitLoginCredentialsSchema = z.object({
+  email: z.string().min(3),
+  password: z.string().min(8), // Ensure the password is at least 8 characters long
+});

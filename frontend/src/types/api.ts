@@ -1,4 +1,5 @@
 import {
+  SubmitLoginCredentialsSchema,
   VehicleEntryRegistrySchema,
   VehicleEntryRegistrySchemaDetail,
   VehicleRegistrySchemaList as VehicleEntryRegistrySchemaList,
@@ -46,10 +47,9 @@ export type VehicleEntry = z.infer<typeof VehicleEntrySchema>;
 
 export type VehicleExitRegistry = z.infer<typeof VehicleExitRegistrySchema>;
 
-export type SubmitLoginCredentials = {
-  email: string;
-  password: string;
-};
+export type SubmitLoginCredentials = z.infer<
+  typeof SubmitLoginCredentialsSchema
+>;
 
 export type AuthCredentials = {
   access: string;
