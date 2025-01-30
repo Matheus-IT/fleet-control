@@ -9,6 +9,7 @@ import {
   NavbarMenu,
   NavbarMenuItem,
   NavbarMenuToggle,
+  Spinner,
 } from "@heroui/react";
 import Logo from "./logo";
 import { setAuthCredentials } from "@/api/auth-tokens";
@@ -35,6 +36,14 @@ export default function MyNavbar() {
   function handleLogout() {
     setAuthCredentials(null, null);
     redirectToLogin();
+  }
+
+  if (!data) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <Spinner size="lg" />
+      </div>
+    );
   }
 
   return (
