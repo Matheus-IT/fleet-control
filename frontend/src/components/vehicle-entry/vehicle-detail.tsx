@@ -239,7 +239,7 @@ export default function VehicleDetail({
         </CardBody>
         <Divider />
         <CardFooter className="flex justify-between">
-          <Button color="primary" onClick={handleGoToHistory}>
+          <Button color="primary" onPress={handleGoToHistory}>
             Ver histórico
           </Button>
 
@@ -248,7 +248,7 @@ export default function VehicleDetail({
               <AlertTriangle className="w-5 h-5 text-yellow-500" />
               <Button
                 color="success"
-                onClick={handleApprove}
+                onPress={handleApprove}
                 isDisabled={
                   lastEntryData.status == VehicleEntryStatus.NOT_APPROVED
                 }
@@ -257,7 +257,7 @@ export default function VehicleDetail({
               </Button>
               <Button
                 color="danger"
-                onClick={() => setIsModalOpen(true)}
+                onPress={() => setIsModalOpen(true)}
                 isDisabled={
                   lastEntryData.status == VehicleEntryStatus.NOT_APPROVED
                 }
@@ -282,12 +282,11 @@ export default function VehicleDetail({
             />
           </ModalBody>
           <ModalFooter>
-            <Button color="default" onClick={() => setIsModalOpen(false)}>
+            <Button color="default" onPress={() => setIsModalOpen(false)}>
               Cancelar
             </Button>
             <Button
               color="danger"
-              onClick={handleDoNotApprove}
               onPress={handleDoNotApprove}
               isDisabled={!observation.trim()}
             >
