@@ -262,7 +262,7 @@ export default function VehicleDetail({
                   lastEntryData.status == VehicleEntryStatus.NOT_APPROVED
                 }
               >
-                Não aprovar
+                Rejeitar
               </Button>
             </div>
           )}
@@ -271,7 +271,7 @@ export default function VehicleDetail({
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <ModalContent>
-          <ModalHeader>Não aprovar entrada</ModalHeader>
+          <ModalHeader>Rejeitar entrada</ModalHeader>
           <ModalBody>
             <Textarea
               label="Observação"
