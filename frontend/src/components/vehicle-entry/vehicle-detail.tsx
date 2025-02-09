@@ -192,7 +192,7 @@ export default function VehicleDetail({
             )}
 
             <div className="space-y-2 ml-6">
-              <p className="text-base">
+              <div className="text-base">
                 <span className="text-gray-600">Status:</span>{" "}
                 {lastEntryData.status == VehicleEntryStatus.NOT_APPROVED && (
                   <>
@@ -215,7 +215,7 @@ export default function VehicleDetail({
                     <strong>Aprovado</strong>
                   </span>
                 )}
-              </p>
+              </div>
             </div>
 
             <div className="flex items-center gap-2 text-gray-600">
