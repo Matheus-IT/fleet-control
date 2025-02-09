@@ -10,7 +10,7 @@ import {
   VehicleEntryStatus,
   Workshop,
 } from "@/types/api";
-import { Button, Spinner, Input } from "@heroui/react";
+import { Button, Spinner, Input, Textarea } from "@heroui/react";
 import { Plus, Trash2 } from "lucide-react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -159,7 +159,8 @@ export default function CorrectLastVehicleEntryRecord({
         Esta entrada{" "}
         <strong className="text-danger-500">não foi aprovada</strong>
       </h1>
-      <h1>Observação: {lastEntry.observation}</h1>
+      <h1>Observação:</h1>
+      <Textarea className="mb-1" value={lastEntry.observation} readOnly />
       <h1>Modelo: {lastEntry.vehicle.model}</h1>
       <h1>Placa: {lastEntry.vehicle.licence_plate}</h1>
 

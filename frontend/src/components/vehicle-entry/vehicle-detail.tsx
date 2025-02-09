@@ -102,7 +102,7 @@ export default function VehicleDetail({
             <p className="flex items-center gap-2">
               <Wrench className="w-4 h-4 text-gray-500" />
               <span className="text-base">
-                Na oficina:{" "}
+                <span className="text-gray-600">Na oficina:</span>{" "}
                 <strong
                   className={
                     vehicle.is_at_workshop
@@ -193,7 +193,7 @@ export default function VehicleDetail({
 
             <div className="space-y-2 ml-6">
               <p className="text-base">
-                Status:{" "}
+                <span className="text-gray-600">Status:</span>{" "}
                 {lastEntryData.status == VehicleEntryStatus.NOT_APPROVED && (
                   <>
                     <span className="text-danger-600">
@@ -201,7 +201,7 @@ export default function VehicleDetail({
                     </span>
                     <br />
                     <span className="text-gray-600">Motivo: </span>
-                    <strong>{lastEntryData.observation}</strong>
+                    <Textarea readOnly value={lastEntryData.observation} />
                   </>
                 )}
                 {lastEntryData.status ==
