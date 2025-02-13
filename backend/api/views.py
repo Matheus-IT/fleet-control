@@ -122,7 +122,6 @@ def vehicle_history_view(request: Request, slug: str):
     from django.shortcuts import get_object_or_404
     from api.serializers import VehicleHistoryReturnSerializer
 
-    print("\n>>>", slug)
     vehicle = get_object_or_404(Vehicle, slug=slug)
 
     history = (
@@ -130,7 +129,6 @@ def vehicle_history_view(request: Request, slug: str):
         .exclude_created_by_system()
         .order_by("-created_at")
     )
-    print("history", history)
 
     serializer = VehicleHistoryReturnSerializer(
         {
