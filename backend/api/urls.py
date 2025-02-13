@@ -38,7 +38,7 @@ urlpatterns = [
     path(
         "vehicle-history/<str:slug>/",
         vehicle_history_view,
-        name="vehicle_overview_view",
+        name="vehicle_history_view",
     ),
     path(
         "get-last-entry-record-from-vehicle/<str:vehicle_slug>/",
