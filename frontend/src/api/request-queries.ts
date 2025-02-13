@@ -84,6 +84,23 @@ export async function getVehicleHistory(slug: string) {
   else console.log("Error at getVehicleHistory", parsedData.error);
 }
 
+export async function getVehicleHistoryCSV(vehicle_id: string) {
+  const res = await axiosInstanceAuth.get(
+    `/api/vehicle-history-csv/${vehicle_id}/`,
+    {
+      responseType: "blob", // Tell Axios to expect a binary response (file)
+    }
+  );
+
+  const blob = new Blob([res.data], { type: "text/csv" });
+
+  const url = window.URL.createObjectURL(blob);
+
+  window.open(url, "_blank");
+
+  window.URL.revokeObjectURL(url);
+}
+
 export async function getTeams() {
   const res = await axiosInstanceAuth.get("/api/teams/");
   const parsedData = ResponsableTeamSchema.array().safeParse(res.data);

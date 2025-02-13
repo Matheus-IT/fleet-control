@@ -140,6 +140,39 @@ def vehicle_history_view(request: Request, slug: str):
     return Response(serializer.data)
 
 
+@api_view(http_method_names=["get"])
+@permission_classes([IsAuthenticated])
+def vehicle_history_csv_view(request: Request, vehicle_id: str):
+    import csv
+    import tempfile
+    from django.http import FileResponse
+
+    print("vehicle_id", vehicle_id)
+    data = [
+        ["Date", "Event", "Location"],
+        ["2023-10-01", "Service", "New York"],
+        ["2023-10-05", "Fuel Refill", "Los Angeles"],
+        ["2023-10-10", "Inspection", "Chicago"],
+    ]
+
+    # Create a temporary file to store the CSV data
+    with tempfile.NamedTemporaryFile(
+        mode="w+", delete=False, newline="", suffix=".csv"
+    ) as temp_file:
+        writer = csv.writer(temp_file)
+        for row in data:
+            writer.writerow(row)
+        temp_file_path = temp_file.name
+
+    # Open the file in binary mode and return it as a FileResponse
+    response = FileResponse(open(temp_file_path, "rb"), content_type="text/csv")
+    response["Content-Disposition"] = (
+        f'attachment; filename="vehicle_{vehicle_id}_history.csv"'
+    )
+
+    return response
+
+
 class TeamViewset(ModelViewSet):
     permission_classes = [IsAuthenticated]
     queryset = Team.objects.all()

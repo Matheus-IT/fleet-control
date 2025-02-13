@@ -1,8 +1,9 @@
 "use client";
 
+import { getVehicleHistoryCSV } from "@/api/request-queries";
 import { useGetVehicleHistory } from "@/hooks/react-query";
 import { VehicleEntryStatus } from "@/types/api";
-import { Spinner } from "@heroui/react";
+import { Button, Spinner } from "@heroui/react";
 
 export default function CreateRecordPage({
   params,
@@ -27,6 +28,14 @@ export default function CreateRecordPage({
     return `${hours}:${minutes}:${seconds}`;
   }
 
+  async function handleDownloadCSV() {
+    try {
+      await getVehicleHistoryCSV(historyData!.vehicle.id.toString());
+    } catch (error) {
+      console.error("Failed to download file:", error);
+    }
+  }
+
   if (!historyData)
     return (
       <div className="h-screen flex items-center justify-center">
@@ -37,6 +46,11 @@ export default function CreateRecordPage({
   return (
     <main className="container mx-auto mt-6">
       <h1 className="text-lg mb-2">Histórico do {historyData.vehicle.model}</h1>
+
+      <Button color="primary" onPress={handleDownloadCSV}>
+        Baixar CSV
+      </Button>
+
       <div className="flex flex-col gap-4">
         {historyData.history.map((e) => (
           <div

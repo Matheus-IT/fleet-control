@@ -12,6 +12,7 @@ from api.views import (
     VehicleEntryRegistryViewSet,
     create_vehicle_exit_record_view,
     vehicle_history_view,
+    vehicle_history_csv_view,
     get_last_entry_record_from_vehicle_view,
 )
 
@@ -39,6 +40,11 @@ urlpatterns = [
         "vehicle-history/<str:slug>/",
         vehicle_history_view,
         name="vehicle_history_view",
+    ),
+    path(
+        "vehicle-history-csv/<str:vehicle_id>/",
+        vehicle_history_csv_view,
+        name="vehicle_history_csv_view",
     ),
     path(
         "get-last-entry-record-from-vehicle/<str:vehicle_slug>/",
