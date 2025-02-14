@@ -76,7 +76,6 @@ export async function getVehicle(slug: string) {
 
 export async function getVehicleHistory(slug: string) {
   const res = await axiosInstanceAuth.get(`/api/vehicle-history/${slug}`);
-  console.log("res.data", res.data);
 
   const parsedData = VehicleHistoryReturnSchema.safeParse(res.data);
 
@@ -88,16 +87,33 @@ export async function getVehicleHistoryCSV(vehicle_id: string) {
   const res = await axiosInstanceAuth.get(
     `/api/vehicle-history-csv/${vehicle_id}/`,
     {
-      responseType: "blob", // Tell Axios to expect a binary response (file)
+      responseType: "blob",
     }
   );
+
+  // Extract the filename from the Content-Disposition header
+  const contentDisposition = res.headers["content-disposition"];
+  let filename = `vehicle_${vehicle_id}_history.csv`; // Default filename
+  if (contentDisposition && contentDisposition.includes("filename=")) {
+    filename = contentDisposition
+      .split("filename=")[1]
+      .split(";")[0]
+      .replace(/['"]/g, ""); // Remove any quotes around the filename
+  }
 
   const blob = new Blob([res.data], { type: "text/csv" });
 
   const url = window.URL.createObjectURL(blob);
 
-  window.open(url, "_blank");
+  // Create a temporary <a> element to trigger the download with the correct filename
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", filename); // Set the filename for the download
+  document.body.appendChild(link);
+  link.click();
 
+  // Clean up
+  link.remove();
   window.URL.revokeObjectURL(url);
 }
 

@@ -24,7 +24,8 @@ from api.serializers import (
     VehicleExitSerializer,
 )
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from rest_framework.pagination import PageNumberPagination
+from django.shortcuts import get_object_or_404
+from api.serializers import VehicleHistoryReturnSerializer
 
 
 @api_view(http_method_names=["get"])
@@ -119,9 +120,6 @@ class VehicleViewset(ModelViewSet):
 @permission_classes([IsAuthenticated])
 @authentication_classes([JWTAuthentication])
 def vehicle_history_view(request: Request, slug: str):
-    from django.shortcuts import get_object_or_404
-    from api.serializers import VehicleHistoryReturnSerializer
-
     vehicle = get_object_or_404(Vehicle, slug=slug)
 
     history = (
@@ -147,13 +145,49 @@ def vehicle_history_csv_view(request: Request, vehicle_id: str):
     import tempfile
     from django.http import FileResponse
 
-    print("vehicle_id", vehicle_id)
+    vehicle = get_object_or_404(Vehicle, id=vehicle_id)
+
+    history = (
+        VehicleEntryRegistry.objects.filter(vehicle=vehicle)
+        .exclude_created_by_system()
+        .order_by("-created_at")
+    )
+
+    serializer = VehicleHistoryReturnSerializer(
+        {
+            "vehicle": vehicle,
+            "history": history,
+        }
+    )
+
     data = [
-        ["Date", "Event", "Location"],
-        ["2023-10-01", "Service", "New York"],
-        ["2023-10-05", "Fuel Refill", "Los Angeles"],
-        ["2023-10-10", "Inspection", "Chicago"],
+        [
+            "Quilometragem",
+            "Oficina",
+            "Eq. Responsável",
+            "Problema",
+            "Autor",
+            "Status",
+            "Observação",
+            "Entrou",
+            "Saiu",
+        ],
     ]
+
+    for e in serializer.data["history"]:
+        data.append(
+            [
+                e["vehicle_km"],
+                e["workshop"]["name"],
+                e["responsable_team"]["name"],
+                e["problem_reported"],
+                e["author"]["name"],
+                e["status"],
+                e["observation"],
+                e["created_at"],
+                e["exit_record"]["created_at"] if e["exit_record"] else "",
+            ]
+        )
 
     # Create a temporary file to store the CSV data
     with tempfile.NamedTemporaryFile(
@@ -166,9 +200,9 @@ def vehicle_history_csv_view(request: Request, vehicle_id: str):
 
     # Open the file in binary mode and return it as a FileResponse
     response = FileResponse(open(temp_file_path, "rb"), content_type="text/csv")
-    response["Content-Disposition"] = (
-        f'attachment; filename="vehicle_{vehicle_id}_history.csv"'
-    )
+
+    filename = f"{vehicle.model}_histórico.csv"
+    response["Content-Disposition"] = f'attachment; filename="{filename}"'
 
     return response
 

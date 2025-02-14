@@ -44,6 +44,8 @@ else:
     ]
     ALLOWED_HOSTS.append(config("API_URL"))
 
+CORS_EXPOSE_HEADERS = ["Content-Disposition"]
+
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
