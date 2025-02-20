@@ -61,7 +61,7 @@ export default function VehicleEntryRegistryList({
               <div className="flex gap-2 items-center">
                 <span>Filtros:</span>
                 <Button
-                  onClick={() => {
+                  onPress={() => {
                     setFilterAtWorkshop(!filterAtWorkshop);
                     if (filterNotAtWorkshop) {
                       setFilterNotAtWorkshop(false);
@@ -74,7 +74,7 @@ export default function VehicleEntryRegistryList({
                 </Button>
 
                 <Button
-                  onClick={() => {
+                  onPress={() => {
                     setFilterNotAtWorkshop(!filterNotAtWorkshop);
                     if (filterAtWorkshop) {
                       setFilterAtWorkshop(false);
