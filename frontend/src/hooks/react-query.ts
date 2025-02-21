@@ -31,8 +31,8 @@ export function useGetVehicleEntries(
       searchQuery,
       filterAtWorkshopStatus,
     ],
-    queryFn: () =>
-      getVehicleEntries(
+    queryFn: async () =>
+      await getVehicleEntries(
         searchQuery,
         itemsPerPage,
         currentPage,
