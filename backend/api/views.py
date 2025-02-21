@@ -41,6 +41,11 @@ def vehicles_overview_view(request: Request):
         )
 
     search_query = request.query_params.get("search_query", "")
+    filter_at_workshop_status = request.query_params.get("filter_at_workshop_status")
+    if filter_at_workshop_status is not None:
+        # here filter_at_workshop_status is either 'true' or 'false'
+        filter_at_workshop_status = filter_at_workshop_status == "true"
+
     # case insensitive
     search_query = search_query.strip().lower()
 
@@ -61,11 +66,19 @@ def vehicles_overview_view(request: Request):
                 status=VehicleEntryRegistry.StatusChoices.APPROVED.value,
             )
 
-        # Skip if no matching search terms
-        if search_query and not (
-            search_query in v.licence_plate.lower()
-            or search_query in v.model.lower()
-            or search_query in latest_entry.workshop.name.lower()
+        if (
+            search_query
+            and not (
+                search_query in v.licence_plate.lower()
+                or search_query in v.model.lower()
+                or (
+                    latest_entry.workshop
+                    and search_query in latest_entry.workshop.name.lower()
+                )
+            )
+        ) or (
+            filter_at_workshop_status != None
+            and latest_entry.vehicle.is_at_workshop != filter_at_workshop_status
         ):
             continue
 

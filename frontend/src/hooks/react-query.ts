@@ -21,11 +21,23 @@ export function useGetProfileInfo() {
 export function useGetVehicleEntries(
   searchQuery: string,
   itemsPerPage: number,
-  currentPage: number
+  currentPage: number,
+  filterAtWorkshopStatus: boolean | null
 ) {
   return useQuery({
-    queryKey: ["getVehicleEntries", currentPage],
-    queryFn: () => getVehicleEntries(searchQuery, itemsPerPage, currentPage),
+    queryKey: [
+      "getVehicleEntries",
+      currentPage,
+      searchQuery,
+      filterAtWorkshopStatus,
+    ],
+    queryFn: () =>
+      getVehicleEntries(
+        searchQuery,
+        itemsPerPage,
+        currentPage,
+        filterAtWorkshopStatus
+      ),
   });
 }
 

@@ -27,13 +27,15 @@ import { UserInfo } from "@/types/user";
 export async function getVehicleEntries(
   searchQuery: string,
   itemsPerPage: number,
-  currentPage: number
+  currentPage: number,
+  filterAtWorkshopStatus: boolean | null
 ) {
   const response = await axiosInstanceAuth.get("/api/vehicle-overview/", {
     params: {
       search_query: searchQuery,
       per_page: itemsPerPage,
       page: currentPage,
+      filter_at_workshop_status: filterAtWorkshopStatus,
     },
   });
 
