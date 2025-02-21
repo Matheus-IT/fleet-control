@@ -22,7 +22,9 @@ export function useGetVehicleEntries(
   searchQuery: string,
   itemsPerPage: number,
   currentPage: number,
-  filterAtWorkshopStatus: boolean | null
+  filterAtWorkshopStatus: boolean | null,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onSuccess: (data: any) => void
 ) {
   return useQuery({
     queryKey: [
@@ -31,13 +33,18 @@ export function useGetVehicleEntries(
       searchQuery,
       filterAtWorkshopStatus,
     ],
-    queryFn: async () =>
-      await getVehicleEntries(
+    queryFn: async () => {
+      const resData = await getVehicleEntries(
         searchQuery,
         itemsPerPage,
         currentPage,
         filterAtWorkshopStatus
-      ),
+      );
+
+      onSuccess(resData);
+
+      return resData;
+    },
   });
 }
 

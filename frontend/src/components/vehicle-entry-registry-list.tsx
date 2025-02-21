@@ -1,7 +1,7 @@
 import VehicleEntryTile from "@/components/vehicle-entry";
 import { useGetVehicleEntries } from "@/hooks/react-query";
 import { Vehicle } from "@/types/api";
-import { Button, Spinner, Pagination } from "@heroui/react";
+import { Button, Spinner, Pagination, Badge, Tooltip } from "@heroui/react";
 import { useState } from "react";
 
 export default function VehicleEntryRegistryList({
@@ -14,13 +14,17 @@ export default function VehicleEntryRegistryList({
     boolean | null
   >(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [itemsCount, setItemsCount] = useState(0);
   const itemsPerPage = 5;
 
   const { data, isPending, error } = useGetVehicleEntries(
     searchQuery,
     itemsPerPage,
     currentPage,
-    filterAtWorkshopStatus
+    filterAtWorkshopStatus,
+    (resData) => {
+      setItemsCount(resData.count as number);
+    }
   );
 
   return (
@@ -39,33 +43,54 @@ export default function VehicleEntryRegistryList({
 
           <div className="flex gap-2 items-center">
             <span>Filtros:</span>
-            <Button
-              onPress={() => {
-                if (filterAtWorkshopStatus == null) {
-                  setFilterAtWorkshopStatus(true);
-                } else {
-                  setFilterAtWorkshopStatus(null);
-                }
-              }}
-              color="primary"
-              variant={filterAtWorkshopStatus == true ? "solid" : "bordered"}
-            >
-              Está na oficina
-            </Button>
 
-            <Button
-              onPress={() => {
-                if (filterAtWorkshopStatus == null) {
-                  setFilterAtWorkshopStatus(false);
-                } else {
-                  setFilterAtWorkshopStatus(null);
-                }
-              }}
-              color="primary"
-              variant={filterAtWorkshopStatus == false ? "solid" : "bordered"}
-            >
-              Não está na oficina
-            </Button>
+            <Tooltip content="Quantos veículos estão na oficina" showArrow>
+              <Badge
+                color="warning"
+                content={itemsCount}
+                isInvisible={filterAtWorkshopStatus != true}
+              >
+                <Button
+                  onPress={() => {
+                    if (filterAtWorkshopStatus == null) {
+                      setFilterAtWorkshopStatus(true);
+                    } else {
+                      setFilterAtWorkshopStatus(null);
+                    }
+                  }}
+                  color="primary"
+                  variant={
+                    filterAtWorkshopStatus == true ? "solid" : "bordered"
+                  }
+                >
+                  Está na oficina
+                </Button>
+              </Badge>
+            </Tooltip>
+
+            <Tooltip content="Quantos veículos não estão na oficina" showArrow>
+              <Badge
+                color="warning"
+                content={itemsCount}
+                isInvisible={filterAtWorkshopStatus != false}
+              >
+                <Button
+                  onPress={() => {
+                    if (filterAtWorkshopStatus == null) {
+                      setFilterAtWorkshopStatus(false);
+                    } else {
+                      setFilterAtWorkshopStatus(null);
+                    }
+                  }}
+                  color="primary"
+                  variant={
+                    filterAtWorkshopStatus == false ? "solid" : "bordered"
+                  }
+                >
+                  Não está na oficina
+                </Button>
+              </Badge>
+            </Tooltip>
           </div>
         </div>
 
