@@ -21,11 +21,11 @@ from api.serializers import (
     TeamSerializer,
     WorkshopSerializer,
     VehicleEntrySerializer,
-    VehicleExitSerializer,
 )
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import get_object_or_404
 from api.serializers import VehicleHistoryReturnSerializer
+from datetime import datetime
 
 
 @api_view(http_method_names=["get"])
@@ -197,8 +197,14 @@ def vehicle_history_csv_view(request: Request, vehicle_id: str):
                 e["author"]["name"],
                 e["status"],
                 e["observation"],
-                e["created_at"],
-                e["exit_record"]["created_at"] if e["exit_record"] else "",
+                datetime.fromisoformat(e["created_at"]).strftime("%d/%m/%Y %H:%M"),
+                (
+                    datetime.fromisoformat(e["exit_record"]["created_at"]).strftime(
+                        "%d/%m/%Y %H:%M"
+                    )
+                    if e["exit_record"]
+                    else ""
+                ),
             ]
         )
 
