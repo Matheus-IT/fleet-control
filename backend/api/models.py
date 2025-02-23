@@ -175,6 +175,9 @@ class VehicleEntryRegistry(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=StatusChoices.choices)
     observation = models.CharField(max_length=100, default="", blank=True)
+    assessment_responsible = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="vehicle_entries", null=True
+    )
 
     objects = VehicleEntryRegistryManager()
 

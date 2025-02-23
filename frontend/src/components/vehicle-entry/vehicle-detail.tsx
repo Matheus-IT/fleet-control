@@ -26,13 +26,14 @@ import { useMutation } from "@tanstack/react-query";
 import { formatDate, formatTime } from "../../utils/date-time";
 import { useRouter } from "next/navigation";
 import { Clock, Car, Wrench, AlertTriangle, User, Users } from "lucide-react";
+import { useUserInfoStore } from "@/stores/user-info";
 
 export default function VehicleDetail({
   lastEntryData,
 }: {
   lastEntryData: VehicleEntryRegistryDetail;
 }) {
-  console.log("VehicleDetail lastEntryData", lastEntryData);
+  const { userInfo } = useUserInfoStore((state) => state);
 
   const vehicle = lastEntryData.vehicle;
   const router = useRouter();
@@ -40,14 +41,15 @@ export default function VehicleDetail({
   const [observation, setObservation] = useState("");
 
   const mutation = useMutation({
-    mutationFn: () => approveEntryRequest(lastEntryData!.id),
+    mutationFn: () => approveEntryRequest(lastEntryData!.id, userInfo!.id),
     onSettled: () => {
       window.location.reload();
     },
   });
 
   const doNotApproveMutation = useMutation({
-    mutationFn: () => doNotApproveEntryRequest(lastEntryData!.id, observation),
+    mutationFn: () =>
+      doNotApproveEntryRequest(lastEntryData!.id, observation, userInfo!.id),
     onSettled: () => {
       setIsModalOpen(false);
       setObservation("");

@@ -5,7 +5,7 @@ import { useGetVehicleHistory } from "@/hooks/react-query";
 import { VehicleEntryStatus } from "@/types/api";
 import { Button, Spinner } from "@heroui/react";
 
-export default function CreateRecordPage({
+export default function VehicleHistoryPage({
   params,
 }: {
   params: { vehicle_slug: string };
@@ -67,7 +67,7 @@ export default function CreateRecordPage({
 
             <p className="text-base">Problema: {e.problem_reported}</p>
 
-            <p className="text-base">Autor: {e.author.name}</p>
+            <p className="text-base">Solicitante: {e.author.name}</p>
 
             <p className="text-base">
               Status:{" "}
@@ -85,6 +85,10 @@ export default function CreateRecordPage({
             {e.status == VehicleEntryStatus.NOT_APPROVED && (
               <p className="text-base">Motivo: {e.observation}</p>
             )}
+
+            <p className="text-base">
+              Responsável pela avaliação: {e.assessment_responsible.name}
+            </p>
 
             <p className="text-base">
               <strong>Entrou</strong> na oficina em: {formatDate(e.created_at)}{" "}

@@ -136,6 +136,7 @@ class VehicleEntrySerializer(serializers.ModelSerializer):
             "created_at",
             "status",
             "observation",
+            "assessment_responsible",
         ]
 
     def create(self, validated_data):
@@ -199,6 +200,7 @@ class VehicleHistorySerializer(serializers.ModelSerializer):
     responsable_team = TeamSerializer()
     author = serializers.SerializerMethodField()
     exit_record = VehicleExitSerializer()
+    assessment_responsible = serializers.SerializerMethodField()
 
     class Meta:
         model = VehicleEntryRegistry
@@ -211,12 +213,18 @@ class VehicleHistorySerializer(serializers.ModelSerializer):
             "author",
             "status",
             "observation",
+            "assessment_responsible",
             "created_at",
         ]
 
     def get_author(self, obj):
         if obj.author:
             return {"name": obj.author.name}
+        return None
+
+    def get_assessment_responsible(self, obj):
+        if obj.assessment_responsible:
+            return {"name": obj.assessment_responsible.name}
         return None
 
 

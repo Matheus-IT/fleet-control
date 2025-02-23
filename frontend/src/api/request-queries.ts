@@ -179,11 +179,15 @@ export async function getLastEntryRecordFromVehicle(
 }
 
 export async function approveEntryRequest(
-  last_entry_request_id: number
+  last_entry_request_id: number,
+  responsible_id: number
 ): Promise<VehicleEntryRegistryList> {
   const res = await axiosInstanceAuth.patch(
     `/api/vehicle-entry-registries/${last_entry_request_id}/`,
-    { status: VehicleEntryStatus.APPROVED }
+    {
+      status: VehicleEntryStatus.APPROVED,
+      assessment_responsible: responsible_id,
+    }
   );
 
   const parsedData = VehicleRegistrySchemaList.parse(res.data);
@@ -192,22 +196,18 @@ export async function approveEntryRequest(
 
 export async function doNotApproveEntryRequest(
   last_entry_request_id: number,
-  observation: string
+  observation: string,
+  responsible_id: number
 ): Promise<VehicleEntryRegistry | undefined> {
   try {
-    console.log("last_entry_request_id", last_entry_request_id);
-
     const res = await axiosInstanceAuth.patch(
       `/api/vehicle-entry-registries/${last_entry_request_id}/`,
       {
         status: VehicleEntryStatus.NOT_APPROVED,
         observation: observation,
+        assessment_responsible: responsible_id,
       }
     );
-    console.log("doNotApproveEntryRequest");
-    console.log("res", res);
-    console.log("res.data", res.data);
-
     const parsedData = VehicleEntryRegistrySchema.parse(res.data);
     return parsedData;
   } catch (e) {
