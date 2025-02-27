@@ -46,7 +46,7 @@ export default function VehicleHistoryPage({
     );
 
   return (
-    <main className="container mx-auto mt-6">
+    <main className="container mx-auto mt-6 lg:w-[61rem]">
       <div className="mx-6">
         <h1 className="text-lg mb-2">
           Histórico do {historyData.vehicle.model}
@@ -61,7 +61,7 @@ export default function VehicleHistoryPage({
         {historyData.history.map((e) => (
           <div
             key={e.created_at.toString()}
-            className="w-full shadow-md rounded-lg p-4 border-l-5 border-l-purple-700 cursor-pointer hover:border-l-purple-800 hover:shadow-lg"
+            className="w-full shadow-md rounded-lg p-4 border-l-5 border-l-purple-700"
           >
             <p className="text-base">Número: {e.id}</p>
 

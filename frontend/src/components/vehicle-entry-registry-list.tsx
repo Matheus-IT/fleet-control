@@ -28,7 +28,7 @@ export default function VehicleEntryRegistryList({
   );
 
   return (
-    <main className="container mx-auto">
+    <main className="container mx-auto lg:w-[61rem]">
       <div className="flex flex-col gap-4 max-sm:p-4">
         <h1 className="text-2xl text-center mt-6">Registros de veículos</h1>
 
