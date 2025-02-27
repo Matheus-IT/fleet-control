@@ -197,6 +197,7 @@ class VehicleExitCreateSerializer(serializers.ModelSerializer):
 
 class VehicleHistorySerializer(serializers.ModelSerializer):
     workshop = WorkshopSerializer()
+    parts = VehiclePartSerializer(many=True)
     responsable_team = TeamSerializer()
     author = serializers.SerializerMethodField()
     exit_record = VehicleExitSerializer()
@@ -207,6 +208,7 @@ class VehicleHistorySerializer(serializers.ModelSerializer):
         fields = [
             "exit_record",
             "vehicle_km",
+            "parts",
             "workshop",
             "problem_reported",
             "responsable_team",

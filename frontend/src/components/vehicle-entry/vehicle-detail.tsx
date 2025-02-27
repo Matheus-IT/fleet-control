@@ -3,11 +3,7 @@ import {
   approveEntryRequest,
   doNotApproveEntryRequest,
 } from "@/api/request-queries";
-import {
-  VehicleEntryRegistryDetail,
-  VehicleEntryStatus,
-  VehiclePart,
-} from "@/types/api";
+import { VehicleEntryRegistryDetail, VehicleEntryStatus } from "@/types/api";
 import {
   Button,
   Card,
@@ -27,6 +23,8 @@ import { formatDate, formatTime } from "../../utils/date-time";
 import { useRouter } from "next/navigation";
 import { Clock, Car, Wrench, AlertTriangle, User, Users } from "lucide-react";
 import { useUserInfoStore } from "@/stores/user-info";
+import { formatCurrency } from "@/utils/currency";
+import { calculateTotal } from "@/utils/vehicle-parts";
 
 export default function VehicleDetail({
   lastEntryData,
@@ -71,20 +69,6 @@ export default function VehicleDetail({
       doNotApproveMutation.mutate();
     }
   }
-
-  const calculateTotal = (parts: VehiclePart[]) => {
-    return parts.reduce(
-      (sum, part) => sum + part.unit_value * part.quantity,
-      0
-    );
-  };
-
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(value);
-  };
 
   return (
     <main className="container mx-auto py-6 px-4 max-w-3xl">

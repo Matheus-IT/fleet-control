@@ -3,6 +3,8 @@
 import { getVehicleHistoryCSV } from "@/api/request-queries";
 import { useGetVehicleHistory } from "@/hooks/react-query";
 import { VehicleEntryStatus } from "@/types/api";
+import { formatCurrency } from "@/utils/currency";
+import { calculateTotal } from "@/utils/vehicle-parts";
 import { Button, Spinner } from "@heroui/react";
 
 export default function VehicleHistoryPage({
@@ -45,11 +47,15 @@ export default function VehicleHistoryPage({
 
   return (
     <main className="container mx-auto mt-6">
-      <h1 className="text-lg mb-2">Histórico do {historyData.vehicle.model}</h1>
+      <div className="mx-6">
+        <h1 className="text-lg mb-2">
+          Histórico do {historyData.vehicle.model}
+        </h1>
 
-      <Button color="primary" onPress={handleDownloadCSV}>
-        Baixar CSV
-      </Button>
+        <Button color="primary" onPress={handleDownloadCSV} className="mb-2">
+          Baixar CSV
+        </Button>
+      </div>
 
       <div className="flex flex-col gap-4">
         {historyData.history.map((e) => (
@@ -68,6 +74,35 @@ export default function VehicleHistoryPage({
             <p className="text-base">Problema: {e.problem_reported}</p>
 
             <p className="text-base">Solicitante: {e.author.name}</p>
+
+            {e.parts && e.parts.length > 0 && (
+              <>
+                <span className="text-base">Peças:</span>
+                <div className="mt-2 space-y-3">
+                  {e.parts.map((part, index) => (
+                    <div key={index} className="bg-gray-50 p-3 rounded-lg">
+                      <div className="grid grid-cols-3 gap-2 text-sm">
+                        <div>
+                          <span className="text-gray-600">Peça:</span>{" "}
+                          <strong>{part.name}</strong>
+                        </div>
+                        <div>
+                          <span className="text-gray-600">Quantidade:</span>{" "}
+                          <strong>{part.quantity}</strong>
+                        </div>
+                        <div>
+                          <span className="text-gray-600">Valor unitário:</span>{" "}
+                          <strong>{formatCurrency(part.unit_value)}</strong>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  <div className="mt-2 text-right font-medium">
+                    Valor total: {formatCurrency(calculateTotal(e.parts))}
+                  </div>
+                </div>
+              </>
+            )}
 
             <p className="text-base">
               Status:{" "}
