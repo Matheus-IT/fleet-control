@@ -63,6 +63,8 @@ export default function VehicleHistoryPage({
             key={e.created_at.toString()}
             className="w-full shadow-md rounded-lg p-4 border-l-5 border-l-purple-700 cursor-pointer hover:border-l-purple-800 hover:shadow-lg"
           >
+            <p className="text-base">Número: {e.id}</p>
+
             <p className="text-base">Quilometragem: {e.vehicle_km}</p>
 
             <p className="text-base">Oficina: {e.workshop!.name}</p>

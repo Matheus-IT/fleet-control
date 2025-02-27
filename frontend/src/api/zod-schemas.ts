@@ -33,6 +33,7 @@ export const UserSchema = z.object({
 
 export const VehicleHistorySchema = z.array(
   z.object({
+    id: z.number(),
     vehicle_km: z.number(),
     parts: z.array(VehiclePartSchema),
     exit_record: z.nullable(

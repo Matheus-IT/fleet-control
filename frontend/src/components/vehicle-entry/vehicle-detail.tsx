@@ -21,7 +21,15 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import { formatDate, formatTime } from "../../utils/date-time";
 import { useRouter } from "next/navigation";
-import { Clock, Car, Wrench, AlertTriangle, User, Users } from "lucide-react";
+import {
+  Clock,
+  Car,
+  Wrench,
+  AlertTriangle,
+  User,
+  Users,
+  SquareAsterisk,
+} from "lucide-react";
 import { useUserInfoStore } from "@/stores/user-info";
 import { formatCurrency } from "@/utils/currency";
 import { calculateTotal } from "@/utils/vehicle-parts";
@@ -85,6 +93,11 @@ export default function VehicleDetail({
         <Divider />
         <CardBody>
           <div className="space-y-4">
+            <p className="flex items-center gap-2">
+              <SquareAsterisk className="w-4 h-4 text-gray-500" />
+              <span className="text-gray-600">Número: </span>
+              {lastEntryData.id}
+            </p>
             <p className="flex items-center gap-2">
               <Wrench className="w-4 h-4 text-gray-500" />
               <span className="text-base">

@@ -206,6 +206,7 @@ class VehicleHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = VehicleEntryRegistry
         fields = [
+            "id",
             "exit_record",
             "vehicle_km",
             "parts",
