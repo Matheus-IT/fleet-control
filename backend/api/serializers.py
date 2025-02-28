@@ -97,6 +97,7 @@ class VehicleDetailEntrySerializer(serializers.ModelSerializer):
     responsable_team = TeamSerializer()
     author = serializers.SerializerMethodField()
     parts = VehiclePartSerializer(many=True)
+    assessment_responsible = serializers.SerializerMethodField()
 
     class Meta:
         model = VehicleEntryRegistry
@@ -112,11 +113,17 @@ class VehicleDetailEntrySerializer(serializers.ModelSerializer):
             "created_at",
             "status",
             "observation",
+            "assessment_responsible",
         ]
 
     def get_author(self, obj):
         if obj.author:
             return {"name": obj.author.name}
+        return None
+
+    def get_assessment_responsible(self, obj):
+        if obj.assessment_responsible:
+            return {"name": obj.assessment_responsible.name}
         return None
 
 

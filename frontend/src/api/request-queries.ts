@@ -174,7 +174,10 @@ export async function getLastEntryRecordFromVehicle(
   const res = await axiosInstanceAuth.get(
     `/api/get-last-entry-record-from-vehicle/${vehicle_slug}/`
   );
+  console.log("res.data", res.data);
   const parsedData = VehicleEntryRegistrySchemaDetail.parse(res.data);
+  console.log("parsedData", parsedData);
+
   return parsedData;
 }
 

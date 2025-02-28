@@ -217,6 +217,13 @@ export default function VehicleDetail({
               </div>
             </div>
 
+            <div className="space-y-2 ml-6">
+              <span className="text-gray-600">
+                Responsável pela avaliação:{" "}
+              </span>
+              <strong>{lastEntryData.assessment_responsible.name}</strong>
+            </div>
+
             <div className="flex items-center gap-2 text-gray-600">
               <Clock className="w-4 h-4" />
               {lastEntryData.author ? (
