@@ -70,7 +70,7 @@ export default function VehicleHistoryPage({
             <p className="text-base">Oficina: {e.workshop!.name}</p>
 
             <p className="text-base">
-              Equipe responsável: {e.responsable_team.name}
+              Equipe responsável: {e.responsible_team.name}
             </p>
 
             <p className="text-base">Problema: {e.problem_reported}</p>

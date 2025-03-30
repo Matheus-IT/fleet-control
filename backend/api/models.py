@@ -170,7 +170,7 @@ class VehicleEntryRegistry(models.Model):
     vehicle_km = models.IntegerField(null=True)
     workshop = models.ForeignKey(Workshop, on_delete=models.CASCADE, null=True)
     problem_reported = models.CharField(max_length=256)
-    responsable_team = models.ForeignKey(Team, on_delete=models.CASCADE, null=True)
+    responsible_team = models.ForeignKey(Team, on_delete=models.CASCADE, null=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=StatusChoices.choices)

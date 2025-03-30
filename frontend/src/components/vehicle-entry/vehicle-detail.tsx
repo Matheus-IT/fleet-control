@@ -130,8 +130,8 @@ export default function VehicleDetail({
               <Users className="w-4 h-4 text-gray-500" />
               <span className="text-gray-600">Equipe responsável:</span>{" "}
               <strong>
-                {lastEntryData.responsable_team!.name} -{" "}
-                {lastEntryData.responsable_team!.type}
+                {lastEntryData.responsible_team!.name} -{" "}
+                {lastEntryData.responsible_team!.type}
               </strong>
             </p>
 

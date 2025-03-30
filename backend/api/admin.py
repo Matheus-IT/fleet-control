@@ -154,7 +154,7 @@ class VehicleEntryRegistryAdmin(admin.ModelAdmin):
         "workshop",
         "status",
         "problem_reported",
-        "responsable_team",
+        "responsible_team",
         "created_at",
     )
     search_fields = (
@@ -162,7 +162,7 @@ class VehicleEntryRegistryAdmin(admin.ModelAdmin):
         "vehicle_km",
         "workshop",
         "problem_reported",
-        "responsable_team",
+        "responsible_team",
         "created_at",
     )
 

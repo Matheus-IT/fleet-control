@@ -44,7 +44,7 @@ export const VehicleHistorySchema = z.array(
     ),
     workshop: z.nullable(WorkshopSchema),
     problem_reported: z.string(),
-    responsable_team: ResponsableTeamSchema,
+    responsible_team: ResponsableTeamSchema,
     author: UserSchema,
     created_at: z.string().transform((value) => new Date(value)), // Convert string to Date
     status: z.string(),
@@ -64,7 +64,7 @@ export const VehicleEntryRegistrySchema = z.object({
   vehicle_km: z.number(),
   workshop: z.number(),
   problem_reported: z.string(),
-  responsable_team: z.number(),
+  responsible_team: z.number(),
   author: z.number(),
   created_at: z
     .union([z.string(), z.date()]) // Allow both string and Date formats
@@ -81,7 +81,7 @@ export const VehicleRegistrySchemaList = z.object({
   vehicle_km: z.nullable(z.number()),
   workshop: z.nullable(WorkshopSchema),
   problem_reported: z.string(),
-  responsable_team: z.nullable(ResponsableTeamSchema),
+  responsible_team: z.nullable(ResponsableTeamSchema),
   author: z.nullable(UserSchema),
   created_at: z
     .union([z.string(), z.date()]) // Allow both string and Date formats
@@ -99,7 +99,7 @@ export const VehicleEntryRegistrySchemaDetail = z.object({
   parts: z.array(VehiclePartSchema),
   workshop: z.nullable(WorkshopSchema),
   problem_reported: z.string(),
-  responsable_team: z.nullable(ResponsableTeamSchema),
+  responsible_team: z.nullable(ResponsableTeamSchema),
   author: z.nullable(UserSchema),
   created_at: z
     .union([z.string(), z.date()]) // Allow both string and Date formats
@@ -117,7 +117,7 @@ export const VehicleEntrySchema = z.object({
   parts: z.array(VehiclePartSchema),
   workshop: z.number(),
   problem_reported: z.string(),
-  responsable_team: z.number(),
+  responsible_team: z.number(),
   author: z.number(),
   created_at: z.optional(
     z

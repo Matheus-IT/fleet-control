@@ -192,7 +192,7 @@ def vehicle_history_csv_view(request: Request, vehicle_id: str):
             [
                 e["vehicle_km"],
                 e["workshop"]["name"],
-                e["responsable_team"]["name"],
+                e["responsible_team"]["name"],
                 e["problem_reported"],
                 e["author"]["name"],
                 e["status"],

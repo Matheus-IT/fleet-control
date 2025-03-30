@@ -48,7 +48,7 @@ export default function CorrectLastVehicleEntryRecord({
   lastEntry: VehicleEntryRegistryDetail;
 }) {
   const [selectedTeam, setSelectedTeam] = useState<ResponsableTeam>(
-    lastEntry.responsable_team!
+    lastEntry.responsible_team!
   );
   const [selectedWorkshop, setSelectedWorkshop] = useState<Workshop>(
     lastEntry.workshop!
@@ -125,7 +125,7 @@ export default function CorrectLastVehicleEntryRecord({
         vehicle_km: parseInt(formData.kilometer),
         workshop: selectedWorkshop.id,
         problem_reported: formData.problem_reported,
-        responsable_team: selectedTeam.id,
+        responsible_team: selectedTeam.id,
         author: userInfo.id,
         parts: formData.vehicleParts.map((part) => ({
           name: part.name,

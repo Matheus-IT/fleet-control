@@ -67,7 +67,7 @@ class VehiclePartSerializer(serializers.ModelSerializer):
 class VehicleEntryRegistrySerializer(serializers.ModelSerializer):
     vehicle = VehicleSerializer()
     workshop = WorkshopSerializer()
-    responsable_team = TeamSerializer()
+    responsible_team = TeamSerializer()
     author = serializers.SerializerMethodField()
 
     class Meta:
@@ -78,7 +78,7 @@ class VehicleEntryRegistrySerializer(serializers.ModelSerializer):
             "vehicle_km",
             "workshop",
             "problem_reported",
-            "responsable_team",
+            "responsible_team",
             "author",
             "created_at",
             "status",
@@ -94,7 +94,7 @@ class VehicleEntryRegistrySerializer(serializers.ModelSerializer):
 class VehicleDetailEntrySerializer(serializers.ModelSerializer):
     vehicle = VehicleSerializer()
     workshop = WorkshopSerializer()
-    responsable_team = TeamSerializer()
+    responsible_team = TeamSerializer()
     author = serializers.SerializerMethodField()
     parts = VehiclePartSerializer(many=True)
     assessment_responsible = serializers.SerializerMethodField()
@@ -107,7 +107,7 @@ class VehicleDetailEntrySerializer(serializers.ModelSerializer):
             "vehicle_km",
             "workshop",
             "problem_reported",
-            "responsable_team",
+            "responsible_team",
             "author",
             "parts",
             "created_at",
@@ -137,7 +137,7 @@ class VehicleEntrySerializer(serializers.ModelSerializer):
             "vehicle_km",
             "workshop",
             "problem_reported",
-            "responsable_team",
+            "responsible_team",
             "author",
             "parts",
             "created_at",
@@ -205,7 +205,7 @@ class VehicleExitCreateSerializer(serializers.ModelSerializer):
 class VehicleHistorySerializer(serializers.ModelSerializer):
     workshop = WorkshopSerializer()
     parts = VehiclePartSerializer(many=True)
-    responsable_team = TeamSerializer()
+    responsible_team = TeamSerializer()
     author = serializers.SerializerMethodField()
     exit_record = VehicleExitSerializer()
     assessment_responsible = serializers.SerializerMethodField()
@@ -219,7 +219,7 @@ class VehicleHistorySerializer(serializers.ModelSerializer):
             "parts",
             "workshop",
             "problem_reported",
-            "responsable_team",
+            "responsible_team",
             "author",
             "status",
             "observation",

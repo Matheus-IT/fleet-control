@@ -124,7 +124,7 @@ export function CreateVehicleEntryRecord({
         vehicle_km: parseInt(formData.kilometer),
         workshop: selectedWorkshop.id,
         problem_reported: formData.problem_reported,
-        responsable_team: selectedTeam.id,
+        responsible_team: selectedTeam.id,
         author: userInfo.id,
         parts: formData.vehicleParts.map((part) => ({
           name: part.name,

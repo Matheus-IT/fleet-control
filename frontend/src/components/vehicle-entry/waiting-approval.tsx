@@ -126,8 +126,8 @@ export default function WaitingApproval({
                     Equipe responsável:
                   </span>{" "}
                   <strong>
-                    {lastEntryData.responsable_team!.name} -{" "}
-                    {lastEntryData.responsable_team!.type}
+                    {lastEntryData.responsible_team!.name} -{" "}
+                    {lastEntryData.responsible_team!.type}
                   </strong>
                 </p>
               </div>
