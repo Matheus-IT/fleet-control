@@ -175,10 +175,15 @@ export async function getLastEntryRecordFromVehicle(
     `/api/get-last-entry-record-from-vehicle/${vehicle_slug}/`
   );
   console.log("res.data", res.data);
-  const parsedData = VehicleEntryRegistrySchemaDetail.parse(res.data);
-  console.log("parsedData", parsedData);
+  try {
+    const parsedData = VehicleEntryRegistrySchemaDetail.parse(res.data);
+    console.log("parsedData", parsedData);
 
-  return parsedData;
+    return parsedData;
+  } catch (e) {
+    console.log("e", e);
+    return {} as VehicleEntryRegistryDetail;
+  }
 }
 
 export async function approveEntryRequest(

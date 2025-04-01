@@ -114,115 +114,131 @@ export default function VehicleDetail({
               </span>
             </p>
 
-            {!vehicle.is_at_workshop && (
-              <p className="ml-6 text-xl">
-                <strong>Informações da última atualização:</strong>
-              </p>
-            )}
+            {!!lastEntryData.author && (
+              <>
+                {!vehicle.is_at_workshop && (
+                  <p className="ml-6 text-xl">
+                    <strong>Informações da última atualização:</strong>
+                  </p>
+                )}
 
-            <p className="text-base flex items-center gap-2">
-              <User className="w-4 h-4 text-gray-500" />
-              <span className="text-gray-600">Solicitante:</span>{" "}
-              <strong>{lastEntryData.author!.name}</strong>
-            </p>
-
-            <p className="text-base flex items-center gap-2">
-              <Users className="w-4 h-4 text-gray-500" />
-              <span className="text-gray-600">Equipe responsável:</span>{" "}
-              <strong>
-                {lastEntryData.responsible_team!.name} -{" "}
-                {lastEntryData.responsible_team!.type}
-              </strong>
-            </p>
-
-            <div className="mt-2 pl-6">
-              <p className="text-base">
-                <span className="text-gray-600">Problema reportado:</span>{" "}
-                <strong>{lastEntryData.problem_reported}</strong>
-              </p>
-              {lastEntryData.workshop && (
-                <p className="text-base">
-                  <span className="text-gray-600">Oficina:</span>{" "}
-                  <strong>{lastEntryData.workshop.name}</strong>
+                <p className="text-base flex items-center gap-2">
+                  <User className="w-4 h-4 text-gray-500" />
+                  <span className="text-gray-600">Solicitante:</span>{" "}
+                  <strong>{lastEntryData.author!.name}</strong>
                 </p>
-              )}
-            </div>
 
-            {lastEntryData.parts &&
-              lastEntryData.parts.length > 0 &&
-              vehicle.is_at_workshop && (
-                <div className="ml-5 p-2 border border-gray-300 rounded-lg">
-                  <span className="text-gray-600 font-medium">Peças:</span>
-                  <div className="mt-2 space-y-3">
-                    {lastEntryData.parts.map((part, index) => (
-                      <div key={index} className="bg-gray-50 p-3 rounded-lg">
-                        <div className="grid grid-cols-3 gap-2 text-sm">
-                          <div>
-                            <span className="text-gray-600">Peça:</span>{" "}
-                            <strong>{part.name}</strong>
+                <p className="text-base flex items-center gap-2">
+                  <Users className="w-4 h-4 text-gray-500" />
+                  <span className="text-gray-600">
+                    Equipe responsável:
+                  </span>{" "}
+                  <strong>
+                    {lastEntryData.responsible_team!.name} -{" "}
+                    {lastEntryData.responsible_team!.type}
+                  </strong>
+                </p>
+
+                <div className="mt-2 pl-6">
+                  <p className="text-base">
+                    <span className="text-gray-600">Problema reportado:</span>{" "}
+                    <strong>{lastEntryData.problem_reported}</strong>
+                  </p>
+                  {lastEntryData.workshop && (
+                    <p className="text-base">
+                      <span className="text-gray-600">Oficina:</span>{" "}
+                      <strong>{lastEntryData.workshop.name}</strong>
+                    </p>
+                  )}
+                </div>
+
+                {lastEntryData.parts &&
+                  lastEntryData.parts.length > 0 &&
+                  vehicle.is_at_workshop && (
+                    <div className="ml-5 p-2 border border-gray-300 rounded-lg">
+                      <span className="text-gray-600 font-medium">Peças:</span>
+                      <div className="mt-2 space-y-3">
+                        {lastEntryData.parts.map((part, index) => (
+                          <div
+                            key={index}
+                            className="bg-gray-50 p-3 rounded-lg"
+                          >
+                            <div className="grid grid-cols-3 gap-2 text-sm">
+                              <div>
+                                <span className="text-gray-600">Peça:</span>{" "}
+                                <strong>{part.name}</strong>
+                              </div>
+                              <div>
+                                <span className="text-gray-600">
+                                  Quantidade:
+                                </span>{" "}
+                                <strong>{part.quantity}</strong>
+                              </div>
+                              <div>
+                                <span className="text-gray-600">
+                                  Valor unitário:
+                                </span>{" "}
+                                <strong>
+                                  {formatCurrency(part.unit_value)}
+                                </strong>
+                              </div>
+                            </div>
                           </div>
-                          <div>
-                            <span className="text-gray-600">Quantidade:</span>{" "}
-                            <strong>{part.quantity}</strong>
-                          </div>
-                          <div>
-                            <span className="text-gray-600">
-                              Valor unitário:
-                            </span>{" "}
-                            <strong>{formatCurrency(part.unit_value)}</strong>
-                          </div>
+                        ))}
+                        <div className="mt-2 text-right font-medium">
+                          Valor total:{" "}
+                          {formatCurrency(calculateTotal(lastEntryData.parts))}
                         </div>
                       </div>
-                    ))}
-                    <div className="mt-2 text-right font-medium">
-                      Valor total:{" "}
-                      {formatCurrency(calculateTotal(lastEntryData.parts))}
                     </div>
+                  )}
+
+                {lastEntryData.parts && lastEntryData.parts.length == 0 && (
+                  <div className="space-y-2 pl-7">
+                    <p className="text-base text-gray-600">
+                      Não há peças nessa entrada...
+                    </p>
+                  </div>
+                )}
+
+                <div className="space-y-2 ml-6">
+                  <div className="text-base">
+                    <span className="text-gray-600">Status:</span>{" "}
+                    {lastEntryData.status ==
+                      VehicleEntryStatus.NOT_APPROVED && (
+                      <>
+                        <span className="text-danger-600">
+                          <strong>Não aprovado</strong>
+                        </span>
+                        <br />
+                        <span className="text-gray-600">Motivo: </span>
+                        <Textarea readOnly value={lastEntryData.observation} />
+                      </>
+                    )}
+                    {lastEntryData.status ==
+                      VehicleEntryStatus.WAITING_APPROVAL && (
+                      <span className="text-orange-600">
+                        <strong>Aguardando aprovação</strong>
+                      </span>
+                    )}
+                    {lastEntryData.status == VehicleEntryStatus.APPROVED && (
+                      <span className="text-success-600">
+                        <strong>Aprovado</strong>
+                      </span>
+                    )}
                   </div>
                 </div>
-              )}
 
-            {lastEntryData.parts && lastEntryData.parts.length == 0 && (
-              <div className="space-y-2 pl-7">
-                <p className="text-base text-gray-600">
-                  Não há peças nessa entrada...
-                </p>
-              </div>
-            )}
-
-            <div className="space-y-2 ml-6">
-              <div className="text-base">
-                <span className="text-gray-600">Status:</span>{" "}
-                {lastEntryData.status == VehicleEntryStatus.NOT_APPROVED && (
-                  <>
-                    <span className="text-danger-600">
-                      <strong>Não aprovado</strong>
+                {lastEntryData.assessment_responsible && (
+                  <div className="space-y-2 ml-6">
+                    <span className="text-gray-600">
+                      Responsável pela avaliação:{" "}
                     </span>
-                    <br />
-                    <span className="text-gray-600">Motivo: </span>
-                    <Textarea readOnly value={lastEntryData.observation} />
-                  </>
+                    <strong>{lastEntryData.assessment_responsible.name}</strong>
+                  </div>
                 )}
-                {lastEntryData.status ==
-                  VehicleEntryStatus.WAITING_APPROVAL && (
-                  <span className="text-orange-600">
-                    <strong>Aguardando aprovação</strong>
-                  </span>
-                )}
-                {lastEntryData.status == VehicleEntryStatus.APPROVED && (
-                  <span className="text-success-600">
-                    <strong>Aprovado</strong>
-                  </span>
-                )}
-              </div>
-            </div>
-
-            <div className="space-y-2 ml-6">
-              <span className="text-gray-600">
-                Responsável pela avaliação:{" "}
-              </span>
-              <strong>{lastEntryData.assessment_responsible.name}</strong>
-            </div>
+              </>
+            )}
 
             <div className="flex items-center gap-2 text-gray-600">
               <Clock className="w-4 h-4" />

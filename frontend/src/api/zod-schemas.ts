@@ -108,7 +108,7 @@ export const VehicleEntryRegistrySchemaDetail = z.object({
     ), // Convert string to Date
   status: z.string(),
   observation: z.string(),
-  assessment_responsible: UserSchema,
+  assessment_responsible: UserSchema.nullable(),
 });
 
 export const VehicleEntrySchema = z.object({
