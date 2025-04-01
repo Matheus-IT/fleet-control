@@ -95,7 +95,7 @@ class Driver(models.Model):
 
 
 class Vehicle(models.Model):
-    model = models.CharField(max_length=50)
+    model = models.CharField(max_length=50, blank=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     licence_plate = models.CharField(max_length=10, unique=True)
     slug = models.SlugField(unique=True, null=True, blank=True)
