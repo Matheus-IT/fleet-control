@@ -231,6 +231,15 @@ class TeamViewset(ModelViewSet):
     queryset = Team.objects.all()
     serializer_class = TeamSerializer
 
+    def get_queryset(self):
+        user = self.request.user
+        user_organization = (
+            user.supervisor.organization
+            if hasattr(user, "supervisor")
+            else user.driver.organization
+        )
+        return Team.objects.filter(organization=user_organization)
+
 
 class WorkshopViewset(ModelViewSet):
     permission_classes = [IsAuthenticated]
