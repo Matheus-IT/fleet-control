@@ -36,6 +36,16 @@
 //   }
 // }
 
+declare namespace Cypress {
+  interface Chainable<Subject = any> {
+    /**
+     * Logs in via the app’s API and stores the auth token in localStorage.
+     * @example cy.login('alice@example.com', 's3cr3t')
+     */
+    login(username?: string, password?: string): Chainable<void>;
+  }
+}
+
 Cypress.Commands.add('login', (email: string, password: string) => {
   cy.session(
     email,
@@ -47,14 +57,10 @@ Cypress.Commands.add('login', (email: string, password: string) => {
       cy.get('input[name="password"]').type(password)
 
       cy.get('button[type="submit"]').click()
+
+      cy.window()
+        .its('localStorage.accessToken')
+        .should('exist')
     },
-    {
-      validate: () => {
-        cy.window().then((window) => {
-          const token = window.localStorage.getItem('accessToken')
-          expect(token).to.exist
-        })
-      },
-    }
   )
 })
