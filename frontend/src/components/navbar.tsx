@@ -54,7 +54,7 @@ export default function MyNavbar() {
           onClick={() => router.replace("/")}
         >
           <Logo />
-          <span className="font-bold ml-2">DPL Construções</span>
+          <span className="font-bold ml-2">Empresa XYZ</span>
         </span>
 
         <NavbarMenuToggle
